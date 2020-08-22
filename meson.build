@@ -1,7 +1,9 @@
 project('shadowlight-engine', 'cpp')
 
 src = [
-    'src/main.cpp'
+    'src/main.cpp',
+
+    'src/ShadowlightEngine.cpp'
 ]
 
 dependencies = [

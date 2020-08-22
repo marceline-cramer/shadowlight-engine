@@ -1,8 +1,11 @@
 #include <iostream>
 
+#include "ShadowlightEngine.hpp"
+
 int main()
 {
-    std::cout << "Hello there." << std::endl;
-    
+    ShadowlightEngine sle;
+    sle.run();
+
     return 0;
 }
