@@ -16,10 +16,12 @@ src = [
 ]
 
 dependencies = [
-    dependency('luajit', version: '>=2.0.0'),
-    dependency('vulkan'),
-    dependency('openal'),
-    dependency('bullet')
+    dependency('luajit', version: '>=2.0.5'),
+    dependency('vulkan', version: '>=1.2.149'),
+    dependency('openal', version: '>=1.20.1'),
+    dependency('bullet', version: '>=2.89'),
+    dependency('boost', version: '>=1.72.0'),
+    dependency('jsoncpp', version: '>=1.9.3')
 ]
 
 incdir = include_directories('include')

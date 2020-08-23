@@ -11,7 +11,7 @@ class Entity
 public:
     void update();
     void addComponent(Component*);
-private:
+//private:
     Entity* parent;
     std::set<Entity*> children;
 

@@ -7,8 +7,8 @@ void Scene::load(LuaBinding* lua)
     auto entity = new Entity();
 
     auto componentScript = new ComponentScript();
-    componentScript->init(lua);
     entity->addComponent(componentScript);
+    componentScript->init(lua, entity->components);
 
     addEntity(entity);
 }
