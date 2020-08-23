@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bullet/btBulletDynamicsCommon.h>
+
 class BulletBinding
 {
 public:
@@ -7,4 +9,9 @@ public:
     void update();
     void exit();
 private:
+    btBroadphaseInterface* broadphase;
+    btDefaultCollisionConfiguration* collisionConfiguration;
+    btCollisionDispatcher* dispatcher;
+    btSequentialImpulseConstraintSolver* solver;
+    btDiscreteDynamicsWorld* world;
 };
