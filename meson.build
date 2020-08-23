@@ -10,7 +10,9 @@ src = [
     'src/VulkanBinding.cpp',
     'src/Scene.cpp',
 
-    'src/Entity.cpp'
+    'src/Entity.cpp',
+
+    'src/ComponentScript.cpp'
 ]
 
 dependencies = [

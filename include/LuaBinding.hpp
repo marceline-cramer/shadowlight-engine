@@ -8,6 +8,7 @@ public:
     void init();
     void update();
     void exit();
-private:
+
     lua_State* L;
+private:
 };

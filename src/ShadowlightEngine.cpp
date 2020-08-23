@@ -1,5 +1,7 @@
 #include "ShadowlightEngine.hpp"
 
+#include <iostream>
+
 void ShadowlightEngine::run()
 {
     bullet.init();
@@ -7,15 +9,17 @@ void ShadowlightEngine::run()
     openal.init();
     lua.init();
 
-    scene.load();
+    scene.load(&lua);
 
-    while(!shouldExit) {
+    do {
+        std::cout << "Updating..." << std::endl;
+
         bullet.update();
         lua.update();
         scene.update();
         vulkan.update();
         openal.update();
-    }
+    } while(!shouldExit);
 
     lua.exit();
     openal.exit();
