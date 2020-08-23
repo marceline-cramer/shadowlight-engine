@@ -3,7 +3,14 @@ project('shadowlight-engine', 'cpp')
 src = [
     'src/main.cpp',
 
-    'src/ShadowlightEngine.cpp'
+    'src/ShadowlightEngine.cpp',
+    'src/LuaBinding.cpp',
+    'src/BulletBinding.cpp',
+    'src/OpenALBinding.cpp',
+    'src/VulkanBinding.cpp',
+    'src/Scene.cpp',
+
+    'src/Entity.cpp'
 ]
 
 dependencies = [
