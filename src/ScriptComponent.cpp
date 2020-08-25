@@ -1,6 +1,6 @@
-#include "ComponentScript.hpp"
+#include "ScriptComponent.hpp"
 
-void ComponentScript::init(LuaBinding* lua, ComponentSet& components)
+void ScriptComponent::init(LuaBinding* lua, ComponentSet& components)
 {
     // Create new thread for this script
     thread = lua_newthread(lua->L);
@@ -25,7 +25,7 @@ void ComponentScript::init(LuaBinding* lua, ComponentSet& components)
     lua_pop(thread, 1);
 }
 
-void ComponentScript::update()
+void ScriptComponent::update()
 {
     // Call update function
     lua_getglobal(thread, "update");

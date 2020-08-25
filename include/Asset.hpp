@@ -2,5 +2,7 @@
 
 class Asset
 {
-
+public:
+    virtual ~Asset() {};
+private:
 };

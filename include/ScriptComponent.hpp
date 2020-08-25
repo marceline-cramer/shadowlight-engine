@@ -7,10 +7,10 @@
 #include "Component.hpp"
 #include "LuaBinding.hpp"
 
-class ComponentScript: public Component
+class ScriptComponent: public Component
 {
 public:
-    virtual ~ComponentScript() {};
+    virtual ~ScriptComponent() {};
     virtual void update();
     virtual const char* getComponentType() { return "script"; };
 

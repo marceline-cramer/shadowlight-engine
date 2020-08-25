@@ -16,7 +16,7 @@ src = [
 
     'src/Entity.cpp',
 
-    'src/ComponentScript.cpp'
+    'src/ScriptComponent.cpp'
 ]
 
 dependencies = [
