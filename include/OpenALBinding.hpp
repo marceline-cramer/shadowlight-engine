@@ -1,5 +1,10 @@
 #pragma once
 
+#include <stdexcept>
+
+#include <AL/al.h>
+#include <AL/alc.h>
+
 class OpenALBinding
 {
 public:
@@ -8,4 +13,6 @@ public:
 
     void update();
 private:
+    ALCdevice* device;
+    ALCcontext* context;
 };

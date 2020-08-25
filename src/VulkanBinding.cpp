@@ -32,7 +32,7 @@ VulkanBinding::VulkanBinding()
 
     std::vector<const char *> layerNames {};
     // uncomment below if you want to use validation layers
-    layerNames.push_back("VK_LAYER_LUNARG_standard_validation");
+    // layerNames.push_back("VK_LAYER_LUNARG_standard_validation");
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
