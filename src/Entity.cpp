@@ -3,12 +3,12 @@
 void Entity::update()
 {
     for(auto it : components) {
-        it.second->update();
+        it.first->update();
     }
 }
 
 void Entity::addComponent(Component* c)
 {
-    auto pair = std::pair<std::string, Component*>(c->getComponentType(), c);
+    auto pair = ComponentMap::value_type(c, c->getComponentType());
     components.insert(pair);
 }

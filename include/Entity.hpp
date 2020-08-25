@@ -6,6 +6,9 @@
 
 #include "Component.hpp"
 
+class Entity;
+using EntitySet = std::set<Entity*>;
+
 class Entity
 {
 public:
@@ -13,7 +16,7 @@ public:
     void addComponent(Component*);
 //private:
     Entity* parent;
-    std::set<Entity*> children;
+    EntitySet children;
 
-    std::map<std::string, Component*> components;
+    ComponentMap components;
 };

@@ -1,6 +1,14 @@
 #pragma once
 
-#include "lua.hpp"
+#include <map>
+#include <set>
+#include <string>
+
+#include <lua.hpp>
+
+class Component;
+using ComponentSet = std::set<Component*>;
+using ComponentMap = std::map<Component*, std::string>;
 
 class Component
 {

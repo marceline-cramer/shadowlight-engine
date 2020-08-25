@@ -25,6 +25,7 @@ void Scene::load(LuaBinding* lua)
 
 void Scene::update()
 {
+    // Create "buckets" for each component
     for(auto it : entities) {
         it->update();
     }
