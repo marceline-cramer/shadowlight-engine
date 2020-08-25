@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 
-#include "ScriptComponent.hpp"
+#include "components/ScriptComponent.hpp"
 
 Scene::Scene()
 {

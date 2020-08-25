@@ -1,4 +1,4 @@
-#include "OpenALBinding.hpp"
+#include "bindings/OpenALBinding.hpp"
 
 OpenALBinding::OpenALBinding()
 {

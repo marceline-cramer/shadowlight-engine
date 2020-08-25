@@ -1,4 +1,4 @@
-#include "LuaBinding.hpp"
+#include "bindings/LuaBinding.hpp"
 
 LuaBinding::LuaBinding()
 {
@@ -11,7 +11,6 @@ LuaBinding::~LuaBinding()
 {
     lua_close(L);
 }
-
 
 void LuaBinding::update()
 {

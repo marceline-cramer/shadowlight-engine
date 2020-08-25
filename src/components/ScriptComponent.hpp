@@ -4,8 +4,8 @@
 #include <string>
 #include <map>
 
-#include "Component.hpp"
-#include "LuaBinding.hpp"
+#include "components/Component.hpp"
+#include "bindings/LuaBinding.hpp"
 
 class ScriptComponent: public Component
 {

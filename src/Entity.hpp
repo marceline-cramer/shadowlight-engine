@@ -4,7 +4,7 @@
 #include <set>
 #include <map>
 
-#include "Component.hpp"
+#include "components/Component.hpp"
 
 class Entity;
 using EntitySet = std::set<Entity*>;

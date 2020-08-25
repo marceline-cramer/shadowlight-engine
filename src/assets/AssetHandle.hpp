@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Asset.hpp"
+#include "assets/Asset.hpp"
 
 class AssetHandle
 {

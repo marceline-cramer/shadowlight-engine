@@ -2,7 +2,7 @@
 
 #include <lua.hpp>
 
-#include "Asset.hpp"
+#include "assets/Asset.hpp"
 
 class ScriptAsset: public Asset
 {

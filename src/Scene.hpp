@@ -3,7 +3,8 @@
 #include <set>
 
 #include "Entity.hpp"
-#include "LuaBinding.hpp"
+
+#include "bindings/LuaBinding.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 

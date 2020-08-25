@@ -5,10 +5,11 @@
 
 #include <physfs.h>
 
-#include "Asset.hpp"
-#include "AssetHandle.hpp"
-#include "ScriptAsset.hpp"
-#include "LuaBinding.hpp"
+#include "assets/Asset.hpp"
+#include "assets/AssetHandle.hpp"
+#include "assets/ScriptAsset.hpp"
+
+#include "bindings/LuaBinding.hpp"
 
 template<class T>
 using AssetSet = std::vector<T>;

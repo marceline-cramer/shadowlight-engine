@@ -1,4 +1,4 @@
-#include "AssetPool.hpp"
+#include "assets/AssetPool.hpp"
 
 AssetPool::AssetPool(LuaBinding* _lua)
 {

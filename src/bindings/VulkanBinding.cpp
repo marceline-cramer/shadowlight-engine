@@ -1,4 +1,4 @@
-#include "VulkanBinding.hpp"
+#include "bindings/VulkanBinding.hpp"
 
 VulkanBinding::VulkanBinding()
 {

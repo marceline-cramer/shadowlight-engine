@@ -1,4 +1,4 @@
-#include "ScriptComponent.hpp"
+#include "components/ScriptComponent.hpp"
 
 void ScriptComponent::init(LuaBinding* lua, ComponentSet& components)
 {

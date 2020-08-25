@@ -1,4 +1,4 @@
-#include "BulletBinding.hpp"
+#include "bindings/BulletBinding.hpp"
 
 BulletBinding::BulletBinding()
 {

@@ -1,4 +1,4 @@
-#include "AssetHandle.hpp"
+#include "assets/AssetHandle.hpp"
 
 AssetHandle::AssetHandle()
 {

@@ -2,21 +2,21 @@ project('shadowlight-engine', 'cpp')
 
 src = [
     'src/main.cpp',
-
     'src/ShadowlightEngine.cpp',
-    'src/LuaBinding.cpp',
-    'src/BulletBinding.cpp',
-    'src/OpenALBinding.cpp',
-    'src/VulkanBinding.cpp',
+    'src/Entity.cpp',
     'src/Scene.cpp',
 
-    'src/AssetPool.cpp',
-    'src/Asset.cpp',
-    'src/AssetHandle.cpp',
+    'src/assets/Asset.cpp',
+    'src/assets/AssetHandle.cpp',
+    'src/assets/AssetPool.cpp',
+    'src/assets/ScriptAsset.cpp',
 
-    'src/Entity.cpp',
+    'src/bindings/BulletBinding.cpp',
+    'src/bindings/LuaBinding.cpp',
+    'src/bindings/OpenALBinding.cpp',
+    'src/bindings/VulkanBinding.cpp',
 
-    'src/ScriptComponent.cpp'
+    'src/components/ScriptComponent.cpp'
 ]
 
 dependencies = [
@@ -30,7 +30,7 @@ dependencies = [
     dependency('physfs', version: '>=3.0.2')
 ]
 
-incdir = include_directories('include')
+incdir = include_directories('src')
 
 exe = executable('shadowlight', src,
     include_directories: incdir, dependencies: dependencies

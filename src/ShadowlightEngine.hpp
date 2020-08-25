@@ -1,9 +1,9 @@
 #pragma once
 
-#include "LuaBinding.hpp"
-#include "BulletBinding.hpp"
-#include "OpenALBinding.hpp"
-#include "VulkanBinding.hpp"
+#include "bindings/LuaBinding.hpp"
+#include "bindings/BulletBinding.hpp"
+#include "bindings/OpenALBinding.hpp"
+#include "bindings/VulkanBinding.hpp"
 
 #include "Scene.hpp"
 
