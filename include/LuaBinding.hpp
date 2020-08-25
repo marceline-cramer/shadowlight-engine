@@ -5,9 +5,10 @@
 class LuaBinding
 {
 public:
-    void init();
+    LuaBinding();
+    ~LuaBinding();
+    
     void update();
-    void exit();
 
     lua_State* L;
 private:

@@ -3,8 +3,9 @@
 class OpenALBinding
 {
 public:
-    void init();
+    OpenALBinding();
+    ~OpenALBinding();
+
     void update();
-    void exit();
 private:
 };

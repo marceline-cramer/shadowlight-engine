@@ -2,6 +2,16 @@
 
 #include "ComponentScript.hpp"
 
+Scene::Scene()
+{
+
+}
+
+Scene::~Scene()
+{
+    
+}
+
 void Scene::load(LuaBinding* lua)
 {
     auto entity = new Entity();

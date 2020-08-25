@@ -1,16 +1,16 @@
 #include "OpenALBinding.hpp"
 
-void OpenALBinding::init()
+OpenALBinding::OpenALBinding()
+{
+
+}
+
+OpenALBinding::~OpenALBinding()
 {
 
 }
 
 void OpenALBinding::update()
-{
-
-}
-
-void OpenALBinding::exit()
 {
 
 }

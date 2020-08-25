@@ -5,9 +5,10 @@
 class BulletBinding
 {
 public:
-    void init();
+    BulletBinding();
+    ~BulletBinding();
+    
     void update();
-    void exit();
 private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;

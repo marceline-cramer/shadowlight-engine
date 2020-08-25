@@ -2,27 +2,36 @@
 
 #include <iostream>
 
+ShadowlightEngine::ShadowlightEngine()
+{
+    bullet = new BulletBinding();
+    vulkan = new VulkanBinding();
+    openal = new OpenALBinding();
+    lua = new LuaBinding();
+    scene = new Scene();
+}
+
+ShadowlightEngine::~ShadowlightEngine()
+{
+    delete scene;
+    delete lua;
+    delete openal;
+    delete vulkan;
+    delete bullet;
+}
+
+
 void ShadowlightEngine::run()
 {
-    bullet.init();
-    vulkan.init();
-    openal.init();
-    lua.init();
-
-    scene.load(&lua);
+    scene->load(lua);
 
     do {
         std::cout << "Updating..." << std::endl;
 
-        bullet.update();
-        lua.update();
-        scene.update();
-        vulkan.update();
-        openal.update();
+        bullet->update();
+        lua->update();
+        scene->update();
+        vulkan->update();
+        openal->update();
     } while(!shouldExit);
-
-    lua.exit();
-    openal.exit();
-    vulkan.exit();
-    bullet.exit();
 }

@@ -21,7 +21,8 @@ dependencies = [
     dependency('openal', version: '>=1.20.1'),
     dependency('bullet', version: '>=2.89'),
     dependency('boost', version: '>=1.72.0'),
-    dependency('jsoncpp', version: '>=1.9.3')
+    dependency('jsoncpp', version: '>=1.9.3'),
+    dependency('sdl2', version: '>=2.0.12')
 ]
 
 incdir = include_directories('include')

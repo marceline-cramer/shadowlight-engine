@@ -1,6 +1,6 @@
 #include "BulletBinding.hpp"
 
-void BulletBinding::init()
+BulletBinding::BulletBinding()
 {
     // Create physics objects
     broadphase = new btDbvtBroadphase();
@@ -13,13 +13,7 @@ void BulletBinding::init()
     world->setGravity(btVector3(0, -9.8, 0));
 }
 
-void BulletBinding::update()
-{
-    // Step the simulation
-    world->stepSimulation(0.01667);
-}
-
-void BulletBinding::exit()
+BulletBinding::~BulletBinding()
 {
     // Deallocate all physics objects
     delete world;
@@ -27,4 +21,11 @@ void BulletBinding::exit()
     delete collisionConfiguration;
     delete dispatcher;
     delete broadphase;
+}
+
+
+void BulletBinding::update()
+{
+    // Step the simulation
+    world->stepSimulation(0.01667);
 }

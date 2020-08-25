@@ -9,15 +9,18 @@
 
 class ShadowlightEngine {
 public:
+    ShadowlightEngine();
+    ~ShadowlightEngine();
+
     void run();
 private:
     // Engine bindings
-    LuaBinding lua;
-    BulletBinding bullet;
-    OpenALBinding openal;
-    VulkanBinding vulkan;
+    LuaBinding* lua;
+    BulletBinding* bullet;
+    OpenALBinding* openal;
+    VulkanBinding* vulkan;
 
     // Engine state
-    Scene scene;
+    Scene* scene;
     bool shouldExit = true;
 };

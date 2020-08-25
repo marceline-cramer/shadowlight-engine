@@ -8,6 +8,9 @@
 class Scene
 {
 public:
+    Scene();
+    ~Scene();
+    
     void load(LuaBinding*);
     void update();
     void addEntity(Entity*);
