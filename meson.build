@@ -9,7 +9,10 @@ src = [
     'src/OpenALBinding.cpp',
     'src/VulkanBinding.cpp',
     'src/Scene.cpp',
-    'src/Assets.cpp',
+
+    'src/AssetPool.cpp',
+    'src/Asset.cpp',
+    'src/AssetHandle.cpp',
 
     'src/Entity.cpp',
 

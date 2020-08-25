@@ -2,7 +2,7 @@
 
 #include <physfs.h>
 
-class Assets
+class AssetPool
 {
 
 };
