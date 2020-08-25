@@ -14,7 +14,7 @@ public:
     virtual void update();
     virtual const char* getComponentType() { return "script"; };
 
-    void init(LuaBinding*, ComponentMap&);
+    void init(LuaBinding*, ComponentSet&);
 private:
     lua_State* thread;
     int selfIndex;

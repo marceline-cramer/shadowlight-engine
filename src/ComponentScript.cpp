@@ -1,6 +1,6 @@
 #include "ComponentScript.hpp"
 
-void ComponentScript::init(LuaBinding* lua, ComponentMap& components)
+void ComponentScript::init(LuaBinding* lua, ComponentSet& components)
 {
     // Create new thread for this script
     thread = lua_newthread(lua->L);
@@ -9,10 +9,10 @@ void ComponentScript::init(LuaBinding* lua, ComponentMap& components)
     lua_createtable(thread, 0, components.size()); 
 
     // Add component bindings
-    for(auto it : components) {
-        lua_pushstring(thread, it.second.c_str());
+    for(auto c : components) {
+        lua_pushstring(thread, c->getComponentType());
         lua_createtable(thread, 0, 0);
-        it.first->createBindings(thread);
+        c->createBindings(thread);
         lua_rawset(thread, -3);
     }
 

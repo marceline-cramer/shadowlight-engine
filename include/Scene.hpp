@@ -5,6 +5,8 @@
 #include "Entity.hpp"
 #include "LuaBinding.hpp"
 
+using BucketMap = std::map<std::string, ComponentSet>;
+
 class Scene
 {
 public:
