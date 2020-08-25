@@ -1,32 +1,19 @@
 #include "assets/AssetPool.hpp"
 
-AssetPool::AssetPool(LuaBinding* _lua)
+template<class T>
+void AssetPool<T>::allocate(AssetHandle& handle)
 {
-    lua = _lua;
-}
+    for(size_t i = 0; i < assets.size(); i++) {
+        auto asset = &assets[i];
 
-void AssetPool::loadScript(AssetHandle& handle, const char* fileName)
-{
-    auto script = dynamic_cast<ScriptAsset*>(allocate(scripts));
-
-    if(!script) {
-        throw std::runtime_error("Ran out of script assets!");
+        if(asset->refCount < 0) {
+            handle.ref(asset);
+        }
     }
-
-    script->load(lua->L, fileName);
-    handle.ref(script);
 }
 
 template<class T>
-Asset* AssetPool::allocate(AssetSet<T>& assets)
+void AssetPool<T>::reap()
 {
-    for(size_t i = 0; i < assets.size(); i++) {
-        auto asset = assets[i];
-
-        if(asset.refCount < 0) {
-            return &assets[i];
-        }
-    }
-
-    return nullptr;
+    // TODO Write AssetPool reaper
 }
