@@ -7,8 +7,6 @@ src = [
     'src/Scene.cpp',
 
     'src/assets/Asset.cpp',
-    'src/assets/AssetHandle.cpp',
-    'src/assets/AssetPool.cpp',
     'src/assets/ScriptAsset.cpp',
 
     'src/bindings/BulletBinding.cpp',

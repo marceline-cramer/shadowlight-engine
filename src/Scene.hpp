@@ -6,6 +6,9 @@
 
 #include "bindings/LuaBinding.hpp"
 
+#include "assets/AssetPool.hpp"
+#include "assets/ScriptAsset.hpp"
+
 using BucketMap = std::map<std::string, ComponentSet>;
 
 class Scene
@@ -19,4 +22,7 @@ public:
     void addEntity(Entity*);
 private:
     std::set<Entity*> entities;
+
+    // Asset pools
+    AssetPool<ScriptAsset> scriptPool;
 };

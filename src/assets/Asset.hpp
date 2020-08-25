@@ -1,13 +1,13 @@
 #pragma once
 
-class AssetHandle;
-
 class Asset
 {
 public:
     virtual ~Asset() {};
 private:
-    friend class AssetHandle;
+    template<class T> friend class AssetHandle;
+    template<class T> friend class AssetPool;
+
     Asset* next;
     int refCount;
 };

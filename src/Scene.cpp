@@ -14,13 +14,13 @@ Scene::~Scene()
 
 void Scene::load(LuaBinding* lua)
 {
-    auto entity = new Entity();
+    /*auto entity = new Entity();
 
     auto componentScript = new ScriptComponent();
     entity->addComponent(componentScript);
     componentScript->init(lua, entity->components);
 
-    addEntity(entity);
+    addEntity(entity);*/
 }
 
 void Scene::update()
