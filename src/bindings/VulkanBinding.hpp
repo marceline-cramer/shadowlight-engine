@@ -7,7 +7,9 @@
 #include <SDL2/SDL_vulkan.h>
 #include <vulkan/vulkan.h>
 
-class VulkanBinding
+#include "bindings/Binding.hpp"
+
+class VulkanBinding : public Binding
 {
 public:
     VulkanBinding();

@@ -12,6 +12,8 @@ using EntitySet = std::set<Entity*>;
 class Entity
 {
 public:
+    ~Entity();
+    
     void addComponent(Component*);
 //private:
     Entity* parent;

@@ -2,7 +2,9 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 
-class BulletBinding
+#include "bindings/Binding.hpp"
+
+class BulletBinding : public Binding
 {
 public:
     BulletBinding();

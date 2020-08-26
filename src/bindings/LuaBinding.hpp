@@ -2,7 +2,9 @@
 
 #include <lua.hpp>
 
-class LuaBinding
+#include "bindings/Binding.hpp"
+
+class LuaBinding : public Binding
 {
 public:
     LuaBinding();

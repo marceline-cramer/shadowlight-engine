@@ -2,33 +2,142 @@
 
 #include "components/ScriptComponent.hpp"
 
-Scene::Scene(Filesystem* _fs)
+Scene::Scene(LuaBinding* _lua, Filesystem* _fs)
 {
+    lua = _lua;
     fs = _fs;
+
+    // Create asset pools
+    scriptPool = new AssetPool<ScriptAsset>(lua);
 
     // Load the config.json file
     rapidjson::Document config;
     fs->loadJson("config.json", config);
+
+    // Load the first scene
+    if(!config.HasMember("firstScene")) {
+        throw std::runtime_error("Config file has no firstScene");
+    }
+
+    if(!config["firstScene"].IsString()) {
+        throw std::runtime_error("firstScene must be a string");
+    }
+
+    currentScene = config["firstScene"].GetString();
+    reloadFlag = true;
 }
 
 Scene::~Scene()
 {
-    
+    for(auto e : entities) {
+        delete e;
+    }
+    entities.clear();
 }
 
-void Scene::load(LuaBinding* lua)
+void Scene::load()
 {
-    /*auto entity = new Entity();
+    rapidjson::Document scene;
+    fs->loadJson(currentScene.c_str(), scene);
 
-    auto componentScript = new ScriptComponent();
-    entity->addComponent(componentScript);
-    componentScript->init(lua, entity->components);
+    // Create entities
+    if(scene.HasMember("entities")) {
+        if(!scene["entities"].IsArray()) {
+            throw std::runtime_error("scene.entities must be an array");
+        }
 
-    addEntity(entity);*/
+        auto entities = scene["entities"].GetArray();
+        for(auto e = entities.Begin(); e != entities.End(); e++) {
+            // Create new entity
+            if(e->IsObject()) {
+                loadEntity(*e);
+            } else if(e->IsString()) {
+                rapidjson::Document entity;
+                fs->loadJson(e->GetString(), entity);
+                loadEntity(entity);
+            } else {
+                throw std::runtime_error("scene.entities.* must be a string or an object");
+            }
+        }
+    }
+
+    reloadFlag = false;
+}
+
+void Scene::loadEntity(rapidjson::Value& entity)
+{
+    Entity* e;
+
+    if(entity.HasMember("name")) {
+        if(!entity["name"].IsString()) {
+            throw std::runtime_error("entity.name must be a string");
+        }
+
+        std::string name = entity["name"].GetString();
+        std::cout << "Processing entity " << name << std::endl;
+    }
+
+    e = new Entity;
+    entities.insert(e);
+
+    if(entity.HasMember("components")) {
+        if(!entity["components"].IsArray()) {
+            throw std::runtime_error("entity.components must be an array");
+        }
+
+        auto components = entity["components"].GetArray();
+        for(auto c = components.Begin(); c != components.End(); c++) {
+            if(c->IsObject()) {
+                loadComponent(e, *c);
+            } else {
+                throw std::runtime_error("entity.components.* must be an object");
+            }
+        }
+    }
+}
+
+void Scene::loadComponent(Entity* e, rapidjson::Value& component)
+{
+    if(!component.HasMember("type")) {
+        throw std::runtime_error("component must have a type");
+    }
+
+    if(!component["type"].IsString()) {
+        throw std::runtime_error("component.type must be a string");
+    }
+
+    std::string componentType = component["type"].GetString();
+
+    std::cout << "Processing component of type " << componentType << std::endl;
+
+    // Create the component
+    Component* c;
+
+    if(componentType == ScriptComponent::ComponentType) {
+        if(!component.HasMember("script")) {
+            throw std::runtime_error("component(script) must have script");
+        }
+
+        if(!component["script"].IsString()) {
+            throw std::runtime_error("component(script).script must be a string");
+        }
+
+        const char* scriptName = component["script"].GetString();
+
+        AssetHandle<ScriptAsset> script;
+        scriptPool->load(scriptName, script);
+
+        c = new ScriptComponent(script, e->components);
+        e->addComponent(c);
+    }
 }
 
 void Scene::update()
 {
+    if(reloadFlag) {
+        load();
+    }
+
     // Create "buckets" for each component
     BucketMap buckets;
 

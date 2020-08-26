@@ -15,18 +15,24 @@ using BucketMap = std::map<std::string, ComponentSet>;
 class Scene
 {
 public:
-    Scene(Filesystem*);
+    Scene(LuaBinding*, Filesystem*);
     ~Scene();
     
-    void load(LuaBinding*);
+    void load();
+    void loadEntity(rapidjson::Value&);
+    void loadComponent(Entity*, rapidjson::Value&);
     void update();
     void addEntity(Entity*);
 private:
+    // Scene state
     std::set<Entity*> entities;
+    std::string currentScene;
+    bool reloadFlag = false;
 
     // Asset pools
-    AssetPool<ScriptAsset> scriptPool;
+    AssetPool<ScriptAsset>* scriptPool;
 
     // Bindings
+    LuaBinding* lua;
     Filesystem* fs;
 };

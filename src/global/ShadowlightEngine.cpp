@@ -9,7 +9,7 @@ ShadowlightEngine::ShadowlightEngine()
     vulkan = new VulkanBinding();
     openal = new OpenALBinding();
     lua = new LuaBinding();
-    scene = new Scene(fs);
+    scene = new Scene(lua, fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
@@ -24,7 +24,7 @@ ShadowlightEngine::~ShadowlightEngine()
 
 void ShadowlightEngine::run()
 {
-    scene->load(lua);
+    scene->load();
 
     do {
         std::cout << "Updating..." << std::endl;

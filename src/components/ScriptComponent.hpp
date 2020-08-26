@@ -11,6 +11,8 @@
 
 #include "bindings/LuaBinding.hpp"
 
+#include "global/Scene.hpp"
+
 class ScriptComponent: public Component
 {
 public:
@@ -18,7 +20,9 @@ public:
 
     virtual ~ScriptComponent() {};
     virtual void update();
-    virtual const char* getComponentType() { return "script"; };
+    virtual const char* getComponentType() { return ComponentType; };
+
+    static constexpr const char* ComponentType = "script";
 private:
     AssetHandle<ScriptAsset> scriptAsset;
     lua_State* thread;

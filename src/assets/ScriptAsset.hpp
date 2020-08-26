@@ -4,10 +4,12 @@
 
 #include "assets/Asset.hpp"
 
+#include "bindings/LuaBinding.hpp"
+
 class ScriptAsset: public Asset
 {
 public:
-    void load(lua_State*, const char*);
+    virtual void load(Binding*, const char*);
 
     lua_State* getThread() { return thread; };
 private:

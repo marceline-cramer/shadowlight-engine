@@ -5,7 +5,9 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-class OpenALBinding
+#include "bindings/Binding.hpp"
+
+class OpenALBinding : public Binding
 {
 public:
     OpenALBinding();
