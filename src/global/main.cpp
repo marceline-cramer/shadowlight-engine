@@ -3,7 +3,7 @@
 
 #include <physfs.h>
 
-#include "ShadowlightEngine.hpp"
+#include "global/ShadowlightEngine.hpp"
 
 int main(int argc, const char* argv[])
 {

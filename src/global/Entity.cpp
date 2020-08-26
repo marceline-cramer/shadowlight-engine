@@ -1,4 +1,4 @@
-#include "Entity.hpp"
+#include "global/Entity.hpp"
 
 void Entity::addComponent(Component* c)
 {

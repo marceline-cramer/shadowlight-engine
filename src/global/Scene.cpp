@@ -1,4 +1,4 @@
-#include "Scene.hpp"
+#include "global/Scene.hpp"
 
 #include "components/ScriptComponent.hpp"
 

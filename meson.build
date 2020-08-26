@@ -1,10 +1,10 @@
 project('shadowlight-engine', 'cpp')
 
 src = [
-    'src/main.cpp',
-    'src/ShadowlightEngine.cpp',
-    'src/Entity.cpp',
-    'src/Scene.cpp',
+    'src/global/main.cpp',
+    'src/global/ShadowlightEngine.cpp',
+    'src/global/Entity.cpp',
+    'src/global/Scene.cpp',
 
     'src/assets/Asset.cpp',
     'src/assets/ScriptAsset.cpp',

@@ -5,7 +5,7 @@
 #include "bindings/OpenALBinding.hpp"
 #include "bindings/VulkanBinding.hpp"
 
-#include "Scene.hpp"
+#include "global/Scene.hpp"
 
 class ShadowlightEngine {
 public:

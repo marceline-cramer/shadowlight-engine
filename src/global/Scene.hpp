@@ -2,7 +2,7 @@
 
 #include <set>
 
-#include "Entity.hpp"
+#include "global/Entity.hpp"
 
 #include "bindings/LuaBinding.hpp"
 
