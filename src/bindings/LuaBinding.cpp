@@ -1,7 +1,9 @@
 #include "bindings/LuaBinding.hpp"
 
-LuaBinding::LuaBinding()
+LuaBinding::LuaBinding(Filesystem* _fs)
 {
+    fs = _fs;
+    
     // TODO Use lua_newstate and custom allocator
     L = luaL_newstate();
     luaopen_base(L);

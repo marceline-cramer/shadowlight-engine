@@ -8,7 +8,7 @@ ShadowlightEngine::ShadowlightEngine()
     bullet = new BulletBinding();
     vulkan = new VulkanBinding();
     openal = new OpenALBinding();
-    lua = new LuaBinding();
+    lua = new LuaBinding(fs);
     scene = new Scene(lua, fs);
 }
 

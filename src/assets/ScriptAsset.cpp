@@ -8,7 +8,11 @@ void ScriptAsset::load(Binding* _lua, const char* fileName)
     thread = lua_newthread(lua->L);
     
     // Load the script
+    std::string script;
+    lua->fs->loadFile(fileName, script);
+
+    // Execute the script
     lua_resume(lua->L, 0);
-    luaL_dostring(thread, "function update(self) self.flag = not self.flag; print(self.flag) end");
+    luaL_dostring(thread, script.c_str());
     lua_pop(thread, 1);
 }

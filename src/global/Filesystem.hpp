@@ -15,6 +15,7 @@ public:
     ~Filesystem();
 
     void loadFile(const char*, std::vector<char>&);
+    void loadFile(const char*, std::string&);
     void loadJson(const char*, rapidjson::Document&);
 private:
     const char* archive;

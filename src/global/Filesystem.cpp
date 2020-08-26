@@ -30,6 +30,13 @@ void Filesystem::loadFile(const char* fileName, std::vector<char>& buffer)
     PHYSFS_close(f);
 }
 
+void Filesystem::loadFile(const char* fileName, std::string& contents)
+{
+    std::vector<char> buffer;
+    loadFile(fileName, buffer);
+    contents = std::string(buffer.data(), buffer.size());
+}
+
 void Filesystem::loadJson(const char* fileName, rapidjson::Document& doc)
 {
     std::vector<char> buffer;
