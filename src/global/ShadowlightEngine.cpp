@@ -11,9 +11,8 @@ ShadowlightEngine::ShadowlightEngine()
     lua = new LuaBinding();
     scene = new Scene();
 
-    std::vector<char> buf;
-    fs->loadFile("test.json", buf);
-    std::cout << std::string(buf.data()) << std::endl;
+    rapidjson::Document doc;
+    fs->loadJson("test.json", doc);
 }
 
 ShadowlightEngine::~ShadowlightEngine()

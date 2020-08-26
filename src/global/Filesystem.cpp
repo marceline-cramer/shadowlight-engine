@@ -29,3 +29,15 @@ void Filesystem::loadFile(const char* fileName, std::vector<char>& buffer)
     PHYSFS_readBytes(f, buffer.data(), buffer.size());
     PHYSFS_close(f);
 }
+
+void Filesystem::loadJson(const char* fileName, rapidjson::Document& doc)
+{
+    std::vector<char> buffer;
+    loadFile(fileName, buffer);
+
+    doc.Parse(buffer.data());
+
+    if(doc.HasParseError()) {
+        throw std::runtime_error("JSON file " + std::string(fileName) + " failed to parse");
+    }
+}
