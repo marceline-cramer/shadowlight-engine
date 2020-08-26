@@ -34,10 +34,9 @@ void Filesystem::loadJson(const char* fileName, rapidjson::Document& doc)
 {
     std::vector<char> buffer;
     loadFile(fileName, buffer);
+    auto json = std::string(buffer.data(), buffer.size());
 
-    doc.Parse(buffer.data());
-
-    if(doc.HasParseError()) {
+    if(doc.Parse(json.c_str()).HasParseError()) {
         throw std::runtime_error("JSON file " + std::string(fileName) + " failed to parse");
     }
 }

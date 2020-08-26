@@ -2,9 +2,13 @@
 
 #include "components/ScriptComponent.hpp"
 
-Scene::Scene()
+Scene::Scene(Filesystem* _fs)
 {
+    fs = _fs;
 
+    // Load the config.json file
+    rapidjson::Document config;
+    fs->loadJson("config.json", config);
 }
 
 Scene::~Scene()

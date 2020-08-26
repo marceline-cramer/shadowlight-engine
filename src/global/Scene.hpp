@@ -3,6 +3,7 @@
 #include <set>
 
 #include "global/Entity.hpp"
+#include "global/Filesystem.hpp"
 
 #include "bindings/LuaBinding.hpp"
 
@@ -14,7 +15,7 @@ using BucketMap = std::map<std::string, ComponentSet>;
 class Scene
 {
 public:
-    Scene();
+    Scene(Filesystem*);
     ~Scene();
     
     void load(LuaBinding*);
@@ -25,4 +26,7 @@ private:
 
     // Asset pools
     AssetPool<ScriptAsset> scriptPool;
+
+    // Bindings
+    Filesystem* fs;
 };

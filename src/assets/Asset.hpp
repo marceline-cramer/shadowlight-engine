@@ -8,6 +8,6 @@ private:
     template<class T> friend class AssetHandle;
     template<class T> friend class AssetPool;
 
-    Asset* next;
-    int refCount;
+    Asset* next = nullptr;
+    int refCount = -1;
 };

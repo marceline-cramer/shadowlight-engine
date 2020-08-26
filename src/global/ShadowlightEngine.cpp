@@ -9,10 +9,7 @@ ShadowlightEngine::ShadowlightEngine()
     vulkan = new VulkanBinding();
     openal = new OpenALBinding();
     lua = new LuaBinding();
-    scene = new Scene();
-
-    rapidjson::Document doc;
-    fs->loadJson("test.json", doc);
+    scene = new Scene(fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
