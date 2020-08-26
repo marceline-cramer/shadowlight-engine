@@ -34,5 +34,5 @@ void ShadowlightEngine::run()
         scene->update();
         vulkan->update();
         openal->update();
-    } while(!shouldExit);
+    } while(!scene->shouldQuit());
 }

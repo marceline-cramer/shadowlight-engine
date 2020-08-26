@@ -14,6 +14,7 @@ class Entity
 public:
     ~Entity();
     
+    void finalize();
     void addComponent(Component*);
 //private:
     Entity* parent;

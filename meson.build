@@ -14,7 +14,8 @@ src = [
     'src/bindings/OpenALBinding.cpp',
     'src/bindings/VulkanBinding.cpp',
 
-    'src/components/ScriptComponent.cpp'
+    'src/components/ScriptComponent.cpp',
+    'src/components/SceneComponent.cpp'
 ]
 
 dependencies = [

@@ -16,11 +16,13 @@
 class ScriptComponent: public Component
 {
 public:
-    ScriptComponent(AssetHandle<ScriptAsset>&, ComponentSet&);
-
+    ScriptComponent(AssetHandle<ScriptAsset>&);
     virtual ~ScriptComponent() {};
+
     virtual void update();
     virtual const char* getComponentType() { return ComponentType; };
+
+    void finalize(ComponentSet&);
 
     static constexpr const char* ComponentType = "script";
 private:

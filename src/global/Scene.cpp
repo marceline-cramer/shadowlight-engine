@@ -1,7 +1,5 @@
 #include "global/Scene.hpp"
 
-#include "components/ScriptComponent.hpp"
-
 Scene::Scene(LuaBinding* _lua, Filesystem* _fs)
 {
     lua = _lua;
@@ -37,6 +35,11 @@ Scene::~Scene()
 
 void Scene::load()
 {
+    if(currentScene == "exit") {
+        quitFlag = true;
+        return;
+    }
+
     rapidjson::Document scene;
     fs->loadJson(currentScene.c_str(), scene);
 
@@ -94,6 +97,8 @@ void Scene::loadEntity(rapidjson::Value& entity)
             }
         }
     }
+
+    e->finalize();
 }
 
 void Scene::loadComponent(Entity* e, rapidjson::Value& component)
@@ -113,6 +118,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     // Create the component
     Component* c;
 
+    // Handle ScriptComponent
     if(componentType == ScriptComponent::ComponentType) {
         if(!component.HasMember("script")) {
             throw std::runtime_error("component(script) must have script");
@@ -127,17 +133,24 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         AssetHandle<ScriptAsset> script;
         scriptPool->load(scriptName, script);
 
-        c = new ScriptComponent(script, e->components);
+        c = new ScriptComponent(script);
+        e->addComponent(c);
+    }
+    // Handle SceneComponent
+    else if(componentType == SceneComponent::ComponentType) {
+        c = new SceneComponent(this);
         e->addComponent(c);
     }
 }
 
+void Scene::loadScene(const char* sceneName)
+{
+    currentScene = sceneName;
+    reloadFlag = true;
+}
+
 void Scene::update()
 {
-    if(reloadFlag) {
-        load();
-    }
-
     // Create "buckets" for each component
     BucketMap buckets;
 
@@ -166,6 +179,10 @@ void Scene::update()
         for(auto c : bucket.second) {
             c->update();
         }
+    }
+
+    if(reloadFlag) {
+        load();
     }
 }
 

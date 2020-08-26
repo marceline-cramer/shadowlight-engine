@@ -1,13 +1,20 @@
 #include "components/ScriptComponent.hpp"
 
-ScriptComponent::ScriptComponent(AssetHandle<ScriptAsset>& _scriptAsset, ComponentSet& components)
+ScriptComponent::ScriptComponent(AssetHandle<ScriptAsset>& _scriptAsset)
 {
     // Initialize thread
     scriptAsset = _scriptAsset;
     thread = scriptAsset.getAsset()->getThread();
 
     // Create self table
-    lua_createtable(thread, 0, components.size()); 
+    lua_createtable(thread, 0, 0); 
+    selfIndex = luaL_ref(thread, LUA_REGISTRYINDEX);
+}
+
+void ScriptComponent::finalize(ComponentSet& components)
+{
+    // Fetch self table
+    lua_rawgeti(thread, LUA_REGISTRYINDEX, selfIndex);
 
     // Add component bindings
     for(auto c : components) {
@@ -17,8 +24,8 @@ ScriptComponent::ScriptComponent(AssetHandle<ScriptAsset>& _scriptAsset, Compone
         lua_rawset(thread, -3);
     }
 
-    // Store self table
-    selfIndex = luaL_ref(thread, LUA_REGISTRYINDEX);
+    // Toss self table
+    lua_pop(thread, 1);
 }
 
 void ScriptComponent::update()

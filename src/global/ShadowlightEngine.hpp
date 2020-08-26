@@ -24,5 +24,4 @@ private:
     // Engine state
     Filesystem* fs;
     Scene* scene;
-    bool shouldExit = true;
 };
