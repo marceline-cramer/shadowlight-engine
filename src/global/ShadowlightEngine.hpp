@@ -6,6 +6,7 @@
 #include "bindings/VulkanBinding.hpp"
 
 #include "global/Scene.hpp"
+#include "global/Filesystem.hpp"
 
 class ShadowlightEngine {
 public:
@@ -21,6 +22,7 @@ private:
     VulkanBinding* vulkan;
 
     // Engine state
+    Filesystem* fs;
     Scene* scene;
     bool shouldExit = true;
 };

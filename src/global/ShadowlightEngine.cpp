@@ -4,6 +4,7 @@
 
 ShadowlightEngine::ShadowlightEngine()
 {
+    fs = new Filesystem("../test-package.zip");
     bullet = new BulletBinding();
     vulkan = new VulkanBinding();
     openal = new OpenALBinding();
@@ -18,6 +19,7 @@ ShadowlightEngine::~ShadowlightEngine()
     delete openal;
     delete vulkan;
     delete bullet;
+    delete fs;
 }
 
 

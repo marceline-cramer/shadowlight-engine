@@ -5,6 +5,7 @@ src = [
     'src/global/ShadowlightEngine.cpp',
     'src/global/Entity.cpp',
     'src/global/Scene.cpp',
+    'src/global/Filesystem.cpp',
 
     'src/assets/Asset.cpp',
     'src/assets/ScriptAsset.cpp',
