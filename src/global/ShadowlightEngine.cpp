@@ -10,6 +10,10 @@ ShadowlightEngine::ShadowlightEngine()
     openal = new OpenALBinding();
     lua = new LuaBinding();
     scene = new Scene();
+
+    std::vector<char> buf;
+    fs->loadFile("test.json", buf);
+    std::cout << std::string(buf.data()) << std::endl;
 }
 
 ShadowlightEngine::~ShadowlightEngine()
@@ -21,7 +25,6 @@ ShadowlightEngine::~ShadowlightEngine()
     delete bullet;
     delete fs;
 }
-
 
 void ShadowlightEngine::run()
 {
