@@ -5,6 +5,7 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
     btRigidBody* body = static_cast<btRigidBody*>(lua_touserdata(L, lua_upvalueindex(1)));
     auto position = body->getCenterOfMassPosition();
 
+    // TODO Lua vectors
     lua_pushnumber(L, position.x());
     lua_pushnumber(L, position.y());
     lua_pushnumber(L, position.z());
