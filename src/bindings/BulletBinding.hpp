@@ -11,10 +11,11 @@ public:
     ~BulletBinding();
     
     void update();
+
+    btDiscreteDynamicsWorld* world;
 private:
     btBroadphaseInterface* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;
     btSequentialImpulseConstraintSolver* solver;
-    btDiscreteDynamicsWorld* world;
 };

@@ -1,7 +1,8 @@
 #include "global/Scene.hpp"
 
-Scene::Scene(LuaBinding* _lua, Filesystem* _fs)
+Scene::Scene(BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    bullet = _bullet;
     lua = _lua;
     fs = _fs;
 
@@ -140,6 +141,13 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     else if(componentType == SceneComponent::ComponentType) {
         c = new SceneComponent(this);
         e->addComponent(c);
+    }
+    // Handle RigidBodyComponent
+    else if(componentType == RigidBodyComponent::ComponentType) {
+        c = new RigidBodyComponent(bullet, component);
+        e->addComponent(c);
+    } else {
+        throw std::runtime_error("Unrecognized component type " + componentType);
     }
 }
 

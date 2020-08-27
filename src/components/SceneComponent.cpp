@@ -19,7 +19,7 @@ SceneComponent::SceneComponent(Scene* _scene)
 
 void SceneComponent::createBindings(lua_State* L)
 {
-    // scene.changeScene
+    // Scene.changeScene
     lua_pushstring(L, "changeScene");
     lua_pushlightuserdata(L, scene);
     lua_pushcclosure(L, SceneComponent_changeScene, 1);

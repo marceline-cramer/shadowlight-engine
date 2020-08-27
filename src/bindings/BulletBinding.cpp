@@ -18,14 +18,14 @@ BulletBinding::~BulletBinding()
     // Deallocate all physics objects
     delete world;
     delete solver;
-    delete collisionConfiguration;
-    delete dispatcher;
     delete broadphase;
+    delete dispatcher;
+    delete collisionConfiguration;
 }
 
 
 void BulletBinding::update()
 {
     // Step the simulation
-    world->stepSimulation(0.01667);
+    world->stepSimulation(1.0f / 60.0f, 10);
 }

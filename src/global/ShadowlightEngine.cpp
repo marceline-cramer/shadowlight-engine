@@ -4,12 +4,12 @@
 
 ShadowlightEngine::ShadowlightEngine()
 {
-    fs = new Filesystem("../test-package.zip");
+    fs = new Filesystem("../test-folder/");
     bullet = new BulletBinding();
     vulkan = new VulkanBinding();
     openal = new OpenALBinding();
     lua = new LuaBinding(fs);
-    scene = new Scene(lua, fs);
+    scene = new Scene(bullet, lua, fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
@@ -27,7 +27,7 @@ void ShadowlightEngine::run()
     scene->load();
 
     do {
-        std::cout << "Updating..." << std::endl;
+        //std::cout << "Updating..." << std::endl;
 
         bullet->update();
         lua->update();

@@ -24,7 +24,7 @@ public:
 
     void finalize(ComponentSet&);
 
-    static constexpr const char* ComponentType = "script";
+    static constexpr const char* ComponentType = "Script";
 private:
     AssetHandle<ScriptAsset> scriptAsset;
     lua_State* thread;

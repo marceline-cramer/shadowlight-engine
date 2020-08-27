@@ -1,7 +1,5 @@
 #include "global/Entity.hpp"
 
-#include "components/ScriptComponent.hpp"
-
 Entity::~Entity()
 {
     for(auto c : components) {
@@ -13,10 +11,7 @@ Entity::~Entity()
 void Entity::finalize()
 {
     for(auto c : components) {
-        auto scriptComponent = dynamic_cast<ScriptComponent*>(c);
-        if(scriptComponent) {
-            scriptComponent->finalize(components);
-        }
+        c->finalize(components);
     }
 }
 

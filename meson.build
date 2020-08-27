@@ -15,7 +15,8 @@ src = [
     'src/bindings/VulkanBinding.cpp',
 
     'src/components/ScriptComponent.cpp',
-    'src/components/SceneComponent.cpp'
+    'src/components/SceneComponent.cpp',
+    'src/components/RigidBodyComponent.cpp'
 ]
 
 dependencies = [

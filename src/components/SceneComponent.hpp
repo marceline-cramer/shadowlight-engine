@@ -16,7 +16,7 @@ public:
     virtual const char* getComponentType() { return ComponentType; };
     virtual void createBindings(lua_State*);
 
-    static constexpr const char* ComponentType = "scene";
+    static constexpr const char* ComponentType = "Scene";
 private:
     Scene* scene;
 };

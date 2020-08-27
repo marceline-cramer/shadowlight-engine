@@ -16,6 +16,7 @@ public:
     virtual ~Component() {};
     virtual void update() {};
     virtual const char* getComponentType() = 0;
+    virtual void finalize(ComponentSet&) {};
     virtual void createBindings(lua_State*) {};
 private:
 };
