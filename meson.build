@@ -8,6 +8,7 @@ src = [
     'src/global/Filesystem.cpp',
 
     'src/assets/ScriptAsset.cpp',
+    'src/assets/AudioAsset.cpp',
 
     'src/bindings/BulletBinding.cpp',
     'src/bindings/LuaBinding.cpp',
@@ -16,7 +17,8 @@ src = [
 
     'src/components/ScriptComponent.cpp',
     'src/components/SceneComponent.cpp',
-    'src/components/RigidBodyComponent.cpp'
+    'src/components/RigidBodyComponent.cpp',
+    'src/components/AudioSourceComponent.cpp'
 ]
 
 dependencies = [
@@ -27,7 +29,11 @@ dependencies = [
     dependency('boost', version: '>=1.72.0'),
     dependency('RapidJSON', version: '>=1.1.0'),
     dependency('sdl2', version: '>=2.0.12'),
-    dependency('physfs', version: '>=3.0.2')
+    dependency('physfs', version: '>=3.0.2'),
+    dependency('libavutil'),
+    dependency('libavcodec'),
+    dependency('libavformat'),
+    dependency('libswresample')
 ]
 
 incdir = include_directories('src')

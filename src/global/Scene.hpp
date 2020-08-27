@@ -7,6 +7,7 @@
 
 #include "bindings/LuaBinding.hpp"
 #include "bindings/BulletBinding.hpp"
+#include "bindings/OpenALBinding.hpp"
 
 #include "assets/AssetPool.hpp"
 #include "assets/ScriptAsset.hpp"
@@ -14,13 +15,14 @@
 #include "components/ScriptComponent.hpp"
 #include "components/SceneComponent.hpp"
 #include "components/RigidBodyComponent.hpp"
+#include "components/AudioSourceComponent.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 
 class Scene
 {
 public:
-    Scene(BulletBinding*, LuaBinding*, Filesystem*);
+    Scene(OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
     ~Scene();
     
     void load();
@@ -41,8 +43,10 @@ private:
 
     // Asset pools
     AssetPool<ScriptAsset>* scriptPool;
+    AssetPool<AudioAsset>* audioPool;
 
     // Bindings
+    OpenALBinding* oal;
     BulletBinding* bullet;
     LuaBinding* lua;
     Filesystem* fs;

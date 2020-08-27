@@ -22,7 +22,7 @@ public:
     virtual void update();
     virtual const char* getComponentType() { return ComponentType; };
 
-    void finalize(ComponentSet&);
+    virtual void finalize(ComponentSet&);
 
     static constexpr const char* ComponentType = "Script";
 private:

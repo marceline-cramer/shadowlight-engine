@@ -7,16 +7,16 @@ ShadowlightEngine::ShadowlightEngine()
     fs = new Filesystem("../test-folder/");
     bullet = new BulletBinding();
     vulkan = new VulkanBinding();
-    openal = new OpenALBinding();
+    oal = new OpenALBinding();
     lua = new LuaBinding(fs);
-    scene = new Scene(bullet, lua, fs);
+    scene = new Scene(oal, bullet, lua, fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
 {
     delete scene;
     delete lua;
-    delete openal;
+    delete oal;
     delete vulkan;
     delete bullet;
     delete fs;
@@ -33,6 +33,6 @@ void ShadowlightEngine::run()
         lua->update();
         scene->update();
         vulkan->update();
-        openal->update();
+        oal->update();
     } while(!scene->shouldQuit());
 }

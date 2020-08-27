@@ -1,13 +1,15 @@
 #include "global/Scene.hpp"
 
-Scene::Scene(BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
+Scene::Scene(OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    oal = _oal;
     bullet = _bullet;
     lua = _lua;
     fs = _fs;
 
     // Create asset pools
     scriptPool = new AssetPool<ScriptAsset>(lua);
+    audioPool = new AssetPool<AudioAsset>(oal);
 
     // Load the config.json file
     rapidjson::Document config;
@@ -32,6 +34,9 @@ Scene::~Scene()
         delete e;
     }
     entities.clear();
+
+    delete scriptPool;
+    delete audioPool;
 }
 
 void Scene::load()
@@ -122,11 +127,11 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     // Handle ScriptComponent
     if(componentType == ScriptComponent::ComponentType) {
         if(!component.HasMember("script")) {
-            throw std::runtime_error("component(script) must have script");
+            throw std::runtime_error("component(Script) must have script");
         }
 
         if(!component["script"].IsString()) {
-            throw std::runtime_error("component(script).script must be a string");
+            throw std::runtime_error("component(Script).script must be a string");
         }
 
         const char* scriptName = component["script"].GetString();
@@ -145,6 +150,24 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     // Handle RigidBodyComponent
     else if(componentType == RigidBodyComponent::ComponentType) {
         c = new RigidBodyComponent(bullet, component);
+        e->addComponent(c);
+    }
+    // Handle AudioSourceComponent
+    else if(componentType == AudioSourceComponent::ComponentType) {
+        if(!component.HasMember("audio")) {
+            throw std::runtime_error("component(AudioSource) must have audio");
+        }
+
+        if(!component["audio"].IsString()) {
+            throw std::runtime_error("component(AudioSource).audio must be a string");
+        }
+
+        const char* audioName = component["audio"].GetString();
+
+        AssetHandle<AudioAsset> audioAsset;
+        audioPool->load(audioName, audioAsset);
+
+        c = new AudioSourceComponent(audioAsset);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);

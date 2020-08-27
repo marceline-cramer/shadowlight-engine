@@ -18,7 +18,7 @@ private:
     // Engine bindings
     LuaBinding* lua;
     BulletBinding* bullet;
-    OpenALBinding* openal;
+    OpenALBinding* oal;
     VulkanBinding* vulkan;
 
     // Engine state
