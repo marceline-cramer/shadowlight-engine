@@ -8,11 +8,12 @@
 class AudioSourceComponent : public Component
 {
 public:
+    COMPONENT_TYPE("AudioSource");
+    
     AudioSourceComponent(AssetHandle<AudioAsset>&);
     virtual ~AudioSourceComponent();
 
     virtual void update();
-    virtual const char* getComponentType() { return ComponentType; };
 
     virtual void finalize(ComponentSet&);
 
@@ -20,7 +21,6 @@ public:
 
     ALuint getSource() { return source; };
 
-    static constexpr const char* ComponentType = "AudioSource";
 private:
     AssetHandle<AudioAsset> audioAsset;
 

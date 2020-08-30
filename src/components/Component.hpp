@@ -6,6 +6,8 @@
 
 #include <lua.hpp>
 
+#define COMPONENT_TYPE(t) static constexpr const char* ComponentType = t; virtual const char* getComponentType() { return ComponentType; };
+
 class Component;
 using ComponentSet = std::set<Component*>;
 using ComponentMap = std::map<Component*, std::string>;

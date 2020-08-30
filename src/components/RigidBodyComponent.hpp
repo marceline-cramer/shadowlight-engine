@@ -9,15 +9,14 @@
 class RigidBodyComponent : public Component
 {
 public:
+    COMPONENT_TYPE("RigidBody");
+    
     RigidBodyComponent(BulletBinding*, rapidjson::Value&);
     virtual ~RigidBodyComponent();
 
     virtual void update();
     virtual void finalize(ComponentSet&);
     virtual void createBindings(lua_State*);
-    virtual const char* getComponentType() { return ComponentType; };
-
-    static constexpr const char* ComponentType = "RigidBody";
 private:
     BulletBinding* bullet;
 

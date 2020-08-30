@@ -9,14 +9,13 @@ class Scene;
 class SceneComponent : public Component
 {
 public:
+    COMPONENT_TYPE("Scene");
+    
     SceneComponent(Scene*);
     virtual ~SceneComponent() {};
 
     virtual void update() {};
-    virtual const char* getComponentType() { return ComponentType; };
     virtual void createBindings(lua_State*);
-
-    static constexpr const char* ComponentType = "Scene";
 private:
     Scene* scene;
 };

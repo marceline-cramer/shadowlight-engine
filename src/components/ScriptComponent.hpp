@@ -16,15 +16,14 @@
 class ScriptComponent: public Component
 {
 public:
+    COMPONENT_TYPE("Script");
+    
     ScriptComponent(AssetHandle<ScriptAsset>&);
     virtual ~ScriptComponent() {};
 
     virtual void update();
-    virtual const char* getComponentType() { return ComponentType; };
 
     virtual void finalize(ComponentSet&);
-
-    static constexpr const char* ComponentType = "Script";
 private:
     AssetHandle<ScriptAsset> scriptAsset;
     lua_State* thread;
