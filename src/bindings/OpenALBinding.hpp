@@ -14,6 +14,7 @@ public:
     ~OpenALBinding();
 
     void update();
+    int getSampleRate() { return 44100; };
 private:
     ALCdevice* device;
     ALCcontext* context;

@@ -16,7 +16,13 @@ public:
 
     virtual void finalize(ComponentSet&);
 
+    virtual void createBindings(lua_State*);
+
+    ALuint getSource() { return source; };
+
     static constexpr const char* ComponentType = "AudioSource";
 private:
     AssetHandle<AudioAsset> audioAsset;
+
+    ALuint source;
 };

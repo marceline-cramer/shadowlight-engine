@@ -11,6 +11,8 @@ OpenALBinding::OpenALBinding()
     if(!device) {
         throw std::runtime_error("Failed to create OpenAL context");
     }
+
+    alcMakeContextCurrent(context);
 }
 
 OpenALBinding::~OpenALBinding()
