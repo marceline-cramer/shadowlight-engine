@@ -35,5 +35,9 @@ void AudioSourceComponent::finalize(ComponentSet&)
 
 void AudioSourceComponent::createBindings(lua_State* L)
 {
-
+    // AudioSource.play
+    lua_pushstring(L, "play");
+    lua_pushlightuserdata(L, this);
+    lua_pushcclosure(L, AudioSourceComponent_play, 1);
+    lua_settable(L, -3);
 }
