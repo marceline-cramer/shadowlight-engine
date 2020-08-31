@@ -23,12 +23,11 @@ src = [
 
 dependencies = [
     dependency('luajit', version: '>=2.0.5'),
-    dependency('vulkan', version: '>=1.2.149'),
-    dependency('openal', version: '>=1.20.1'),
-    dependency('bullet', version: '>=2.89'),
-    dependency('boost', version: '>=1.72.0'),
+    dependency('vulkan', version: '>=1.1.0'),
+    dependency('openal', version: '>=1.19.1'),
+    dependency('bullet', version: '>=2.87'),
     dependency('RapidJSON', version: '>=1.1.0'),
-    dependency('sdl2', version: '>=2.0.12'),
+    dependency('sdl2', version: '>=2.0.9'),
     dependency('physfs', version: '>=3.0.2'),
     dependency('libavutil'),
     dependency('libavcodec'),
