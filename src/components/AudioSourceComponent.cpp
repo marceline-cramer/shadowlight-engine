@@ -13,7 +13,7 @@ AudioSourceComponent::AudioSourceComponent(AssetHandle<AudioAsset>& _audioAsset)
     audioAsset = _audioAsset;
 
     // TODO Add position/velocity tied to RigidBody
-    // TODO 
+    // TODO OpenAL error checking
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, audioAsset.getAsset()->getBuffer());
 }

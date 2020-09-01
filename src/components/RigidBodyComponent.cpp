@@ -29,6 +29,7 @@ RigidBodyComponent::RigidBodyComponent(BulletBinding* _bullet, rapidjson::Value&
     motionState = new btDefaultMotionState(startTransform);
 
     // Create body
+    // TODO Bullet error checking
     btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, shape, localInertia);
     body = new btRigidBody(constructionInfo);
     bullet->world->addRigidBody(body);

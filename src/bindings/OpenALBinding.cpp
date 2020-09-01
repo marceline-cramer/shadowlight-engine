@@ -2,6 +2,7 @@
 
 OpenALBinding::OpenALBinding()
 {
+    // TODO OpenAL error checking
     device = alcOpenDevice(nullptr);
     if(!device) {
         throw std::runtime_error("Failed to open OpenAL device");
@@ -17,12 +18,12 @@ OpenALBinding::OpenALBinding()
 
 OpenALBinding::~OpenALBinding()
 {
-
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(context);
+    alcCloseDevice(device);
 }
 
 void OpenALBinding::update()
 {
-    alcMakeContextCurrent(nullptr);
-    alcDestroyContext(context);
-    alcCloseDevice(device);
+
 }
