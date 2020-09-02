@@ -48,6 +48,7 @@ VulkanBinding::VulkanBinding()
     // Setup Vulkan
     createInstance();
     setupDebugMessenger();
+    createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
 }
@@ -59,6 +60,7 @@ VulkanBinding::~VulkanBinding()
     }
 
     vkDestroyDevice(device, nullptr);
+    vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
 
     SDL_DestroyWindow(window);
@@ -162,6 +164,13 @@ void VulkanBinding::setupDebugMessenger()
 
     if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
         throw std::runtime_error("failed to set up debug messenger!");
+    }
+}
+
+void VulkanBinding::createSurface()
+{
+    if(SDL_Vulkan_CreateSurface(window, instance, &surface) != SDL_TRUE) {
+        throw std::runtime_error("Failed to create window surface");
     }
 }
 

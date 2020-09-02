@@ -40,6 +40,7 @@ private:
     void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
     void createInstance();
     void setupDebugMessenger();
+    void createSurface();
     void pickPhysicalDevice();
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice);
     bool isDeviceSuitable(VkPhysicalDevice);
@@ -55,4 +56,6 @@ private:
     VkDevice device;
 
     VkQueue graphicsQueue;
+
+    VkSurfaceKHR surface;
 };
