@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -27,7 +28,16 @@ public:
 
     void update();
 private:
+    // Constants
+    const std::vector<const char*> validationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+    };
+
+    const bool enableValidationLayers = true;
+
     // Convenience functions
+    bool checkValidationLayerSupport();
+    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
     void createInstance();
     void setupDebugMessenger();
     void pickPhysicalDevice();
@@ -40,6 +50,7 @@ private:
 
     // Vulkan data
     VkInstance instance;
+    VkDebugUtilsMessengerEXT debugMessenger;
     VkPhysicalDevice physicalDevice;
     VkDevice device;
 
