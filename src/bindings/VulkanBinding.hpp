@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <set>
 #include <vector>
 
 #include <SDL2/SDL.h>
@@ -15,8 +16,11 @@ struct QueueFamilyIndices
     uint32_t graphicsFamily;
     bool hasGraphicsFamily = false;
 
+    uint32_t presentFamily;
+    bool hasPresentFamily = false;
+
     bool isComplete() {
-        return hasGraphicsFamily;
+        return hasGraphicsFamily && hasPresentFamily;
     }
 };
 
@@ -56,6 +60,7 @@ private:
     VkDevice device;
 
     VkQueue graphicsQueue;
+    VkQueue presentQueue;
 
     VkSurfaceKHR surface;
 };
