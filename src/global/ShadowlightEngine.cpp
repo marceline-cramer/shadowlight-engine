@@ -31,10 +31,11 @@ void ShadowlightEngine::run()
     do {
         //std::cout << "Updating..." << std::endl;
 
+        window->update();
         bullet->update();
         lua->update();
         scene->update();
         vulkan->update();
         oal->update();
-    } while(!scene->shouldQuit());
+    } while(!scene->shouldQuit() && !window->shouldQuit());
 }

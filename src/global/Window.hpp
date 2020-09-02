@@ -15,6 +15,11 @@ public:
 
     std::vector<const char*> getExtensions();
     void createSurface(VkInstance, VkSurfaceKHR*);
+    void update();
+    bool shouldQuit() { return quitFlag; };
 private:
     SDL_Window* window;
+    SDL_Surface* surface;
+    
+    bool quitFlag = false;
 };
