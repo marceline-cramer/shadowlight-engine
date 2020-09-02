@@ -5,11 +5,11 @@
 #include <set>
 #include <vector>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
 #include <vulkan/vulkan.h>
 
 #include "bindings/Binding.hpp"
+
+#include "global/Window.hpp"
 
 struct QueueFamilyIndices
 {
@@ -34,7 +34,7 @@ struct SwapChainSupportDetails
 class VulkanBinding : public Binding
 {
 public:
-    VulkanBinding();
+    VulkanBinding(Window*);
     ~VulkanBinding();
 
     void update();
@@ -67,8 +67,8 @@ private:
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR&);
     void createSwapchain();
 
-    // SDL structures
-    SDL_Window* window;
+    // Bindings
+    Window* window;
 
     // Vulkan data
     VkInstance instance;

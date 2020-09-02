@@ -6,6 +6,7 @@ src = [
     'src/global/Entity.cpp',
     'src/global/Scene.cpp',
     'src/global/Filesystem.cpp',
+    'src/global/Window.cpp',
 
     'src/assets/ScriptAsset.cpp',
     'src/assets/AudioAsset.cpp',

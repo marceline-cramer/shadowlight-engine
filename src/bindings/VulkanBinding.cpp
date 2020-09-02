@@ -29,21 +29,9 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
     }
 }
 
-VulkanBinding::VulkanBinding()
+VulkanBinding::VulkanBinding(Window* _window)
 {
-    // Initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        throw std::runtime_error("Failure to initialize SDL");
-    }
-
-    // Create SDL window
-    window = SDL_CreateWindow("SDL Tutorial",
-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              800, 600,
-                              SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
-    if(!window) {
-        throw std::runtime_error("Failed to create SDL window");
-    }
+    window = _window;
 
     // Setup Vulkan
     createInstance();
@@ -65,9 +53,6 @@ VulkanBinding::~VulkanBinding()
     vkDestroyDevice(device, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 bool VulkanBinding::checkValidationLayerSupport()
@@ -117,10 +102,7 @@ void VulkanBinding::createInstance()
         throw std::runtime_error("Vulkan validation layers requested, but not available");
     }
 
-    uint32_t extensionCount;
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
-    std::vector<const char *> extensionNames(extensionCount);
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensionNames.data());
+    auto extensionNames = window->getExtensions();
 
     if(enableValidationLayers) {
         extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -172,9 +154,7 @@ void VulkanBinding::setupDebugMessenger()
 
 void VulkanBinding::createSurface()
 {
-    if(SDL_Vulkan_CreateSurface(window, instance, &surface) != SDL_TRUE) {
-        throw std::runtime_error("Failed to create window surface");
-    }
+    window->createSurface(instance, &surface);
 }
 
 void VulkanBinding::pickPhysicalDevice()

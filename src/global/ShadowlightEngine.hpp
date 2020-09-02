@@ -5,6 +5,7 @@
 #include "bindings/OpenALBinding.hpp"
 #include "bindings/VulkanBinding.hpp"
 
+#include "global/Window.hpp"
 #include "global/Scene.hpp"
 #include "global/Filesystem.hpp"
 
@@ -22,6 +23,7 @@ private:
     VulkanBinding* vulkan;
 
     // Engine state
+    Window* window;
     Filesystem* fs;
     Scene* scene;
 };
