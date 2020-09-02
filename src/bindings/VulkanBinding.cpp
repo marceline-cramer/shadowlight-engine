@@ -52,6 +52,19 @@ VulkanBinding::VulkanBinding()
     createLogicalDevice();
 }
 
+VulkanBinding::~VulkanBinding()
+{
+    if(enableValidationLayers) {
+        DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+    }
+
+    vkDestroyDevice(device, nullptr);
+    vkDestroyInstance(instance, nullptr);
+
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
 bool VulkanBinding::checkValidationLayerSupport()
 {
     uint32_t layerCount;
@@ -242,19 +255,6 @@ void VulkanBinding::createLogicalDevice()
     }
 
     vkGetDeviceQueue(device, indices.graphicsFamily, 0, &graphicsQueue);
-}
-
-VulkanBinding::~VulkanBinding()
-{
-    if(enableValidationLayers) {
-        DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-    }
-
-    vkDestroyDevice(device, nullptr);
-    vkDestroyInstance(instance, nullptr);
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 void VulkanBinding::update()
