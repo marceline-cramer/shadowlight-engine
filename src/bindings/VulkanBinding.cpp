@@ -51,12 +51,13 @@ VulkanBinding::~VulkanBinding()
 
     vkDestroySwapchainKHR(device, swapChain, nullptr);
 
+    vkDestroyDevice(device, nullptr);
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+
     if(enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
-    vkDestroyDevice(device, nullptr);
-    vkDestroySurfaceKHR(instance, surface, nullptr);
     vkDestroyInstance(instance, nullptr);
 }
 
@@ -88,7 +89,7 @@ bool VulkanBinding::checkValidationLayerSupport()
 
 void VulkanBinding::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
-    createInfo = {
+    VkDebugUtilsMessengerCreateInfoEXT newCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
         .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
                            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
@@ -99,6 +100,8 @@ void VulkanBinding::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreate
         .pfnUserCallback = debugCallback,
         .pUserData = nullptr
     };
+
+    createInfo = newCreateInfo;
 }
 
 void VulkanBinding::createInstance()
