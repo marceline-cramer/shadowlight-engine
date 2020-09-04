@@ -17,12 +17,14 @@
 #include "components/RigidBodyComponent.hpp"
 #include "components/AudioSourceComponent.hpp"
 
+#include "pipelines/MeshFeedForwardPipeline.hpp"
+
 using BucketMap = std::map<std::string, ComponentSet>;
 
 class Scene
 {
 public:
-    Scene(OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
+    Scene(VulkanBinding*, OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
     ~Scene();
     
     void load();
@@ -46,8 +48,12 @@ private:
     AssetPool<AudioAsset>* audioPool;
 
     // Bindings
+    VulkanBinding* vk;
     OpenALBinding* oal;
     BulletBinding* bullet;
     LuaBinding* lua;
     Filesystem* fs;
+
+    // Graphics pipelines
+    MeshFeedForwardPipeline* meshFeedForwardPipeline;
 };

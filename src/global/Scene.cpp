@@ -1,7 +1,8 @@
 #include "global/Scene.hpp"
 
-Scene::Scene(OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
+Scene::Scene(VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    vk = _vk;
     oal = _oal;
     bullet = _bullet;
     lua = _lua;
@@ -10,6 +11,9 @@ Scene::Scene(OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, File
     // Create asset pools
     scriptPool = new AssetPool<ScriptAsset>(lua);
     audioPool = new AssetPool<AudioAsset>(oal);
+
+    // Create pipelines
+    meshFeedForwardPipeline = new MeshFeedForwardPipeline(vk, fs);
 
     // Load the config.json file
     rapidjson::Document config;
@@ -30,13 +34,18 @@ Scene::Scene(OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, File
 
 Scene::~Scene()
 {
+    // Delete entities
     for(auto e : entities) {
         delete e;
     }
     entities.clear();
 
+    // Delete asset pools
     delete scriptPool;
     delete audioPool;
+
+    // Delete graphics pipelines
+    delete meshFeedForwardPipeline;
 }
 
 void Scene::load()

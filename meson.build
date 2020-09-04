@@ -19,7 +19,9 @@ src = [
     'src/components/ScriptComponent.cpp',
     'src/components/SceneComponent.cpp',
     'src/components/RigidBodyComponent.cpp',
-    'src/components/AudioSourceComponent.cpp'
+    'src/components/AudioSourceComponent.cpp',
+
+    'src/pipelines/MeshFeedForwardPipeline.cpp'
 ]
 
 dependencies = [

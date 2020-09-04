@@ -37,6 +37,9 @@ public:
     VulkanBinding(Window*);
     ~VulkanBinding();
 
+    // Utilities for other Vulkan objects to use
+    VkShaderModule createShaderModule(const std::vector<char>&);
+
     void update();
 private:
     // Constants
@@ -49,6 +52,11 @@ private:
     };
 
     const bool enableValidationLayers = true;
+
+    // Friend classes
+    // Pipelines and Vulkan bindings are tightly coupled,
+    // so friend classes are necessary
+    friend class MeshFeedForwardPipeline;
 
     // Convenience functions
     bool checkValidationLayerSupport();
