@@ -5,6 +5,40 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
     vk = _vk;
     fs = _fs;
 
+    VkAttachmentDescription colorAttachment{
+        .format = vk->swapChainImageFormat,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    VkAttachmentReference colorAttachmentRef{
+        .attachment = 0,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+
+    VkSubpassDescription subpass{
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentRef
+    };
+
+    VkRenderPassCreateInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+        .attachmentCount = 1,
+        .pAttachments = &colorAttachment,
+        .subpassCount = 1,
+        .pSubpasses = &subpass
+    };
+
+    if(vkCreateRenderPass(vk->device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create render pass");
+    }
+
     // TODO Fix the hardcoding of default shader locations
     // TODO Add GLSL->SPIR-V compilation through libglslc
     // TODO Create shader asset to wrap compilation/file reading
@@ -142,8 +176,31 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
         .pPushConstantRanges = nullptr
     };
 
-    if (vkCreatePipelineLayout(vk->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+    if(vkCreatePipelineLayout(vk->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create pipeline layout");
+    }
+
+    VkGraphicsPipelineCreateInfo pipelineInfo{
+        .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .stageCount = 2,
+        .pStages = shaderStages,
+        .pVertexInputState = &vertexInputInfo,
+        .pInputAssemblyState = &inputAssembly,
+        .pViewportState = &viewportState,
+        .pRasterizationState = &rasterizer,
+        .pMultisampleState = &multisampling,
+        .pDepthStencilState = nullptr,
+        .pColorBlendState = &colorBlending,
+        .pDynamicState = nullptr,
+        .layout = pipelineLayout,
+        .renderPass = renderPass,
+        .subpass = 0,
+        .basePipelineHandle = VK_NULL_HANDLE,
+        .basePipelineIndex = -1
+    };
+
+    if(vkCreateGraphicsPipelines(vk->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create graphics pipeline");
     }
 
     // Clean up shader modules
@@ -153,5 +210,7 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
 
 MeshFeedForwardPipeline::~MeshFeedForwardPipeline()
 {
+    vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
+    vkDestroyRenderPass(vk->device, renderPass, nullptr);
 }

@@ -13,7 +13,9 @@ public:
     ~MeshFeedForwardPipeline();
 private:
     // Vulkan objects
+    VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
+    VkPipeline graphicsPipeline;
 
     // Bindings
     VulkanBinding* vk;
