@@ -41,10 +41,18 @@ VulkanBinding::VulkanBinding(Window* _window)
     createLogicalDevice();
     createSwapchain();
     createImageViews();
+    createRenderPass();
+    createFramebuffers();
 }
 
 VulkanBinding::~VulkanBinding()
 {
+    for(auto framebuffer : swapChainFramebuffers) {
+        vkDestroyFramebuffer(device, framebuffer, nullptr);
+    }
+
+    vkDestroyRenderPass(device, mainRenderPass, nullptr);
+
     for(auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
     }
@@ -439,6 +447,68 @@ void VulkanBinding::createImageViews()
 
         if(vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create swap chain image views");
+        }
+    }
+}
+
+void VulkanBinding::createRenderPass()
+{
+    VkAttachmentDescription colorAttachment{
+        .format = swapChainImageFormat,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    VkAttachmentReference colorAttachmentRef{
+        .attachment = 0,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+
+    VkSubpassDescription subpass{
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentRef
+    };
+
+    VkRenderPassCreateInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+        .attachmentCount = 1,
+        .pAttachments = &colorAttachment,
+        .subpassCount = 1,
+        .pSubpasses = &subpass
+    };
+
+    if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &mainRenderPass) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create render pass");
+    }
+}
+
+void VulkanBinding::createFramebuffers()
+{
+    swapChainFramebuffers.resize(swapChainImageViews.size());
+
+    for(size_t i = 0; i < swapChainImageViews.size(); i++) {
+        VkImageView attachments[] = {
+            swapChainImageViews[i]
+        };
+
+        VkFramebufferCreateInfo framebufferInfo{
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = mainRenderPass,
+            .attachmentCount = 1,
+            .pAttachments = attachments,
+            .width = swapChainExtent.width,
+            .height = swapChainExtent.height,
+            .layers = 1
+        };
+
+        if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create framebuffer");
         }
     }
 }

@@ -75,6 +75,8 @@ private:
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR&);
     void createSwapchain();
     void createImageViews();
+    void createRenderPass();
+    void createFramebuffers();
 
     // Bindings
     Window* window;
@@ -89,10 +91,13 @@ private:
     VkQueue presentQueue;
 
     VkSurfaceKHR surface;
+
+    VkRenderPass mainRenderPass;
     
     VkSwapchainKHR swapChain;
     std::vector<VkImage> swapChainImages;
     std::vector<VkImageView> swapChainImageViews;
+    std::vector<VkFramebuffer> swapChainFramebuffers;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
 };
