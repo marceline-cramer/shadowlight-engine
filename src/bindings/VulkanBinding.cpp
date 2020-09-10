@@ -45,10 +45,16 @@ VulkanBinding::VulkanBinding(Window* _window)
     createFramebuffers();
     createCommandPool();
     createCommandBuffers();
+    createSemaphores();
 }
 
 VulkanBinding::~VulkanBinding()
 {
+    vkDeviceWaitIdle(device);
+    
+    vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+    vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+
     vkDestroyCommandPool(device, commandPool, nullptr);
 
     for(auto framebuffer : swapChainFramebuffers) {
@@ -479,12 +485,23 @@ void VulkanBinding::createRenderPass()
         .pColorAttachments = &colorAttachmentRef
     };
 
+    VkSubpassDependency dependency{
+        .srcSubpass = VK_SUBPASS_EXTERNAL,
+        .dstSubpass = 0,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+    };
+
     VkRenderPassCreateInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .attachmentCount = 1,
         .pAttachments = &colorAttachment,
         .subpassCount = 1,
-        .pSubpasses = &subpass
+        .pSubpasses = &subpass,
+        .dependencyCount = 1,
+        .pDependencies = &dependency
     };
 
     if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &mainRenderPass) != VK_SUCCESS) {
@@ -548,6 +565,21 @@ void VulkanBinding::createCommandBuffers()
     }
 }
 
+void VulkanBinding::createSemaphores()
+{
+    VkSemaphoreCreateInfo semaphoreInfo{
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+    };
+
+    if(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create image available semaphore");
+    }
+
+    if(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create render finished semaphore");
+    }
+}
+
 VkShaderModule VulkanBinding::createShaderModule(const std::vector<char>& code)
 {
     VkShaderModuleCreateInfo createInfo{
@@ -569,12 +601,16 @@ void VulkanBinding::update()
 
 }
 
-VkCommandBuffer VulkanBinding::beginRender()
+void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
 {
-    // TODO Swapchain synchronization
-    int i = 0;
-    auto commandBuffer = commandBuffers[i];
+    // Acquire swapchain image
+    uint32_t imageIndex;
+    vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
+    auto commandBuffer = commandBuffers[imageIndex];
+    auto framebuffer = swapChainFramebuffers[imageIndex];
+
+    // Begin this frame's command buffer
     VkCommandBufferBeginInfo beginInfo{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
@@ -584,30 +620,51 @@ VkCommandBuffer VulkanBinding::beginRender()
         throw std::runtime_error("Failed to begin command buffer");
     }
 
-    VkClearValue clearColor = {0.2f, 0.0f, 0.0f, 1.0f};
+    // Render each pipeline
+    for(auto p : pipelines) {
+        p->render(commandBuffer, framebuffer);
+    }
 
-    VkRenderPassBeginInfo renderPassInfo{
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        .renderPass = mainRenderPass,
-        .framebuffer = swapChainFramebuffers[i],
-        .renderArea = {
-            .offset = {0, 0},
-            .extent = swapChainExtent
-        },
-        .clearValueCount = 1,
-        .pClearValues = &clearColor
-    };
-    
-    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-    return commandBuffer;
-}
-
-void VulkanBinding::endRender(VkCommandBuffer commandBuffer)
-{
-    vkCmdEndRenderPass(commandBuffer);
-
+    // End the command buffer
     if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
         throw std::runtime_error("Failed to end command buffer");
     }
+
+    // Submit the command buffer
+    VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
+    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    VkSemaphore signalSemaphores[] = {renderFinishedSemaphore};
+
+    VkSubmitInfo submitInfo{
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = waitSemaphores,
+        .pWaitDstStageMask = waitStages,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &commandBuffer,
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = signalSemaphores
+    };
+
+    if(vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to submit draw command buffer");
+    }
+
+    // Present the frame
+    VkSwapchainKHR swapChains[] = {swapChain};
+
+    VkPresentInfoKHR presentInfo{
+        .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = signalSemaphores,
+        .swapchainCount = 1,
+        .pSwapchains = swapChains,
+        .pImageIndices = &imageIndex,
+        .pResults = nullptr
+    };
+
+    vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    // TODO Better frame synchronization
+    vkQueueWaitIdle(presentQueue);
 }

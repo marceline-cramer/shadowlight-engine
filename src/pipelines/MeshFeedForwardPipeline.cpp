@@ -180,8 +180,24 @@ MeshFeedForwardPipeline::~MeshFeedForwardPipeline()
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
 }
 
-void MeshFeedForwardPipeline::draw(VkCommandBuffer commandBuffer)
+void MeshFeedForwardPipeline::render(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
+    VkClearValue clearColor = {0.2f, 0.0f, 0.0f, 1.0f};
+
+    VkRenderPassBeginInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .renderPass = vk->mainRenderPass,
+        .framebuffer = framebuffer,
+        .renderArea = {
+            .offset = {0, 0},
+            .extent = vk->swapChainExtent
+        },
+        .clearValueCount = 1,
+        .pClearValues = &clearColor
+    };
+
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
     vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+    vkCmdEndRenderPass(commandBuffer);
 }

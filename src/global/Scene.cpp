@@ -222,9 +222,8 @@ void Scene::update()
     }
 
     // Draw scene
-    auto commandBuffer = vk->beginRender();
-    meshFeedForwardPipeline->draw(commandBuffer);
-    vk->endRender(commandBuffer);
+    std::vector<Pipeline*> pipelines = {meshFeedForwardPipeline};
+    vk->render(pipelines);
 
     if(reloadFlag) {
         load();

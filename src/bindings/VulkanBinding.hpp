@@ -9,6 +9,8 @@
 
 #include "bindings/Binding.hpp"
 
+#include "pipelines/Pipeline.hpp"
+
 #include "global/Window.hpp"
 
 struct QueueFamilyIndices
@@ -41,9 +43,7 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>&);
 
     void update();
-
-    VkCommandBuffer beginRender();
-    void endRender(VkCommandBuffer);
+    void render(std::vector<Pipeline*>&);
 private:
     // Constants
     const std::vector<const char*> validationLayers = {
@@ -82,6 +82,7 @@ private:
     void createFramebuffers();
     void createCommandPool();
     void createCommandBuffers();
+    void createSemaphores();
 
     // Bindings
     Window* window;
@@ -108,4 +109,7 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
 };

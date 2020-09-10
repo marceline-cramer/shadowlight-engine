@@ -12,7 +12,7 @@ public:
     MeshFeedForwardPipeline(VulkanBinding*, Filesystem*);
     ~MeshFeedForwardPipeline();
 
-    void draw(VkCommandBuffer);
+    virtual void render(VkCommandBuffer, VkFramebuffer);
 private:
     // Vulkan objects
     VkPipelineLayout pipelineLayout;
