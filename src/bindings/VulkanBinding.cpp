@@ -43,10 +43,14 @@ VulkanBinding::VulkanBinding(Window* _window)
     createImageViews();
     createRenderPass();
     createFramebuffers();
+    createCommandPool();
+    createCommandBuffers();
 }
 
 VulkanBinding::~VulkanBinding()
 {
+    vkDestroyCommandPool(device, commandPool, nullptr);
+
     for(auto framebuffer : swapChainFramebuffers) {
         vkDestroyFramebuffer(device, framebuffer, nullptr);
     }
@@ -513,6 +517,37 @@ void VulkanBinding::createFramebuffers()
     }
 }
 
+void VulkanBinding::createCommandPool()
+{
+    auto queueFamilyIndices = findQueueFamilies(physicalDevice);
+
+    VkCommandPoolCreateInfo poolInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+        .queueFamilyIndex = queueFamilyIndices.graphicsFamily
+    };
+
+    if(vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create command pool");
+    }
+}
+
+void VulkanBinding::createCommandBuffers()
+{
+    commandBuffers.resize(swapChainFramebuffers.size());
+
+    VkCommandBufferAllocateInfo allocInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = commandPool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = (uint32_t) commandBuffers.size()
+    };
+
+    if(vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to allocate command buffers");
+    }
+}
+
 VkShaderModule VulkanBinding::createShaderModule(const std::vector<char>& code)
 {
     VkShaderModuleCreateInfo createInfo{
@@ -532,4 +567,47 @@ VkShaderModule VulkanBinding::createShaderModule(const std::vector<char>& code)
 void VulkanBinding::update()
 {
 
+}
+
+VkCommandBuffer VulkanBinding::beginRender()
+{
+    // TODO Swapchain synchronization
+    int i = 0;
+    auto commandBuffer = commandBuffers[i];
+
+    VkCommandBufferBeginInfo beginInfo{
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+    };
+
+    if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to begin command buffer");
+    }
+
+    VkClearValue clearColor = {0.2f, 0.0f, 0.0f, 1.0f};
+
+    VkRenderPassBeginInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .renderPass = mainRenderPass,
+        .framebuffer = swapChainFramebuffers[i],
+        .renderArea = {
+            .offset = {0, 0},
+            .extent = swapChainExtent
+        },
+        .clearValueCount = 1,
+        .pClearValues = &clearColor
+    };
+    
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    return commandBuffer;
+}
+
+void VulkanBinding::endRender(VkCommandBuffer commandBuffer)
+{
+    vkCmdEndRenderPass(commandBuffer);
+
+    if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to end command buffer");
+    }
 }

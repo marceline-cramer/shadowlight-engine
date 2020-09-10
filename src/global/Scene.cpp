@@ -221,6 +221,11 @@ void Scene::update()
         }
     }
 
+    // Draw scene
+    auto commandBuffer = vk->beginRender();
+    meshFeedForwardPipeline->draw(commandBuffer);
+    vk->endRender(commandBuffer);
+
     if(reloadFlag) {
         load();
     }

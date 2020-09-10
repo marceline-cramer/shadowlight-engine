@@ -41,6 +41,9 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>&);
 
     void update();
+
+    VkCommandBuffer beginRender();
+    void endRender(VkCommandBuffer);
 private:
     // Constants
     const std::vector<const char*> validationLayers = {
@@ -77,6 +80,8 @@ private:
     void createImageViews();
     void createRenderPass();
     void createFramebuffers();
+    void createCommandPool();
+    void createCommandBuffers();
 
     // Bindings
     Window* window;
@@ -89,6 +94,9 @@ private:
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
+
+    VkCommandPool commandPool;
+    std::vector<VkCommandBuffer> commandBuffers;
 
     VkSurfaceKHR surface;
 

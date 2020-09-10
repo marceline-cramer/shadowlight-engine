@@ -11,6 +11,8 @@ class MeshFeedForwardPipeline : public Pipeline
 public:
     MeshFeedForwardPipeline(VulkanBinding*, Filesystem*);
     ~MeshFeedForwardPipeline();
+
+    void draw(VkCommandBuffer);
 private:
     // Vulkan objects
     VkPipelineLayout pipelineLayout;

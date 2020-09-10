@@ -179,3 +179,9 @@ MeshFeedForwardPipeline::~MeshFeedForwardPipeline()
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
 }
+
+void MeshFeedForwardPipeline::draw(VkCommandBuffer commandBuffer)
+{
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+}
