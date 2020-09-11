@@ -4,38 +4,26 @@ void MeshAsset::load(Binding* _vk, const char* fileName)
 {
     vk = static_cast<VulkanBinding*>(_vk);
 
-    // Create vertex buffer
-    VkBufferCreateInfo vertexBufferInfo{
-        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .size = sizeof(vertices[0]) * vertices.size(),
-        .usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE
-    };
+    // Create staging buffer
+    VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
-    if(vkCreateBuffer(vk->device, &vertexBufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create vertex buffer");
-    }
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-    VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(vk->device, vertexBuffer, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .allocationSize = memRequirements.size,
-        .memoryTypeIndex = vk->findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
-    };
-
-    if(vkAllocateMemory(vk->device, &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to allocate vertex buffer memory");
-    }
-
-    vkBindBufferMemory(vk->device, vertexBuffer, vertexBufferMemory, 0);
-
-    // Fill vertex buffer
+    // Fill staging buffer
     void* data;
-    vkMapMemory(vk->device, vertexBufferMemory, 0, vertexBufferInfo.size, 0, &data);
-    memcpy(data, vertices.data(), (size_t) vertexBufferInfo.size);
-    vkUnmapMemory(vk->device, vertexBufferMemory);
+    vkMapMemory(vk->device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, vertices.data(), (size_t) bufferSize);
+    vkUnmapMemory(vk->device, stagingBufferMemory);
+
+    // Create and copy vertex buffer
+    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+
+    vk->copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+
+    vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
+    vkFreeMemory(vk->device, stagingBufferMemory, nullptr);
 }
 
 void MeshAsset::unload()

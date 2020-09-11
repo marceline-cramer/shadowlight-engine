@@ -42,6 +42,8 @@ public:
     // Utilities for other Vulkan objects to use
     VkShaderModule createShaderModule(const std::vector<char>&);
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
+    void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
+    void copyBuffer(VkBuffer, VkBuffer, VkDeviceSize);
 
     void update();
     void render(std::vector<Pipeline*>&);
