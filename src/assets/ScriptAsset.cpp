@@ -16,3 +16,8 @@ void ScriptAsset::load(Binding* _lua, const char* fileName)
     luaL_dostring(thread, script.c_str());
     lua_pop(thread, 1);
 }
+
+void ScriptAsset::unload()
+{
+    
+}

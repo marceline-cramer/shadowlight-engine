@@ -41,6 +41,7 @@ public:
 
     // Utilities for other Vulkan objects to use
     VkShaderModule createShaderModule(const std::vector<char>&);
+    uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
 
     void update();
     void render(std::vector<Pipeline*>&);
@@ -57,9 +58,11 @@ private:
     const bool enableValidationLayers = true;
 
     // Friend classes
-    // Pipelines and Vulkan bindings are tightly coupled,
+    // Pipelines, Vulkan assets, and Vulkan bindings are tightly coupled,
     // so friend classes are necessary
     friend class MeshFeedForwardPipeline;
+    
+    friend class MeshAsset;
 
     // Convenience functions
     bool checkValidationLayerSupport();

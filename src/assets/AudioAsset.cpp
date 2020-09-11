@@ -1,14 +1,7 @@
 #include "assets/AudioAsset.hpp"
 
-AudioAsset::~AudioAsset()
-{
-    unload();
-}
-
 void AudioAsset::load(Binding* _oal, const char* fileName)
 {
-    unload();
-
     // TODO A lot of these FFMPEG calls are deprecated, please update
 
     oal = static_cast<OpenALBinding*>(_oal);

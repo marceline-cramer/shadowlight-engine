@@ -14,6 +14,7 @@ class ScriptAsset: public Asset
 {
 public:
     virtual void load(Binding*, const char*);
+    virtual void unload();
 
     lua_State* getThread() { return thread; };
 private:

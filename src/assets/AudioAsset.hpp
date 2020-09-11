@@ -21,10 +21,8 @@ extern "C" {
 class AudioAsset : public Asset
 {
 public:
-    virtual ~AudioAsset();
-
     virtual void load(Binding*, const char*);
-    void unload();
+    virtual void unload();
 
     ALuint getBuffer() { return buffer; };
 private:

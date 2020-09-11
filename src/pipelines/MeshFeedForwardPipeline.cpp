@@ -37,12 +37,15 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
         fragShaderStageInfo
     };
 
+    auto bindingDescription = MeshVertex::getBindingDescription();
+    auto attributeDescriptions = MeshVertex::getAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 0,
-        .pVertexBindingDescriptions = nullptr,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions = nullptr
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &bindingDescription,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size()),
+        .pVertexAttributeDescriptions = attributeDescriptions.data()
     };
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{
@@ -172,12 +175,23 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
     // Clean up shader modules
     vkDestroyShaderModule(vk->device, fragShaderModule, nullptr);
     vkDestroyShaderModule(vk->device, vertShaderModule, nullptr);
+
+    // Create mesh pool
+    meshPool = new AssetPool<MeshAsset>(vk);
+
+    // TODO Create MeshRendererComponent
+    tempMesh = new AssetHandle<MeshAsset>();
+    meshPool->load("", *tempMesh);
 }
 
 MeshFeedForwardPipeline::~MeshFeedForwardPipeline()
 {
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
+
+    delete tempMesh;
+
+    delete meshPool;
 }
 
 void MeshFeedForwardPipeline::render(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
@@ -198,6 +212,8 @@ void MeshFeedForwardPipeline::render(VkCommandBuffer commandBuffer, VkFramebuffe
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+    
+    tempMesh->getAsset()->render(commandBuffer);
+
     vkCmdEndRenderPass(commandBuffer);
 }
