@@ -2,10 +2,6 @@
 
 #include <chrono>
 
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "assets/AssetHandle.hpp"
 #include "assets/MeshAsset.hpp"
 #include "assets/MaterialAsset.hpp"
@@ -20,10 +16,13 @@ public:
     MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&);
     ~MeshRendererComponent();
 
-    void render(VkCommandBuffer);
+    virtual void render(VkCommandBuffer);
+    virtual void finalize(ComponentSet&, EntityTransform&);
 private:
     Pipeline* pipeline;
     VulkanBinding* vk;
+
+    EntityTransform* transform;
 
     VkBuffer uniformBuffer;
     VkDeviceMemory uniformBufferMemory;

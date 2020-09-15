@@ -23,7 +23,7 @@ public:
 
     virtual void update();
 
-    virtual void finalize(ComponentSet&);
+    virtual void finalize(ComponentSet&, EntityTransform&);
 private:
     AssetHandle<ScriptAsset> scriptAsset;
     lua_State* thread;

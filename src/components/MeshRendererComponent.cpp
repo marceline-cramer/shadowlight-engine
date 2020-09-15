@@ -69,18 +69,12 @@ MeshRendererComponent::~MeshRendererComponent()
 
 void MeshRendererComponent::render(VkCommandBuffer commandBuffer)
 {
-    // TODO Entity transformation
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
     MeshRendererUniform ubo{};
+    ubo.model = glm::translate(glm::mat4(transform->orientation), transform->position);
 
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // TODO CameraComponent
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.proj = glm::perspective(glm::radians(45.0f), vk->swapChainExtent.width / (float) vk->swapChainExtent.height, 0.1f, 10.0f);
-    //ubo.proj[1][1] *= -1;
 
     void* data;
     vkMapMemory(vk->device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);
@@ -90,4 +84,9 @@ void MeshRendererComponent::render(VkCommandBuffer commandBuffer)
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.getAsset()->pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
     material.getAsset()->bindPipeline(commandBuffer);
     mesh.getAsset()->render(commandBuffer);
+}
+
+void MeshRendererComponent::finalize(ComponentSet& components, EntityTransform& _transform)
+{
+    transform = &_transform;
 }

@@ -47,7 +47,7 @@ void RigidBodyComponent::update()
 
 }
 
-void RigidBodyComponent::finalize(ComponentSet&)
+void RigidBodyComponent::finalize(ComponentSet&, EntityTransform&)
 {
 
 }

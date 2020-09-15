@@ -15,7 +15,7 @@ public:
     virtual ~RigidBodyComponent();
 
     virtual void update();
-    virtual void finalize(ComponentSet&);
+    virtual void finalize(ComponentSet&, EntityTransform&);
     virtual void createBindings(lua_State*);
 private:
     BulletBinding* bullet;

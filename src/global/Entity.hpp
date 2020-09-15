@@ -21,4 +21,5 @@ public:
     EntitySet children;
 
     ComponentSet components;
+    EntityTransform transform;
 };

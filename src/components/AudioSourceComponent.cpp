@@ -28,7 +28,7 @@ void AudioSourceComponent::update()
 
 }
 
-void AudioSourceComponent::finalize(ComponentSet&)
+void AudioSourceComponent::finalize(ComponentSet&, EntityTransform&)
 {
 
 }

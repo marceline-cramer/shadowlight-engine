@@ -11,7 +11,7 @@ Entity::~Entity()
 void Entity::finalize()
 {
     for(auto c : components) {
-        c->finalize(components);
+        c->finalize(components, transform);
     }
 }
 

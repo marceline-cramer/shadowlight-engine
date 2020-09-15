@@ -11,7 +11,7 @@ ScriptComponent::ScriptComponent(AssetHandle<ScriptAsset>& _scriptAsset)
     selfIndex = luaL_ref(thread, LUA_REGISTRYINDEX);
 }
 
-void ScriptComponent::finalize(ComponentSet& components)
+void ScriptComponent::finalize(ComponentSet& components, EntityTransform& transform)
 {
     // Fetch self table
     lua_rawgeti(thread, LUA_REGISTRYINDEX, selfIndex);

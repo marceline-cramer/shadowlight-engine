@@ -14,13 +14,10 @@ public:
     virtual ~AudioSourceComponent();
 
     virtual void update();
-
-    virtual void finalize(ComponentSet&);
-
+    virtual void finalize(ComponentSet&, EntityTransform&);
     virtual void createBindings(lua_State*);
 
     ALuint getSource() { return source; };
-
 private:
     AssetHandle<AudioAsset> audioAsset;
 
