@@ -124,14 +124,6 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     colorBlending.blendConstants[1] = 0.0f;
     colorBlending.blendConstants[2] = 0.0f;
     colorBlending.blendConstants[3] = 0.0f;
-
-    VkDynamicState dynamicStates[] = {};
-
-    VkPipelineDynamicStateCreateInfo dynamicState{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-        .dynamicStateCount = 0,
-        .pDynamicStates = dynamicStates
-    };
     
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -156,7 +148,7 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         .pMultisampleState = &multisampling,
         .pDepthStencilState = nullptr,
         .pColorBlendState = &colorBlending,
-        .pDynamicState = &dynamicState,
+        .pDynamicState = nullptr,
         .layout = pipelineLayout,
         .renderPass = vk->mainRenderPass,
         .subpass = 0,
