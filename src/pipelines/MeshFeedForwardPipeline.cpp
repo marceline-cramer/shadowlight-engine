@@ -160,7 +160,7 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
         .pMultisampleState = &multisampling,
         .pDepthStencilState = nullptr,
         .pColorBlendState = &colorBlending,
-        .pDynamicState = nullptr,
+        .pDynamicState = &dynamicState,
         .layout = pipelineLayout,
         .renderPass = vk->mainRenderPass,
         .subpass = 0,
