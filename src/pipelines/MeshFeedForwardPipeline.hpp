@@ -11,11 +11,11 @@
 
 #include "global/Filesystem.hpp"
 
-#include "pipelines/Pipeline.hpp"
+#include "pipelines/MeshPipeline.hpp"
 
 #include "assets/MeshAsset.hpp"
 
-class MeshFeedForwardPipeline : public Pipeline
+class MeshFeedForwardPipeline : public MeshPipeline
 {
 public:
     MeshFeedForwardPipeline(VulkanBinding*, Filesystem*);
