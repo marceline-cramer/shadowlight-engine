@@ -1,9 +1,11 @@
 #pragma once
 
+#include <sstream>
 #include <vector>
 #include <array>
 
 #include <vulkan/vulkan.h>
+#include <tiny_obj_loader.h>
 
 #include "assets/Asset.hpp"
 
@@ -60,15 +62,17 @@ public:
     
     void render(VkCommandBuffer);
 private:
+    void loadModel(const char*);
+    void createVertexBuffer();
+    void createIndexBuffer();
+
     VulkanBinding* vk;
 
-    // TODO Load a model
-    const std::vector<MeshVertex> vertices = {
-        {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
-    };
+    std::vector<MeshVertex> vertices;
+    std::vector<uint32_t> indices;
 
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
+    VkBuffer indexBuffer;
+    VkDeviceMemory indexBufferMemory;
 };

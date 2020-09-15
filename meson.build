@@ -41,7 +41,7 @@ dependencies = [
     dependency('libswresample')
 ]
 
-incdir = include_directories('src')
+incdir = include_directories(['src', 'lib'])
 
 exe = executable('shadowlight', src,
     include_directories: incdir, dependencies: dependencies
