@@ -14,5 +14,7 @@ public:
     virtual void render(VkCommandBuffer) = 0;
 
     std::set<RendererComponent*> rendererComponents;
+
+    class VulkanBinding* vk;
 private:
 };

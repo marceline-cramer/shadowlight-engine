@@ -12,8 +12,11 @@ public:
     virtual void unload();
 
     void bindPipeline(VkCommandBuffer);
-private:    
+private:
+    friend class MeshRendererComponent;
+    
     // Vulkan objects
+    VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
 

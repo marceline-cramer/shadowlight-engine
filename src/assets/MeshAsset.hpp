@@ -47,6 +47,13 @@ struct MeshVertex
     }
 };
 
+struct MeshRendererUniform
+{
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 proj;
+};
+
 class MeshAsset : public Asset
 {
 public:

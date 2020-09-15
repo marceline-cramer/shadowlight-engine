@@ -45,6 +45,7 @@ public:
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
     void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
     void copyBuffer(VkBuffer, VkBuffer, VkDeviceSize);
+    size_t getSwapchainSize() { return swapChainImages.size(); };
 
     void update();
     void render(std::vector<Pipeline*>&);
@@ -67,6 +68,8 @@ private:
     
     friend class MeshAsset;
     friend class MaterialAsset;
+
+    friend class MeshRendererComponent;
 
     // Convenience functions
     bool checkValidationLayerSupport();

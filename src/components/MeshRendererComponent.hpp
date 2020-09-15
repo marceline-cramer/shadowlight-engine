@@ -1,5 +1,11 @@
 #pragma once
 
+#include <chrono>
+
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "assets/AssetHandle.hpp"
 #include "assets/MeshAsset.hpp"
 #include "assets/MaterialAsset.hpp"
@@ -17,6 +23,12 @@ public:
     void render(VkCommandBuffer);
 private:
     Pipeline* pipeline;
+    VulkanBinding* vk;
+
+    VkBuffer uniformBuffer;
+    VkDeviceMemory uniformBufferMemory;
+    VkDescriptorPool descriptorPool;
+    VkDescriptorSet descriptorSet;
     
     AssetHandle<MeshAsset> mesh;
     AssetHandle<MaterialAsset> material;

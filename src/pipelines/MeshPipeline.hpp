@@ -11,5 +11,4 @@ public:
 
     void render(VkCommandBuffer);
 private:
-    VulkanBinding* vk;
 };

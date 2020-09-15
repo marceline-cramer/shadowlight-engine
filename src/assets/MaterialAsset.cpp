@@ -4,6 +4,24 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
 {
     vk = static_cast<VulkanBinding*>(_vk);
 
+    VkDescriptorSetLayoutBinding uboLayoutBinding{
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .pImmutableSamplers = nullptr
+    };
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo{
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = 1,
+        .pBindings = &uboLayoutBinding
+    };
+
+    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create descriptor set layout");
+    }
+
     // TODO Fix the hardcoding of default shader locations
     // TODO Add GLSL->SPIR-V compilation through libglslc
     // TODO Create shader asset to wrap compilation/file reading
@@ -127,8 +145,8 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 0,
-        .pSetLayouts = nullptr,
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = nullptr
     };
@@ -169,6 +187,7 @@ void MaterialAsset::unload()
 {
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
+    vkDestroyDescriptorSetLayout(vk->device, descriptorSetLayout, nullptr);
 }
 
 void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
