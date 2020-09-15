@@ -7,5 +7,7 @@ MeshPipeline::MeshPipeline(VulkanBinding* _vk)
 
 void MeshPipeline::render(VkCommandBuffer commandBuffer)
 {
-
+    for(auto c : rendererComponents) {
+        c->render(commandBuffer);
+    }
 }
