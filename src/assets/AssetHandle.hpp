@@ -56,11 +56,11 @@ void AssetHandle<T>::deref()
     if(asset) {
         if(asset->refCount > 0) {
             asset->refCount--;
-        }
 
-        // TODO Use reaper in AssetPool so that assets are maintained
-        if(asset->refCount <= 0) {
-            asset->unload();
+            // TODO Use reaper in AssetPool so that assets are maintained
+            if(asset->refCount == 0) {
+                asset->unload();
+            }
         }
 
         asset = nullptr;
