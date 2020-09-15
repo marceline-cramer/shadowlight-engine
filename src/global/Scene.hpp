@@ -11,8 +11,6 @@
 
 #include "assets/AssetPool.hpp"
 #include "assets/ScriptAsset.hpp"
-#include "assets/MeshAsset.hpp"
-#include "assets/MaterialAsset.hpp"
 
 #include "components/ScriptComponent.hpp"
 #include "components/SceneComponent.hpp"
@@ -49,8 +47,6 @@ private:
     // Asset pools
     AssetPool<ScriptAsset>* scriptPool;
     AssetPool<AudioAsset>* audioPool;
-    AssetPool<MeshAsset>* meshPool;
-    AssetPool<MaterialAsset>* materialPool;
 
     // Bindings
     VulkanBinding* vk;

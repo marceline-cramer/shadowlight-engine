@@ -11,8 +11,6 @@ Scene::Scene(VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, Lu
     // Create asset pools
     scriptPool = new AssetPool<ScriptAsset>(lua);
     audioPool = new AssetPool<AudioAsset>(oal);
-    meshPool = new AssetPool<MeshAsset>(vk);
-    materialPool = new AssetPool<MaterialAsset>(vk);
 
     // Create pipelines
     meshPipeline = new MeshPipeline(vk);
@@ -48,8 +46,6 @@ Scene::~Scene()
     // Delete asset pools
     delete scriptPool;
     delete audioPool;
-    delete meshPool;
-    delete materialPool;
 }
 
 void Scene::load()
@@ -202,13 +198,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         const char* meshName = component["mesh"].GetString();
         const char* materialName = component["material"].GetString();
 
-        AssetHandle<MeshAsset> meshAsset;
-        meshPool->load(meshName, meshAsset);
-
-        AssetHandle<MaterialAsset> materialAsset;
-        materialPool->load(materialName, materialAsset);
-
-        c = new MeshRendererComponent(meshPipeline, meshAsset, materialAsset);
+        c = meshPipeline->createMeshRenderer(meshName, materialName);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
