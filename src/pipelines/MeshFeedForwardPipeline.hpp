@@ -24,14 +24,7 @@ public:
 
     virtual void render(VkCommandBuffer, VkFramebuffer);
 private:
-    // Asset pools
-    AssetPool<MeshAsset>* meshPool;
-    AssetPool<MaterialAsset>* materialPool;
-
     // Bindings
     VulkanBinding* vk;
     Filesystem* fs;
-
-    // TODO Create MeshRendererComponent
-    AssetHandle<MeshAsset>* tempMesh;
 };

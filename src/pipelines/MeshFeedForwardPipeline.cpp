@@ -4,22 +4,11 @@ MeshFeedForwardPipeline::MeshFeedForwardPipeline(VulkanBinding* _vk, Filesystem*
 {
     vk = _vk;
     fs = _fs;
-
-    // Create asset pools
-    meshPool = new AssetPool<MeshAsset>(vk);
-    materialPool = new AssetPool<MaterialAsset>(vk);
-
-    // TODO Create MeshRendererComponent
-    tempMesh = new AssetHandle<MeshAsset>();
-    meshPool->load("", *tempMesh);
 }
 
 MeshFeedForwardPipeline::~MeshFeedForwardPipeline()
 {
-    delete tempMesh;
 
-    delete meshPool;
-    delete materialPool;
 }
 
 void MeshFeedForwardPipeline::render(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)

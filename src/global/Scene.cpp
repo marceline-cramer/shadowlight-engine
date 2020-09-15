@@ -11,6 +11,8 @@ Scene::Scene(VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, Lu
     // Create asset pools
     scriptPool = new AssetPool<ScriptAsset>(lua);
     audioPool = new AssetPool<AudioAsset>(oal);
+    meshPool = new AssetPool<MeshAsset>(lua);
+    materialPool = new AssetPool<MaterialAsset>(oal);
 
     // Create pipelines
     meshFeedForwardPipeline = new MeshFeedForwardPipeline(vk, fs);
@@ -43,6 +45,8 @@ Scene::~Scene()
     // Delete asset pools
     delete scriptPool;
     delete audioPool;
+    delete meshPool;
+    delete materialPool;
 
     // Delete graphics pipelines
     delete meshFeedForwardPipeline;
@@ -177,6 +181,34 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         audioPool->load(audioName, audioAsset);
 
         c = new AudioSourceComponent(audioAsset);
+        e->addComponent(c);
+    } else if(componentType == MeshRendererComponent::ComponentType) {
+        if(!component.HasMember("material")) {
+            throw std::runtime_error("component(MeshRendererComponent) must have material");
+        }
+
+        if(!component["material"].IsString()) {
+            throw std::runtime_error("component(MeshRendererComponent).material must be a string");
+        }
+
+        if(!component.HasMember("mesh")) {
+            throw std::runtime_error("component(MeshRendererComponent) must have mesh");
+        }
+
+        if(!component["mesh"].IsString()) {
+            throw std::runtime_error("component(MeshRendererComponent).mesh must be a string");
+        }
+
+        const char* meshName = component["mesh"].GetString();
+        const char* materialName = component["material"].GetString();
+
+        AssetHandle<MeshAsset> meshAsset;
+        meshPool->load(meshName, meshAsset);
+
+        AssetHandle<MaterialAsset> materialAsset;
+        materialPool->load(meshName, materialAsset);
+
+        c = new MeshRendererComponent(meshAsset, materialAsset);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
