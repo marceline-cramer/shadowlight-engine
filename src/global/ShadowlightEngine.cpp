@@ -7,7 +7,7 @@ ShadowlightEngine::ShadowlightEngine()
     fs = new Filesystem("../test-folder/");
     bullet = new BulletBinding();
     window = new Window();
-    vulkan = new VulkanBinding(window);
+    vulkan = new VulkanBinding(fs, window);
     oal = new OpenALBinding();
     lua = new LuaBinding(fs);
     scene = new Scene(vulkan, oal, bullet, lua, fs);

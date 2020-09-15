@@ -29,8 +29,9 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
     }
 }
 
-VulkanBinding::VulkanBinding(Window* _window)
+VulkanBinding::VulkanBinding(Filesystem* _fs, Window* _window)
 {
+    fs = _fs;
     window = _window;
 
     // Setup Vulkan

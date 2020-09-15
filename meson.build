@@ -11,6 +11,7 @@ src = [
     'src/assets/ScriptAsset.cpp',
     'src/assets/AudioAsset.cpp',
     'src/assets/MeshAsset.cpp',
+    'src/assets/MaterialAsset.cpp',
 
     'src/bindings/BulletBinding.cpp',
     'src/bindings/LuaBinding.cpp',

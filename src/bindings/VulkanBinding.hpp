@@ -12,6 +12,7 @@
 #include "pipelines/Pipeline.hpp"
 
 #include "global/Window.hpp"
+#include "global/Filesystem.hpp"
 
 struct QueueFamilyIndices
 {
@@ -36,7 +37,7 @@ struct SwapChainSupportDetails
 class VulkanBinding : public Binding
 {
 public:
-    VulkanBinding(Window*);
+    VulkanBinding(Filesystem*, Window*);
     ~VulkanBinding();
 
     // Utilities for other Vulkan objects to use
@@ -65,6 +66,7 @@ private:
     friend class MeshFeedForwardPipeline;
     
     friend class MeshAsset;
+    friend class MaterialAsset;
 
     // Convenience functions
     bool checkValidationLayerSupport();
@@ -91,6 +93,7 @@ private:
 
     // Bindings
     Window* window;
+    Filesystem* fs;
 
     // Vulkan data
     VkInstance instance;

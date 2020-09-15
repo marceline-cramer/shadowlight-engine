@@ -14,6 +14,7 @@
 #include "pipelines/MeshPipeline.hpp"
 
 #include "assets/MeshAsset.hpp"
+#include "assets/MaterialAsset.hpp"
 
 class MeshFeedForwardPipeline : public MeshPipeline
 {
@@ -23,12 +24,9 @@ public:
 
     virtual void render(VkCommandBuffer, VkFramebuffer);
 private:
-    // Vulkan objects
-    VkPipelineLayout pipelineLayout;
-    VkPipeline graphicsPipeline;
-
-    // Mesh pool
+    // Asset pools
     AssetPool<MeshAsset>* meshPool;
+    AssetPool<MaterialAsset>* materialPool;
 
     // Bindings
     VulkanBinding* vk;
