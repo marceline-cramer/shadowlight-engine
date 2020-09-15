@@ -28,14 +28,21 @@ void ShadowlightEngine::run()
 {
     scene->load();
 
+    auto lastUpdate = std::chrono::high_resolution_clock::now();
+
     do {
         //std::cout << "Updating..." << std::endl;
 
+        auto thisUpdate = std::chrono::high_resolution_clock::now();
+        float dt = std::chrono::duration_cast<std::chrono::seconds>(thisUpdate-lastUpdate).count();
+
         window->update();
-        bullet->update();
+        bullet->update(dt);
         lua->update();
         scene->update();
         vulkan->update();
         oal->update();
+
+        lastUpdate = thisUpdate;
     } while(!scene->shouldQuit() && !window->shouldQuit());
 }

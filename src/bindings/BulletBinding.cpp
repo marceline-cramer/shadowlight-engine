@@ -24,8 +24,8 @@ BulletBinding::~BulletBinding()
 }
 
 
-void BulletBinding::update()
+void BulletBinding::update(float dt)
 {
     // Step the simulation
-    world->stepSimulation(1.0f / 60.0f, 10);
+    world->stepSimulation(dt, 10);
 }

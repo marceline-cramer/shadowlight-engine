@@ -10,7 +10,7 @@ public:
     BulletBinding();
     ~BulletBinding();
     
-    void update();
+    void update(float);
 
     btDiscreteDynamicsWorld* world;
 private:
