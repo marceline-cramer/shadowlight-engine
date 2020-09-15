@@ -31,10 +31,8 @@ void ShadowlightEngine::run()
     auto lastUpdate = std::chrono::high_resolution_clock::now();
 
     do {
-        //std::cout << "Updating..." << std::endl;
-
         auto thisUpdate = std::chrono::high_resolution_clock::now();
-        float dt = std::chrono::duration_cast<std::chrono::seconds>(thisUpdate-lastUpdate).count();
+        float dt = std::chrono::duration_cast<std::chrono::nanoseconds>(thisUpdate-lastUpdate).count()/1000000000.0f;
 
         window->update();
         bullet->update(dt);

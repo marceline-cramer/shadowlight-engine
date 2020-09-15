@@ -44,12 +44,17 @@ RigidBodyComponent::~RigidBodyComponent()
 
 void RigidBodyComponent::update()
 {
+    auto bodyTransform = body->getCenterOfMassTransform();
+    auto position = bodyTransform.getOrigin();
+    auto rotation = bodyTransform.getRotation();
 
+    transform->position = glm::vec3(position.x(), position.y(), position.z());
+    transform->orientation = glm::quat(rotation.x(), rotation.y(), rotation.z(), rotation.w());
 }
 
-void RigidBodyComponent::finalize(ComponentSet&, EntityTransform&)
+void RigidBodyComponent::finalize(ComponentSet&, EntityTransform& _transform)
 {
-
+    transform = &_transform;
 }
 
 void RigidBodyComponent::createBindings(lua_State* L)

@@ -10,7 +10,7 @@ BulletBinding::BulletBinding()
     world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
     // Initialize physics settings
-    world->setGravity(btVector3(0, -9.8, 0));
+    world->setGravity(btVector3(0, 0, -9.8));
 }
 
 BulletBinding::~BulletBinding()

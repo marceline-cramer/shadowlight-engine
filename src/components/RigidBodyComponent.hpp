@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <rapidjson/document.h>
 
 #include "bindings/BulletBinding.hpp"
@@ -19,6 +21,8 @@ public:
     virtual void createBindings(lua_State*);
 private:
     BulletBinding* bullet;
+
+    EntityTransform* transform;
 
     btRigidBody* body;
     btScalar mass;
