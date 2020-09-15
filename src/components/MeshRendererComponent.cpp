@@ -70,7 +70,7 @@ MeshRendererComponent::~MeshRendererComponent()
 void MeshRendererComponent::render(VkCommandBuffer commandBuffer)
 {
     MeshRendererUniform ubo{};
-    ubo.model = glm::translate(glm::mat4(transform->orientation), transform->position);
+    ubo.model = glm::translate(glm::mat4(1.0), transform->position) * glm::mat4(transform->orientation);
 
     // TODO CameraComponent
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
