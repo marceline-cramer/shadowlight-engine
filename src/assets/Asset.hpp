@@ -13,6 +13,10 @@ private:
     template<class T> friend class AssetHandle;
     template<class T> friend class AssetPool;
 
+    void _load(Binding* b, const char* f) { refCount = 0; loaded = true; load(b, f); };
+    void _unload() { refCount = 0; loaded = false; unload(); };
+
     Asset* next = nullptr;
-    int refCount = -1;
+    int refCount = 0;
+    bool loaded = false;
 };

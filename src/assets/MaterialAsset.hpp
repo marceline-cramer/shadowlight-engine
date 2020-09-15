@@ -10,7 +10,9 @@ class MaterialAsset : public Asset
 public:
     virtual void load(Binding*, const char*);
     virtual void unload();
-private:
+
+    void bindPipeline(VkCommandBuffer);
+private:    
     // Vulkan objects
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;

@@ -170,3 +170,8 @@ void MaterialAsset::unload()
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
 }
+
+void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
+{
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+}

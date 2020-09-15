@@ -16,5 +16,6 @@ MeshRendererComponent::~MeshRendererComponent()
 
 void MeshRendererComponent::render(VkCommandBuffer commandBuffer)
 {
-
+    material.getAsset()->bindPipeline(commandBuffer);
+    mesh.getAsset()->render(commandBuffer);
 }

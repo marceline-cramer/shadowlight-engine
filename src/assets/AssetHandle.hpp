@@ -8,6 +8,7 @@ class AssetHandle
 public:
     AssetHandle();
     AssetHandle(const AssetHandle&);
+    void operator=(const AssetHandle&);
     ~AssetHandle();
     
     T* getAsset();
@@ -25,6 +26,13 @@ AssetHandle<T>::AssetHandle()
 
 template<class T>
 AssetHandle<T>::AssetHandle(const AssetHandle& _handle)
+{
+    asset = _handle.asset;
+    asset->refCount++;
+}
+
+template<class T>
+void AssetHandle<T>::operator=(const AssetHandle& _handle)
 {
     asset = _handle.asset;
     asset->refCount++;
@@ -58,8 +66,8 @@ void AssetHandle<T>::deref()
             asset->refCount--;
 
             // TODO Use reaper in AssetPool so that assets are maintained
-            if(asset->refCount == 0) {
-                asset->unload();
+            if(asset->refCount <= 0 && asset->loaded) {
+                asset->_unload();
             }
         }
 
