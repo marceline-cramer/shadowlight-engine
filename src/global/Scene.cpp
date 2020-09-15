@@ -15,7 +15,7 @@ Scene::Scene(VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, Lu
     materialPool = new AssetPool<MaterialAsset>(oal);
 
     // Create pipelines
-    meshFeedForwardPipeline = new MeshFeedForwardPipeline(vk, fs);
+    meshPipeline = new MeshPipeline(vk);
 
     // Load the config.json file
     rapidjson::Document config;
@@ -49,7 +49,7 @@ Scene::~Scene()
     delete materialPool;
 
     // Delete graphics pipelines
-    delete meshFeedForwardPipeline;
+    delete meshPipeline;
 }
 
 void Scene::load()
@@ -206,7 +206,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         meshPool->load(meshName, meshAsset);
 
         AssetHandle<MaterialAsset> materialAsset;
-        materialPool->load(meshName, materialAsset);
+        materialPool->load(materialName, materialAsset);
 
         c = new MeshRendererComponent(meshAsset, materialAsset);
         e->addComponent(c);
@@ -254,7 +254,7 @@ void Scene::update()
     }
 
     // Draw scene
-    std::vector<Pipeline*> pipelines = {meshFeedForwardPipeline};
+    std::vector<Pipeline*> pipelines = {meshPipeline};
     vk->render(pipelines);
 
     if(reloadFlag) {

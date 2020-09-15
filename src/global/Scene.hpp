@@ -20,7 +20,7 @@
 #include "components/AudioSourceComponent.hpp"
 #include "components/MeshRendererComponent.hpp"
 
-#include "pipelines/MeshFeedForwardPipeline.hpp"
+#include "pipelines/MeshPipeline.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 
@@ -60,5 +60,5 @@ private:
     Filesystem* fs;
 
     // Graphics pipelines
-    MeshFeedForwardPipeline* meshFeedForwardPipeline;
+    MeshPipeline* meshPipeline;
 };

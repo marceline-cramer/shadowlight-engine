@@ -701,10 +701,28 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
         throw std::runtime_error("Failed to begin command buffer");
     }
 
+    VkClearValue clearColor = {0.2f, 0.0f, 0.0f, 1.0f};
+
+    VkRenderPassBeginInfo renderPassInfo{
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        .renderPass = mainRenderPass,
+        .framebuffer = framebuffer,
+        .renderArea = {
+            .offset = {0, 0},
+            .extent = swapChainExtent
+        },
+        .clearValueCount = 1,
+        .pClearValues = &clearColor
+    };
+
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
     // Render each pipeline
     for(auto p : pipelines) {
-        p->render(commandBuffer, framebuffer);
+        p->render(commandBuffer);
     }
+
+    vkCmdEndRenderPass(commandBuffer);
 
     // End the command buffer
     if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

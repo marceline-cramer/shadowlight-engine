@@ -24,7 +24,7 @@ src = [
     'src/components/AudioSourceComponent.cpp',
     'src/components/MeshRendererComponent.cpp',
 
-    'src/pipelines/MeshFeedForwardPipeline.cpp'
+    'src/pipelines/MeshPipeline.cpp'
 ]
 
 dependencies = [
