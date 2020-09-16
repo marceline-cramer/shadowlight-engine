@@ -3,6 +3,7 @@
 #include "assets/AssetPool.hpp"
 #include "assets/MeshAsset.hpp"
 #include "assets/MaterialAsset.hpp"
+#include "assets/TextureAsset.hpp"
 
 #include "bindings/VulkanBinding.hpp"
 
@@ -18,8 +19,9 @@ public:
 
     void render(VkCommandBuffer);
 
-    MeshRendererComponent* createMeshRenderer(const char*, const char*);
+    MeshRendererComponent* createMeshRenderer(const char*, const char*, const char*);
 private:
     AssetPool<MeshAsset>* meshPool;
     AssetPool<MaterialAsset>* materialPool;
+    AssetPool<TextureAsset>* texturePool;
 };

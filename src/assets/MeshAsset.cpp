@@ -68,7 +68,9 @@ void MeshAsset::createVertexBuffer()
     // Create and copy vertex buffer
     vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 
-    vk->copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+    VkCommandBuffer commandBuffer = vk->beginSingleTimeCommands();
+    vk->copyBuffer(commandBuffer, stagingBuffer, vertexBuffer, bufferSize);
+    vk->endSingleTimeCommands(commandBuffer);
 
     vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
     vkFreeMemory(vk->device, stagingBufferMemory, nullptr);
@@ -92,7 +94,9 @@ void MeshAsset::createIndexBuffer()
     // Create and copy index buffer
     vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 
-    vk->copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+    VkCommandBuffer commandBuffer = vk->beginSingleTimeCommands();
+    vk->copyBuffer(commandBuffer, stagingBuffer, indexBuffer, bufferSize);
+    vk->endSingleTimeCommands(commandBuffer);
 
     vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
     vkFreeMemory(vk->device, stagingBufferMemory, nullptr);

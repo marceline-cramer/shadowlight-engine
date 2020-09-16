@@ -5,6 +5,7 @@
 #include "assets/AssetHandle.hpp"
 #include "assets/MeshAsset.hpp"
 #include "assets/MaterialAsset.hpp"
+#include "assets/TextureAsset.hpp"
 
 #include "components/RendererComponent.hpp"
 
@@ -13,7 +14,7 @@ class MeshRendererComponent : public RendererComponent
 public:
     COMPONENT_TYPE("MeshRenderer");
 
-    MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&);
+    MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&, AssetHandle<TextureAsset>&);
     ~MeshRendererComponent();
 
     virtual void render(VkCommandBuffer);
@@ -31,4 +32,5 @@ private:
     
     AssetHandle<MeshAsset> mesh;
     AssetHandle<MaterialAsset> material;
+    AssetHandle<TextureAsset> texture;
 };

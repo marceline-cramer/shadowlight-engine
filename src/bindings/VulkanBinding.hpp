@@ -44,8 +44,12 @@ public:
     VkShaderModule createShaderModule(const std::vector<char>&);
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
     void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
-    void copyBuffer(VkBuffer, VkBuffer, VkDeviceSize);
+    void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);
     size_t getSwapchainSize() { return swapChainImages.size(); };
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer);
+    void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
+    void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
 
     void update();
     void render(std::vector<Pipeline*>&);
@@ -68,6 +72,7 @@ private:
     
     friend class MeshAsset;
     friend class MaterialAsset;
+    friend class TextureAsset;
 
     friend class MeshRendererComponent;
 

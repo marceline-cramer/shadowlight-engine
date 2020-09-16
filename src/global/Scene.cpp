@@ -195,10 +195,19 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
             throw std::runtime_error("component(MeshRendererComponent).mesh must be a string");
         }
 
+        if(!component.HasMember("texture")) {
+            throw std::runtime_error("component(MeshRendererComponent) must have texture");
+        }
+
+        if(!component["texture"].IsString()) {
+            throw std::runtime_error("component(MeshRendererComponent).texture must be a string");
+        }
+
         const char* meshName = component["mesh"].GetString();
         const char* materialName = component["material"].GetString();
+        const char* textureName = component["texture"].GetString();
 
-        c = meshPipeline->createMeshRenderer(meshName, materialName);
+        c = meshPipeline->createMeshRenderer(meshName, materialName, textureName);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);

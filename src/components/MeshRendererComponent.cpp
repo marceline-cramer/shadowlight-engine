@@ -1,10 +1,11 @@
 #include "components/MeshRendererComponent.hpp"
 
-MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<MeshAsset>& _mesh, AssetHandle<MaterialAsset>& _material)
+MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<MeshAsset>& _mesh, AssetHandle<MaterialAsset>& _material, AssetHandle<TextureAsset>& _texture)
 {
     pipeline = _pipeline;
     mesh = _mesh;
     material = _material;
+    texture = _texture;
     vk = pipeline->vk;
     pipeline->rendererComponents.insert(this);
 
