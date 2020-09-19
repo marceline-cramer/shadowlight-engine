@@ -97,10 +97,35 @@ void TextureAsset::load(Binding* _vk, const char* fileName)
     if(vkCreateImageView(vk->device, &viewInfo, nullptr, &textureView) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create image view");
     }
+
+    VkSamplerCreateInfo samplerInfo{
+        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+        .magFilter = VK_FILTER_LINEAR,
+        .minFilter = VK_FILTER_LINEAR,
+        .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .mipLodBias = 0.0f,
+        // TODO Anisotropy
+        .anisotropyEnable = VK_FALSE,
+        .maxAnisotropy = 1.0,
+        .compareEnable = VK_FALSE,
+        .compareOp = VK_COMPARE_OP_ALWAYS,
+        .minLod = 0.0f,
+        .maxLod = 0.0f,
+        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+        .unnormalizedCoordinates = VK_FALSE
+    };
+
+    if(vkCreateSampler(vk->device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create texture sampler");
+    }
 }
 
 void TextureAsset::unload()
 {
+    vkDestroySampler(vk->device, textureSampler, nullptr);
     vkDestroyImageView(vk->device, textureView, nullptr);
     vkDestroyImage(vk->device, textureImage, nullptr);
     vkFreeMemory(vk->device, textureMemory, nullptr);

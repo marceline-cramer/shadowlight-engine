@@ -17,4 +17,5 @@ private:
     VkImage textureImage;
     VkDeviceMemory textureMemory;
     VkImageView textureView;
+    VkSampler textureSampler;
 };
