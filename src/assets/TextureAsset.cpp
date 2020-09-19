@@ -79,10 +79,29 @@ void TextureAsset::load(Binding* _vk, const char* fileName)
 
     vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
     vkFreeMemory(vk->device, stagingBufferMemory, nullptr);
+
+    VkImageViewCreateInfo viewInfo{
+        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        .image = textureImage,
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .format = VK_FORMAT_R8G8B8A8_SRGB,
+        .subresourceRange = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        }
+    };
+
+    if(vkCreateImageView(vk->device, &viewInfo, nullptr, &textureView) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create image view");
+    }
 }
 
 void TextureAsset::unload()
 {
+    vkDestroyImageView(vk->device, textureView, nullptr);
     vkDestroyImage(vk->device, textureImage, nullptr);
     vkFreeMemory(vk->device, textureMemory, nullptr);
 }
