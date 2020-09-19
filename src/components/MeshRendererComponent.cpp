@@ -2,6 +2,7 @@
 
 MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<MeshAsset>& _mesh, AssetHandle<MaterialAsset>& _material, AssetHandle<TextureAsset>& _texture)
 {
+    // TODO Multitexturing
     pipeline = _pipeline;
     mesh = _mesh;
     material = _material;
@@ -12,16 +13,21 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
     VkDeviceSize uniformBufferSize = sizeof(MeshRendererUniform);
     vk->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
 
-    VkDescriptorPoolSize poolSize{
+    std::array<VkDescriptorPoolSize, 2> poolSizes;
+    poolSizes[0] = {
         .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1
+    };
+    poolSizes[1] = {
+        .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
         .descriptorCount = 1
     };
 
     VkDescriptorPoolCreateInfo poolInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .maxSets = 1,
-        .poolSizeCount = 1,
-        .pPoolSizes = &poolSize
+        .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
+        .pPoolSizes = poolSizes.data()
     };
 
     if(vkCreateDescriptorPool(vk->device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
@@ -45,7 +51,14 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         .range = sizeof(MeshRendererUniform)
     };
 
-    VkWriteDescriptorSet descriptorWrite{
+    VkDescriptorImageInfo imageInfo{
+        .sampler = texture.getAsset()->getSampler(),
+        .imageView = texture.getAsset()->getImageView(),
+        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    };
+
+    std::array<VkWriteDescriptorSet, 2> descriptorWrites;
+    descriptorWrites[0] = {
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .dstSet = descriptorSet,
         .dstBinding = 0,
@@ -54,8 +67,17 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .pBufferInfo = &bufferInfo
     };
+    descriptorWrites[1] = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .dstSet = descriptorSet,
+        .dstBinding = 1,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .pImageInfo = &imageInfo
+    };
 
-    vkUpdateDescriptorSets(vk->device, 1, &descriptorWrite, 0, nullptr);
+    vkUpdateDescriptorSets(vk->device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 MeshRendererComponent::~MeshRendererComponent()

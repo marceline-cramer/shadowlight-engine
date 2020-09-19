@@ -12,10 +12,22 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         .pImmutableSamplers = nullptr
     };
 
+    VkDescriptorSetLayoutBinding samplerLayoutBinding{
+        .binding = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .pImmutableSamplers = nullptr
+    };
+
+    std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
+        uboLayoutBinding,
+        samplerLayoutBinding
+    };
     VkDescriptorSetLayoutCreateInfo layoutInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .bindingCount = 1,
-        .pBindings = &uboLayoutBinding
+        .bindingCount = static_cast<uint32_t>(bindings.size()),
+        .pBindings = bindings.data()
     };
 
     if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
