@@ -33,6 +33,8 @@ public:
     void loadComponent(Entity*, rapidjson::Value&);
     void loadScene(const char*);
 
+    const char* getComponentString(rapidjson::Value&, const char*, const char*);
+
     void update();
     void addEntity(Entity*);
 

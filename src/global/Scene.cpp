@@ -135,15 +135,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 
     // Handle ScriptComponent
     if(componentType == ScriptComponent::ComponentType) {
-        if(!component.HasMember("script")) {
-            throw std::runtime_error("component(Script) must have script");
-        }
-
-        if(!component["script"].IsString()) {
-            throw std::runtime_error("component(Script).script must be a string");
-        }
-
-        const char* scriptName = component["script"].GetString();
+        const char* scriptName = getComponentString(component, componentType.data(), "script");
 
         AssetHandle<ScriptAsset> script;
         scriptPool->load(scriptName, script);
@@ -163,15 +155,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle AudioSourceComponent
     else if(componentType == AudioSourceComponent::ComponentType) {
-        if(!component.HasMember("audio")) {
-            throw std::runtime_error("component(AudioSource) must have audio");
-        }
-
-        if(!component["audio"].IsString()) {
-            throw std::runtime_error("component(AudioSource).audio must be a string");
-        }
-
-        const char* audioName = component["audio"].GetString();
+        const char* audioName = getComponentString(component, componentType.data(), "audio");
 
         AssetHandle<AudioAsset> audioAsset;
         audioPool->load(audioName, audioAsset);
@@ -179,33 +163,9 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         c = new AudioSourceComponent(audioAsset);
         e->addComponent(c);
     } else if(componentType == MeshRendererComponent::ComponentType) {
-        if(!component.HasMember("material")) {
-            throw std::runtime_error("component(MeshRendererComponent) must have material");
-        }
-
-        if(!component["material"].IsString()) {
-            throw std::runtime_error("component(MeshRendererComponent).material must be a string");
-        }
-
-        if(!component.HasMember("mesh")) {
-            throw std::runtime_error("component(MeshRendererComponent) must have mesh");
-        }
-
-        if(!component["mesh"].IsString()) {
-            throw std::runtime_error("component(MeshRendererComponent).mesh must be a string");
-        }
-
-        if(!component.HasMember("texture")) {
-            throw std::runtime_error("component(MeshRendererComponent) must have texture");
-        }
-
-        if(!component["texture"].IsString()) {
-            throw std::runtime_error("component(MeshRendererComponent).texture must be a string");
-        }
-
-        const char* meshName = component["mesh"].GetString();
-        const char* materialName = component["material"].GetString();
-        const char* textureName = component["texture"].GetString();
+        const char* meshName = getComponentString(component, componentType.data(), "mesh");
+        const char* materialName = getComponentString(component, componentType.data(), "material");
+        const char* textureName = getComponentString(component, componentType.data(), "texture");
 
         c = meshPipeline->createMeshRenderer(meshName, materialName, textureName);
         e->addComponent(c);
@@ -218,6 +178,23 @@ void Scene::loadScene(const char* sceneName)
 {
     currentScene = sceneName;
     reloadFlag = true;
+}
+
+const char* Scene::getComponentString(rapidjson::Value& component, const char* componentType, const char* stringName)
+{
+    if(!component.HasMember(stringName)) {
+        std::ostringstream errorMessage;
+        errorMessage << "component(" << componentType << ") must have " << stringName;
+        throw std::runtime_error(errorMessage.str());
+    }
+
+    if(!component[stringName].IsString()) {
+        std::ostringstream errorMessage;
+        errorMessage << "component(" << componentType << ")." << stringName << " must be a string";
+        throw std::runtime_error(errorMessage.str());
+    }
+
+    return component[stringName].GetString();
 }
 
 void Scene::update()
