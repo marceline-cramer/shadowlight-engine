@@ -11,6 +11,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define VMA_IMPLEMENTATION
+#include "vk_mem_alloc.h"
+
 int main(int argc, const char* argv[])
 {
     PHYSFS_init(argv[0]);
