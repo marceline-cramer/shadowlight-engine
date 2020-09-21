@@ -38,7 +38,6 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     // TODO Add GLSL->SPIR-V compilation through libglslc
     // TODO Create shader asset to wrap compilation/file reading
     // (Shader assets and Material assets will be decoupled)
-    // TODO Remove Filesystem dependency from this class
     std::vector<char> vertShaderCode, fragShaderCode;
     vk->fs->loadFile("shaders/vert.spv", vertShaderCode);
     vk->fs->loadFile("shaders/frag.spv", fragShaderCode);
