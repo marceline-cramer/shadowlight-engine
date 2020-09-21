@@ -12,7 +12,6 @@ AudioSourceComponent::AudioSourceComponent(AssetHandle<AudioAsset>& _audioAsset)
 {
     audioAsset = _audioAsset;
 
-    // TODO Add position/velocity tied to EntityTransform
     // TODO OpenAL error checking
     alGenSources(1, &source);
     alSourcei(source, AL_BUFFER, audioAsset.getAsset()->getBuffer());
@@ -25,12 +24,13 @@ AudioSourceComponent::~AudioSourceComponent()
 
 void AudioSourceComponent::update()
 {
-
+    // TODO AudioSource velocity
+    alSource3f(source, AL_POSITION, transform->position.x, transform->position.y, transform->position.z);
 }
 
-void AudioSourceComponent::finalize(ComponentSet&, EntityTransform&)
+void AudioSourceComponent::finalize(ComponentSet&, EntityTransform& _transform)
 {
-
+    transform = &_transform;
 }
 
 void AudioSourceComponent::createBindings(lua_State* L)

@@ -21,5 +21,7 @@ public:
 private:
     AssetHandle<AudioAsset> audioAsset;
 
+    EntityTransform* transform;
+
     ALuint source;
 };
