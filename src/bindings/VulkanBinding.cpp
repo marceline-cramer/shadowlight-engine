@@ -40,6 +40,7 @@ VulkanBinding::VulkanBinding(Filesystem* _fs, Window* _window)
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+    createAllocator();
     createSwapchain();
     createImageViews();
     createRenderPass();
@@ -69,6 +70,8 @@ VulkanBinding::~VulkanBinding()
     }
 
     vkDestroySwapchainKHR(device, swapChain, nullptr);
+
+    vmaDestroyAllocator(allocator);
 
     vkDestroyDevice(device, nullptr);
     vkDestroySurfaceKHR(instance, surface, nullptr);
@@ -373,6 +376,19 @@ VkExtent2D VulkanBinding::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capab
         };
 
         return actualExtent;
+    }
+}
+
+void VulkanBinding::createAllocator()
+{
+    VmaAllocatorCreateInfo allocatorInfo{
+        .physicalDevice = physicalDevice,
+        .device = device,
+        .instance = instance
+    };
+
+    if(vmaCreateAllocator(&allocatorInfo, &allocator) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create Vulkan memory allocator");
     }
 }
 

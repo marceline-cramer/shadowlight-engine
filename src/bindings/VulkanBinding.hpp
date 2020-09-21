@@ -7,6 +7,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "vk_mem_alloc.h"
+
 #include "bindings/Binding.hpp"
 
 #include "pipelines/Pipeline.hpp"
@@ -91,6 +93,7 @@ private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>&);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>&);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR&);
+    void createAllocator();
     void createSwapchain();
     void createImageViews();
     void createRenderPass();
@@ -128,4 +131,7 @@ private:
 
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;
+
+    // VulkanMemoryAllocator data
+    VmaAllocator allocator;
 };
