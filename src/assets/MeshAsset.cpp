@@ -26,6 +26,8 @@ void MeshAsset::loadModel(const char* fileName)
         throw std::runtime_error(warn + err);
     }
 
+    std::unordered_map<MeshVertex, uint32_t> uniqueVertices;
+
     for (const auto& shape : shapes) {
         for (const auto& index : shape.mesh.indices) {
             MeshVertex vertex{
@@ -43,8 +45,12 @@ void MeshAsset::loadModel(const char* fileName)
                 }
             };
 
-            vertices.push_back(vertex);
-            indices.push_back(indices.size());
+            if(uniqueVertices.count(vertex) == 0) {
+                uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                vertices.push_back(vertex);
+            }
+
+            indices.push_back(uniqueVertices[vertex]);
         }
     }
 }
