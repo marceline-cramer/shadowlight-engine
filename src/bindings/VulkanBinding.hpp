@@ -43,7 +43,7 @@ public:
     ~VulkanBinding();
 
     // Utilities for other Vulkan objects to use
-    VkShaderModule createShaderModule(const std::vector<char>&);
+    VkShaderModule createShaderModule(const std::vector<uint32_t>&);
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
     void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
     void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);

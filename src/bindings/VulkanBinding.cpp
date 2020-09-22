@@ -596,12 +596,12 @@ void VulkanBinding::createSemaphores()
     }
 }
 
-VkShaderModule VulkanBinding::createShaderModule(const std::vector<char>& code)
+VkShaderModule VulkanBinding::createShaderModule(const std::vector<uint32_t>& code)
 {
     VkShaderModuleCreateInfo createInfo{
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        .codeSize = code.size(),
-        .pCode = reinterpret_cast<const uint32_t*>(code.data())
+        .codeSize = code.size() * sizeof(uint32_t),
+        .pCode = code.data()
     };
 
     VkShaderModule shaderModule;

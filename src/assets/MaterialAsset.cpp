@@ -4,6 +4,36 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
 {
     vk = static_cast<VulkanBinding*>(_vk);
 
+    // TODO Fix the hardcoding of default shader locations
+    const char* vertFile = "shaders/mesh.vert";
+    const char* fragFile = "shaders/mesh.frag";
+    std::string vertShaderCode, fragShaderCode;
+    vk->fs->loadFile(vertFile, vertShaderCode);
+    vk->fs->loadFile(fragFile, fragShaderCode);
+
+    // Load shader modules
+    VkShaderModule vertShaderModule = compileShader(vertFile, vertShaderCode, shaderc_vertex_shader);
+    VkShaderModule fragShaderModule = compileShader(fragFile, fragShaderCode, shaderc_fragment_shader);
+
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_VERTEX_BIT,
+        .module = vertShaderModule,
+        .pName = "main"
+    };
+
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .module = fragShaderModule,
+        .pName = "main"
+    };
+
+    VkPipelineShaderStageCreateInfo shaderStages[] = {
+        vertShaderStageInfo,
+        fragShaderStageInfo
+    };
+
     VkDescriptorSetLayoutBinding uboLayoutBinding{
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -33,37 +63,6 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create descriptor set layout");
     }
-
-    // TODO Fix the hardcoding of default shader locations
-    // TODO Add GLSL->SPIR-V compilation through libglslc
-    // TODO Create shader asset to wrap compilation/file reading
-    // (Shader assets and Material assets will be decoupled)
-    std::vector<char> vertShaderCode, fragShaderCode;
-    vk->fs->loadFile("shaders/vert.spv", vertShaderCode);
-    vk->fs->loadFile("shaders/frag.spv", fragShaderCode);
-
-    // Load shader modules
-    VkShaderModule vertShaderModule = vk->createShaderModule(vertShaderCode);
-    VkShaderModule fragShaderModule = vk->createShaderModule(fragShaderCode);
-
-    VkPipelineShaderStageCreateInfo vertShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = vertShaderModule,
-        .pName = "main"
-    };
-
-    VkPipelineShaderStageCreateInfo fragShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = fragShaderModule,
-        .pName = "main"
-    };
-
-    VkPipelineShaderStageCreateInfo shaderStages[] = {
-        vertShaderStageInfo,
-        fragShaderStageInfo
-    };
 
     auto bindingDescription = MeshVertex::getBindingDescription();
     auto attributeDescriptions = MeshVertex::getAttributeDescriptions();
@@ -204,4 +203,23 @@ void MaterialAsset::unload()
 void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+}
+
+VkShaderModule MaterialAsset::compileShader(const char* fileName, std::string source, shaderc_shader_kind kind)
+{
+    shaderc::Compiler compiler;
+    shaderc::CompileOptions options;
+
+    auto spirvModule = compiler.CompileGlslToSpv(source, kind, fileName, options);
+
+    if(spirvModule.GetCompilationStatus() != shaderc_compilation_status_success) {
+        std::ostringstream errorMessage;
+        errorMessage << "Shader " << fileName;
+        errorMessage << " compilation failed with ";
+        errorMessage << spirvModule.GetErrorMessage();
+        throw std::runtime_error(errorMessage.str());
+    }
+
+    std::vector<uint32_t> spirv = {spirvModule.cbegin(), spirvModule.cend()};
+    return vk->createShaderModule(spirv);
 }

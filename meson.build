@@ -39,7 +39,8 @@ dependencies = [
     dependency('libavutil'),
     dependency('libavcodec'),
     dependency('libavformat'),
-    dependency('libswresample')
+    dependency('libswresample'),
+    dependency('shaderc')
 ]
 
 incdir = include_directories(['src', 'lib'])

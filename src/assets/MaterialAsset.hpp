@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shaderc/shaderc.hpp"
+
 #include "assets/Asset.hpp"
 #include "assets/MeshAsset.hpp"
 
@@ -13,6 +15,9 @@ public:
 
     void bindPipeline(VkCommandBuffer);
 private:
+    // Utility functions
+    VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
+
     friend class MeshRendererComponent;
     
     // Vulkan objects
