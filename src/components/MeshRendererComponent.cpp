@@ -79,7 +79,7 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         descriptorWrites.push_back({
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .dstSet = descriptorSet,
-            .dstBinding = 1,
+            .dstBinding = 1 + i,
             .dstArrayElement = 0,
             .descriptorCount = 1,
             .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
