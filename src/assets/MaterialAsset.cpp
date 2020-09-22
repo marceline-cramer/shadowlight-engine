@@ -8,6 +8,22 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     rapidjson::Document config;
     vk->fs->loadJson(fileName, config);
 
+    textures.clear();
+    if(config.HasMember("textures")) {
+        if(!config["textures"].IsArray()) {
+            throw std::runtime_error("MaterialAsset.textures must be an array");
+        }
+
+        auto textureArray = config["textures"].GetArray();
+        for(auto t = textureArray.Begin(); t != textureArray.End(); t++) {
+            if(!t->IsString()) {
+                throw std::runtime_error("MaterialAsset.textures must contain strings");
+            }
+
+            textures.push_back(t->GetString());
+        }
+    }
+
     if(!config.HasMember("vertShader")) {
         throw std::runtime_error("MaterialAsset must have a vertShader");
     }
@@ -55,30 +71,30 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         fragShaderStageInfo
     };
 
-    VkDescriptorSetLayoutBinding uboLayoutBinding{
+    std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
+
+    layoutBindings.push_back({
         .binding = 0,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount = 1,
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
         .pImmutableSamplers = nullptr
-    };
+    });
 
-    VkDescriptorSetLayoutBinding samplerLayoutBinding{
-        .binding = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .pImmutableSamplers = nullptr
-    };
+    for(int i = 0; i < textures.size(); i++) {
+        layoutBindings.push_back({
+            .binding = i + 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .pImmutableSamplers = nullptr
+        });
+    }
 
-    std::array<VkDescriptorSetLayoutBinding, 2> bindings = {
-        uboLayoutBinding,
-        samplerLayoutBinding
-    };
     VkDescriptorSetLayoutCreateInfo layoutInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .bindingCount = static_cast<uint32_t>(bindings.size()),
-        .pBindings = bindings.data()
+        .bindingCount = static_cast<uint32_t>(layoutBindings.size()),
+        .pBindings = layoutBindings.data()
     };
 
     if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {

@@ -14,7 +14,7 @@ class MeshRendererComponent : public RendererComponent
 public:
     COMPONENT_TYPE("MeshRenderer");
 
-    MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&, AssetHandle<TextureAsset>&);
+    MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&, std::vector<AssetHandle<TextureAsset>>&);
     ~MeshRendererComponent();
 
     virtual void render(VkCommandBuffer);
@@ -32,5 +32,5 @@ private:
     
     AssetHandle<MeshAsset> mesh;
     AssetHandle<MaterialAsset> material;
-    AssetHandle<TextureAsset> texture;
+    std::vector<AssetHandle<TextureAsset>> textures;
 };

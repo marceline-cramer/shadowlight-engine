@@ -19,7 +19,7 @@ public:
 
     void render(VkCommandBuffer);
 
-    MeshRendererComponent* createMeshRenderer(const char*, const char*, const char*);
+    MeshRendererComponent* createMeshRenderer(const char*, const char*, std::map<std::string, const char*>);
 private:
     AssetPool<MeshAsset>* meshPool;
     AssetPool<MaterialAsset>* materialPool;

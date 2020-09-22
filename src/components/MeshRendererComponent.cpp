@@ -1,27 +1,29 @@
 #include "components/MeshRendererComponent.hpp"
 
-MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<MeshAsset>& _mesh, AssetHandle<MaterialAsset>& _material, AssetHandle<TextureAsset>& _texture)
+MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<MeshAsset>& _mesh, AssetHandle<MaterialAsset>& _material, std::vector<AssetHandle<TextureAsset>>& _textures)
 {
-    // TODO Multitexturing
     pipeline = _pipeline;
     mesh = _mesh;
     material = _material;
-    texture = _texture;
+    textures = _textures;
     vk = pipeline->vk;
     pipeline->rendererComponents.insert(this);
 
     VkDeviceSize uniformBufferSize = sizeof(MeshRendererUniform);
     vk->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
 
-    std::array<VkDescriptorPoolSize, 2> poolSizes;
-    poolSizes[0] = {
+    std::vector<VkDescriptorPoolSize> poolSizes;
+    poolSizes.push_back({
         .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .descriptorCount = 1
-    };
-    poolSizes[1] = {
-        .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        .descriptorCount = 1
-    };
+    });
+
+    for(int i = 0; i < textures.size(); i++) {
+        poolSizes.push_back({
+            .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = 1
+        });
+    }
 
     VkDescriptorPoolCreateInfo poolInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -45,20 +47,15 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         throw std::runtime_error("Failed to allocate descriptor sets");
     }
 
+    std::vector<VkWriteDescriptorSet> descriptorWrites;
+
     VkDescriptorBufferInfo bufferInfo{
         .buffer = uniformBuffer,
         .offset = 0,
         .range = sizeof(MeshRendererUniform)
     };
 
-    VkDescriptorImageInfo imageInfo{
-        .sampler = texture.getAsset()->getSampler(),
-        .imageView = texture.getAsset()->getImageView(),
-        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-    };
-
-    std::array<VkWriteDescriptorSet, 2> descriptorWrites;
-    descriptorWrites[0] = {
+    descriptorWrites.push_back({
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .dstSet = descriptorSet,
         .dstBinding = 0,
@@ -66,16 +63,29 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         .descriptorCount = 1,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .pBufferInfo = &bufferInfo
-    };
-    descriptorWrites[1] = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .dstSet = descriptorSet,
-        .dstBinding = 1,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        .pImageInfo = &imageInfo
-    };
+    });
+
+    std::vector<VkDescriptorImageInfo> imageInfo;
+
+    for(int i = 0; i < textures.size(); i++) {
+        imageInfo.push_back({
+            .sampler = textures[i].getAsset()->getSampler(),
+            .imageView = textures[i].getAsset()->getImageView(),
+            .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        });
+    }
+
+    for(int i = 0; i < imageInfo.size(); i++) {
+        descriptorWrites.push_back({
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstSet = descriptorSet,
+            .dstBinding = 1,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .pImageInfo = &imageInfo[i]
+        });
+    }
 
     vkUpdateDescriptorSets(vk->device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }

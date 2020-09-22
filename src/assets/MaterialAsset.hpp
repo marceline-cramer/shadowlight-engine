@@ -14,6 +14,8 @@ public:
     virtual void unload();
 
     void bindPipeline(VkCommandBuffer);
+
+    std::vector<std::string> getTextures() { return textures; }
 private:
     // Utility functions
     VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
@@ -27,4 +29,7 @@ private:
 
     // Bindings
     VulkanBinding* vk;
+
+    // Material info
+    std::vector<std::string> textures;
 };
