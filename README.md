@@ -13,6 +13,8 @@ The Shadowlight Engine is a cross-platform game engine with Lua scripting, Bulle
 - [SDL2](https://www.libsdl.org/)
 - [PhysFS](https://www.icculus.org/physfs/)
 - [FFMPEG](https://ffmpeg.org/)
+- [GLM](https://github.com/g-truc/glm)
+- [shaderc](https://github.com/google/shaderc)
 
 All of these packages should be available through your package manager, but if not, links are provided for convenience.
 
