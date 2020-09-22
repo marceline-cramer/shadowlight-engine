@@ -42,6 +42,11 @@ void MeshAsset::loadModel(const char* fileName)
                 .texCoord = {
                     attrib.texcoords[2*index.texcoord_index+0],
                     1.0 - attrib.texcoords[2*index.texcoord_index+1]
+                },
+                .normal = {
+                    attrib.normals[3*index.normal_index+0],
+                    attrib.normals[3*index.normal_index+1],
+                    attrib.normals[3*index.normal_index+2]
                 }
             };
 
