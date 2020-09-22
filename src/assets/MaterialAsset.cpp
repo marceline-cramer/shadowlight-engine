@@ -4,9 +4,30 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
 {
     vk = static_cast<VulkanBinding*>(_vk);
 
-    // TODO Fix the hardcoding of default shader locations
-    const char* vertFile = "shaders/mesh.vert";
-    const char* fragFile = "shaders/mesh.frag";
+    // TODO Json encapsulator class
+    rapidjson::Document config;
+    vk->fs->loadJson(fileName, config);
+
+    if(!config.HasMember("vertShader")) {
+        throw std::runtime_error("MaterialAsset must have a vertShader");
+    }
+
+    if(!config["vertShader"].IsString()) {
+        throw std::runtime_error("MaterialAsset.vertShader must be a string");
+    }
+
+    const char* vertFile = config["vertShader"].GetString();
+
+    if(!config.HasMember("fragShader")) {
+        throw std::runtime_error("MaterialAsset must have a fragShader");
+    }
+
+    if(!config["fragShader"].IsString()) {
+        throw std::runtime_error("MaterialAsset.fragShader must be a string");
+    }
+
+    const char* fragFile = config["fragShader"].GetString();
+
     std::string vertShaderCode, fragShaderCode;
     vk->fs->loadFile(vertFile, vertShaderCode);
     vk->fs->loadFile(fragFile, fragShaderCode);
