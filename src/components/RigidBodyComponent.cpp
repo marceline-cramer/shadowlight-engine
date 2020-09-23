@@ -16,23 +16,6 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
 RigidBodyComponent::RigidBodyComponent(BulletBinding* _bullet, rapidjson::Value& component)
 {
     bullet = _bullet;
-
-    mass = 1;
-    shape = new btBoxShape(btVector3(1, 1, 1));
-
-    btTransform startTransform;
-    startTransform.setIdentity();
-
-    btVector3 localInertia;
-    shape->calculateLocalInertia(mass, localInertia);
-
-    motionState = new btDefaultMotionState(startTransform);
-
-    // Create body
-    // TODO Bullet error checking
-    btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, shape, localInertia);
-    body = new btRigidBody(constructionInfo);
-    bullet->world->addRigidBody(body);
 }
 
 RigidBodyComponent::~RigidBodyComponent()
@@ -55,6 +38,25 @@ void RigidBodyComponent::update()
 void RigidBodyComponent::finalize(ComponentSet&, EntityTransform& _transform)
 {
     transform = &_transform;
+
+    mass = 1;
+    shape = new btBoxShape(btVector3(1, 1, 1));
+
+    btTransform startTransform;
+    btVector3 startOrigin = {transform->position.x, transform->position.y, transform->position.z};
+    startTransform.setIdentity();
+    startTransform.setOrigin(startOrigin);
+
+    btVector3 localInertia;
+    shape->calculateLocalInertia(mass, localInertia);
+
+    motionState = new btDefaultMotionState(startTransform);
+
+    // Create body
+    // TODO Bullet error checking
+    btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, shape, localInertia);
+    body = new btRigidBody(constructionInfo);
+    bullet->world->addRigidBody(body);
 }
 
 void RigidBodyComponent::createBindings(lua_State* L)
