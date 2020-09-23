@@ -18,6 +18,7 @@
 #include "components/AudioSourceComponent.hpp"
 #include "components/MeshRendererComponent.hpp"
 #include "components/CameraComponent.hpp"
+#include "components/FirstPersonControllerComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
 

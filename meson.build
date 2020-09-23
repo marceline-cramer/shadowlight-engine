@@ -25,6 +25,7 @@ src = [
     'src/components/AudioSourceComponent.cpp',
     'src/components/MeshRendererComponent.cpp',
     'src/components/CameraComponent.cpp',
+    'src/components/FirstPersonControllerComponent.cpp',
 
     'src/pipelines/MeshPipeline.cpp'
 ]

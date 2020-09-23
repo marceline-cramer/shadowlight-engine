@@ -186,6 +186,11 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 
         auto c = vk->createCamera(cameraTarget);
         e->addComponent(c);
+    }
+    // Handle FirstPersonControllerComponent
+    else if(componentType == FirstPersonControllerComponent::ComponentType) {
+        auto c = new FirstPersonControllerComponent();
+        e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
     }
