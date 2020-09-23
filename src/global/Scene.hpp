@@ -4,6 +4,7 @@
 
 #include "global/Entity.hpp"
 #include "global/Filesystem.hpp"
+#include "global/Window.hpp"
 
 #include "bindings/LuaBinding.hpp"
 #include "bindings/BulletBinding.hpp"
@@ -27,7 +28,7 @@ using BucketMap = std::map<std::string, ComponentSet>;
 class Scene
 {
 public:
-    Scene(VulkanBinding*, OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
+    Scene(Window*, VulkanBinding*, OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
     ~Scene();
     
     void load();
@@ -53,6 +54,7 @@ private:
     AssetPool<AudioAsset>* audioPool;
 
     // Bindings
+    Window* window;
     VulkanBinding* vk;
     OpenALBinding* oal;
     BulletBinding* bullet;

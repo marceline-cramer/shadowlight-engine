@@ -19,6 +19,9 @@ public:
     void createSurface(VkInstance, VkSurfaceKHR*);
     void update();
     bool shouldQuit() { return quitFlag; };
+
+    InputAxis* getMouseX() { return &mouseX; }
+    InputAxis* getMouseY() { return &mouseY; }
 private:
     SDL_Window* window;
     SDL_Surface* surface;

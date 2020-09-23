@@ -2,12 +2,14 @@
 
 #include "components/Component.hpp"
 
+#include "input/InputAxis.hpp"
+
 class FirstPersonControllerComponent : public Component
 {
 public:
     COMPONENT_TYPE("FirstPersonController");
 
-    FirstPersonControllerComponent();
+    FirstPersonControllerComponent(InputAxis*, InputAxis*);
 
     virtual void update();
     virtual void finalize(ComponentSet&, EntityTransform&);
@@ -16,4 +18,7 @@ private:
 
     float pan;
     float tilt;
+
+    InputAxis* ax;
+    InputAxis* ay;
 };

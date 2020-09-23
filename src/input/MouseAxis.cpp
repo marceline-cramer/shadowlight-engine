@@ -2,5 +2,5 @@
 
 void MouseAxis::process(int _axis)
 {
-    axis = _axis / (float) 20.0;
+    axis = _axis / (float) 50.0;
 }

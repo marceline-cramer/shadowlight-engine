@@ -1,7 +1,8 @@
 #include "global/Scene.hpp"
 
-Scene::Scene(VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
+Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    window = _window;
     vk = _vk;
     oal = _oal;
     bullet = _bullet;
@@ -189,7 +190,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle FirstPersonControllerComponent
     else if(componentType == FirstPersonControllerComponent::ComponentType) {
-        auto c = new FirstPersonControllerComponent();
+        auto c = new FirstPersonControllerComponent(window->getMouseX(), window->getMouseY());
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);

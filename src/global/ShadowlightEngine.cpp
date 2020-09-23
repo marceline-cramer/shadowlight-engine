@@ -10,7 +10,7 @@ ShadowlightEngine::ShadowlightEngine()
     vulkan = new VulkanBinding(fs, window);
     oal = new OpenALBinding();
     lua = new LuaBinding(fs);
-    scene = new Scene(vulkan, oal, bullet, lua, fs);
+    scene = new Scene(window, vulkan, oal, bullet, lua, fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
