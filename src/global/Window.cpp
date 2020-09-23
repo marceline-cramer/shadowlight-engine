@@ -56,7 +56,7 @@ void Window::createSurface(VkInstance instance, VkSurfaceKHR* surface)
     }
 }
 
-void Window::update()
+void Window::update(double dt)
 {
     SDL_Event e;
 
@@ -82,7 +82,7 @@ void Window::update()
     mouseY->updateRelative(rely);
 
     for(auto axis : axes) {
-        axis->process();
+        axis->process(dt);
     }
 }
 

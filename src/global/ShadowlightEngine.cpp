@@ -32,9 +32,9 @@ void ShadowlightEngine::run()
 
     do {
         auto thisUpdate = std::chrono::high_resolution_clock::now();
-        float dt = std::chrono::duration_cast<std::chrono::nanoseconds>(thisUpdate-lastUpdate).count()/1000000000.0f;
+        double dt = std::chrono::duration_cast<std::chrono::nanoseconds>(thisUpdate-lastUpdate).count()/1000000000.0f;
 
-        window->update();
+        window->update(dt);
         bullet->update(dt);
         lua->update();
         scene->update();

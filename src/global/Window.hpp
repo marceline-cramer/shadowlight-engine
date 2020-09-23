@@ -19,7 +19,7 @@ public:
 
     std::vector<const char*> getExtensions();
     void createSurface(VkInstance, VkSurfaceKHR*);
-    void update();
+    void update(double);
     bool shouldQuit() { return quitFlag; };
 
     InputAxis* getMouseX() { return mouseX; }

@@ -24,7 +24,7 @@ BulletBinding::~BulletBinding()
 }
 
 
-void BulletBinding::update(float dt)
+void BulletBinding::update(double dt)
 {
     // Step the simulation
     world->stepSimulation(dt, 10);

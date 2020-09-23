@@ -14,7 +14,7 @@ class KeyboardAxis : public InputAxis
 public:
     KeyboardAxis(SDL_Scancode, SDL_Scancode);
 
-    virtual void process();
+    virtual void process(double);
     virtual float getAxis() { return axis; }
 private:
     float axis;
