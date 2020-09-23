@@ -24,6 +24,7 @@ src = [
     'src/components/RigidBodyComponent.cpp',
     'src/components/AudioSourceComponent.cpp',
     'src/components/MeshRendererComponent.cpp',
+    'src/components/CameraComponent.cpp',
 
     'src/pipelines/MeshPipeline.cpp'
 ]
