@@ -23,6 +23,7 @@
 #include "components/PointLightComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
+#include "pipelines/PointLightPipeline.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 
@@ -64,4 +65,5 @@ private:
 
     // Graphics pipelines
     MeshPipeline* meshPipeline;
+    PointLightPipeline* pointLightPipeline;
 };

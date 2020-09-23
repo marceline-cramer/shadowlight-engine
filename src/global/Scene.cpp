@@ -15,6 +15,7 @@ Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBin
 
     // Create pipelines
     meshPipeline = new MeshPipeline(vk);
+    pointLightPipeline = new PointLightPipeline(vk);
 
     // Load the config.json file
     rapidjson::Document config;
@@ -43,6 +44,7 @@ Scene::~Scene()
 
     // Delete graphics pipelines
     delete meshPipeline;
+    delete pointLightPipeline;
 
     // Delete asset pools
     delete scriptPool;
@@ -199,7 +201,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle PointLightComponent
     else if(componentType == PointLightComponent::ComponentType) {
-        auto c = new PointLightComponent();
+        auto c = pointLightPipeline->createPointLight();
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
