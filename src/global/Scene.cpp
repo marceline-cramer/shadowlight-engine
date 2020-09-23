@@ -196,6 +196,11 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
             window->createKeyboardAxis(SDL_SCANCODE_A, SDL_SCANCODE_D),
             window->createKeyboardAxis(SDL_SCANCODE_S, SDL_SCANCODE_W));
         e->addComponent(c);
+    }
+    // Handle PointLightComponent
+    else if(componentType == PointLightComponent::ComponentType) {
+        auto c = new PointLightComponent();
+        e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
     }

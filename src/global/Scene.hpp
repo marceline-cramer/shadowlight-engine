@@ -20,6 +20,7 @@
 #include "components/MeshRendererComponent.hpp"
 #include "components/CameraComponent.hpp"
 #include "components/FirstPersonControllerComponent.hpp"
+#include "components/PointLightComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
 

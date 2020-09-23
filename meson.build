@@ -26,6 +26,7 @@ src = [
     'src/components/MeshRendererComponent.cpp',
     'src/components/CameraComponent.cpp',
     'src/components/FirstPersonControllerComponent.cpp',
+    'src/components/PointLightComponent.cpp',
 
     'src/pipelines/MeshPipeline.cpp',
 
