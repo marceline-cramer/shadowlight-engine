@@ -7,7 +7,7 @@ KeyboardAxis::KeyboardAxis(SDL_Scancode _negKey, SDL_Scancode _posKey)
     posKey = _posKey;
 }
 
-void KeyboardAxis::process()
+void KeyboardAxis::process(double dt)
 {
     if(keys[negKey]) {
         if(keys[posKey]) {

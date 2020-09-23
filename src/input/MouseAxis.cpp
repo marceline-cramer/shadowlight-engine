@@ -1,11 +1,18 @@
 #include "input/MouseAxis.hpp"
 
-void MouseAxis::updateRelative(int rel)
+MouseAxis::MouseAxis(double _sensitivity)
 {
-    axis = rel / (float) 100.0;
+    sensitivity = _sensitivity;
 }
 
-void MouseAxis::process()
+void MouseAxis::updateRelative(int _rel)
+{
+    rel += _rel;
+}
+
+void MouseAxis::process(double dt)
 {
     // TODO Mouse smoothing
+    axis = (dt * rel) * sensitivity;
+    rel = 0;
 }
