@@ -22,8 +22,8 @@ public:
     void update();
     bool shouldQuit() { return quitFlag; };
 
-    InputAxis* getMouseX() { return &mouseX; }
-    InputAxis* getMouseY() { return &mouseY; }
+    InputAxis* getMouseX() { return mouseX; }
+    InputAxis* getMouseY() { return mouseY; }
     InputAxis* createKeyboardAxis(SDL_Scancode, SDL_Scancode);
 private:
     SDL_Window* window;
