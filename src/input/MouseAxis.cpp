@@ -2,7 +2,7 @@
 
 void MouseAxis::updateRelative(int rel)
 {
-    axis = rel / (float) 50.0;
+    axis = rel / (float) 100.0;
 }
 
 void MouseAxis::process()

@@ -25,8 +25,13 @@ void FirstPersonControllerComponent::update()
 
     transform->orientation = newOrientation;
 
-    glm::vec3 truckDirection = glm::vec3(glm::cos(pan), -glm::sin(pan), 0.0) * cameraSpeed;
-    glm::vec3 dollyDirection = glm::vec3(glm::sin(pan) * glm::sin(tilt), glm::cos(pan) * glm::sin(tilt), glm::cos(tilt)) * cameraSpeed;
+    auto truckDirection = glm::vec3(glm::cos(pan), -glm::sin(pan), 0.0) * cameraSpeed;
+    auto forwardDirection = glm::vec2(glm::sin(pan), glm::cos(pan));
+    auto upDirection = glm::vec2(glm::sin(tilt), glm::cos(tilt));
+    auto dollyDirection = glm::vec3(
+        forwardDirection.x * upDirection.x,
+        forwardDirection.y * upDirection.x,
+        upDirection.y) * cameraSpeed;
 
     transform->position += truckDirection * truckAxis->getAxis();
     transform->position += dollyDirection * dollyAxis->getAxis();
