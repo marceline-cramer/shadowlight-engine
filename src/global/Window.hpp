@@ -7,6 +7,8 @@
 #include <SDL2/SDL_vulkan.h>
 #include <vulkan/vulkan.h>
 
+#include "input/MouseAxis.hpp"
+
 class Window
 {
 public:
@@ -20,6 +22,9 @@ public:
 private:
     SDL_Window* window;
     SDL_Surface* surface;
+
+    MouseAxis mouseX;
+    MouseAxis mouseY;
     
     bool quitFlag = false;
 };

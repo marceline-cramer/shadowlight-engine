@@ -20,6 +20,9 @@ Window::Window()
     surface = SDL_GetWindowSurface(window);
     SDL_FillRect(surface, nullptr, 0);
     SDL_UpdateWindowSurface(window);
+
+    // Setup mouse input
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 Window::~Window()
@@ -48,11 +51,23 @@ void Window::update()
 {
     SDL_Event e;
 
+    int relx = 0;
+    int rely = 0;
+
     while(SDL_PollEvent(&e) != 0)
     {
-        if(e.type == SDL_QUIT)
+        switch(e.type)
         {
+        case SDL_QUIT:
             quitFlag = true;
+            break;
+        case SDL_MOUSEMOTION:
+            relx += e.motion.xrel;
+            rely += e.motion.yrel;
+            break;
         }
     }
+
+    mouseX.process(relx);
+    mouseY.process(rely);
 }

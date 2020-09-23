@@ -27,7 +27,9 @@ src = [
     'src/components/CameraComponent.cpp',
     'src/components/FirstPersonControllerComponent.cpp',
 
-    'src/pipelines/MeshPipeline.cpp'
+    'src/pipelines/MeshPipeline.cpp',
+
+    'src/input/MouseAxis.cpp'
 ]
 
 dependencies = [
