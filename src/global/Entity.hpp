@@ -12,6 +12,7 @@ using EntitySet = std::set<Entity*>;
 class Entity
 {
 public:
+    Entity();
     ~Entity();
     
     void finalize();

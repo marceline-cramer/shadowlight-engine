@@ -1,5 +1,11 @@
 #include "global/Entity.hpp"
 
+Entity::Entity()
+{
+    transform.position = glm::vec3(0.0);
+    transform.orientation = glm::quat();
+}
+
 Entity::~Entity()
 {
     for(auto c : components) {
