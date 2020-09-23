@@ -29,7 +29,8 @@ src = [
 
     'src/pipelines/MeshPipeline.cpp',
 
-    'src/input/MouseAxis.cpp'
+    'src/input/MouseAxis.cpp',
+    'src/input/KeyboardAxis.cpp'
 ]
 
 dependencies = [
