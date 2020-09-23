@@ -17,7 +17,7 @@ public:
     MeshPipeline(VulkanBinding*);
     ~MeshPipeline();
 
-    void render(VkCommandBuffer);
+    virtual void render(VkCommandBuffer, CameraComponent*);
 
     MeshRendererComponent* createMeshRenderer(const char*, const char*, std::map<std::string, const char*>);
 private:

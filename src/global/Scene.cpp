@@ -184,7 +184,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     else if(componentType == CameraComponent::ComponentType) {
         const char* cameraTarget = getComponentString(component, componentType.data(), "target");
 
-        auto c = new CameraComponent(cameraTarget, 1.0);
+        auto c = vk->createCamera(cameraTarget);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);

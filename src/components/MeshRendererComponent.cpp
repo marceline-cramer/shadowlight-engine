@@ -100,15 +100,12 @@ MeshRendererComponent::~MeshRendererComponent()
     pipeline->rendererComponents.erase(this);
 }
 
-void MeshRendererComponent::render(VkCommandBuffer commandBuffer)
+void MeshRendererComponent::render(VkCommandBuffer commandBuffer, CameraComponent* camera)
 {
     MeshRendererUniform ubo{};
     ubo.model = glm::translate(glm::mat4(1.0), transform->position) * glm::mat4(transform->orientation);
-
-    // TODO CameraComponent
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f), vk->swapChainExtent.width / (float) vk->swapChainExtent.height, 0.1f, 10.0f);
-    ubo.proj[1][1] *= -1;
+    ubo.view = camera->getViewMatrix();
+    ubo.proj = camera->getProjectionMatrix();
 
     void* data;
     vkMapMemory(vk->device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);

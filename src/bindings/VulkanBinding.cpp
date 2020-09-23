@@ -784,6 +784,12 @@ void VulkanBinding::update()
 
 void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
 {
+    auto it = cameras.find("main");
+    if(it == cameras.end()) {
+        throw std::runtime_error("No main camera");
+    }
+    auto mainCamera = it->second;
+
     // Acquire swapchain image
     uint32_t imageIndex;
     vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
@@ -819,7 +825,7 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
 
     // Render each pipeline
     for(auto p : pipelines) {
-        p->render(commandBuffer);
+        p->render(commandBuffer, mainCamera);
     }
 
     vkCmdEndRenderPass(commandBuffer);
@@ -866,4 +872,18 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
 
     // TODO Better frame synchronization
     vkQueueWaitIdle(presentQueue);
+}
+
+CameraComponent* VulkanBinding::createCamera(const char* target)
+{
+    if(cameras.find(target) != cameras.end()) {
+        std::ostringstream errorMessage;
+        errorMessage << "Camera target ";
+        errorMessage << target;
+        errorMessage << " already occupied";
+        throw std::runtime_error(errorMessage.str());
+    }
+
+    auto camera = new CameraComponent(target, &cameras, swapChainExtent.width / (float) swapChainExtent.height);
+    return camera;
 }

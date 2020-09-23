@@ -4,12 +4,15 @@
 #include <stdexcept>
 #include <set>
 #include <vector>
+#include <sstream>
 
 #include <vulkan/vulkan.h>
 
 #include "vk_mem_alloc.h"
 
 #include "bindings/Binding.hpp"
+
+#include "components/CameraComponent.hpp"
 
 #include "pipelines/Pipeline.hpp"
 
@@ -55,6 +58,8 @@ public:
 
     void update();
     void render(std::vector<Pipeline*>&);
+
+    CameraComponent* createCamera(const char*);
 private:
     // Constants
     const std::vector<const char*> validationLayers = {
@@ -128,6 +133,8 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+
+    CameraMap cameras;
 
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;

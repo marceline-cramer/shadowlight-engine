@@ -10,7 +10,7 @@ class CameraComponent : public Component
 public:
     COMPONENT_TYPE("Camera");
 
-    CameraComponent(const char*, float);
+    CameraComponent(const char*, CameraMap*, float);
     ~CameraComponent();
 
     virtual void update();
@@ -19,6 +19,7 @@ public:
     glm::mat4 getProjectionMatrix() { return projectionMatrix; }
 private:
     std::string target;
+    CameraMap* parentMap;
     float aspect;
 
     glm::mat4 viewMatrix;

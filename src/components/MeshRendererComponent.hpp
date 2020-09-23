@@ -17,7 +17,7 @@ public:
     MeshRendererComponent(Pipeline*, AssetHandle<MeshAsset>&, AssetHandle<MaterialAsset>&, std::vector<AssetHandle<TextureAsset>>&);
     ~MeshRendererComponent();
 
-    virtual void render(VkCommandBuffer);
+    virtual void render(VkCommandBuffer, CameraComponent*);
     virtual void finalize(ComponentSet&, EntityTransform&);
 private:
     Pipeline* pipeline;

@@ -1,14 +1,17 @@
 #include "components/CameraComponent.hpp"
 
-CameraComponent::CameraComponent(const char* _target, float _aspect)
+CameraComponent::CameraComponent(const char* _target, CameraMap* _parentMap, float _aspect)
 {
     target = _target;
+    parentMap = _parentMap;
     aspect = _aspect;
+
+    parentMap->emplace(target, this);
 }
 
 CameraComponent::~CameraComponent()
 {
-
+    parentMap->erase(target);
 }
 
 void CameraComponent::update()

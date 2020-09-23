@@ -16,10 +16,10 @@ MeshPipeline::~MeshPipeline()
     delete texturePool;
 }
 
-void MeshPipeline::render(VkCommandBuffer commandBuffer)
+void MeshPipeline::render(VkCommandBuffer commandBuffer, CameraComponent* camera)
 {
     for(auto c : rendererComponents) {
-        c->render(commandBuffer);
+        c->render(commandBuffer, camera);
     }
 }
 
