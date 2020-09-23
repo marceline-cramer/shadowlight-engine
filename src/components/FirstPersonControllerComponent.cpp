@@ -1,9 +1,11 @@
 #include "components/FirstPersonControllerComponent.hpp"
 
-FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _ax, InputAxis* _ay)
+FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _panAxis, InputAxis* _tiltAxis, InputAxis* _truckAxis, InputAxis* _dollyAxis)
 {
-    ax = _ax;
-    ay = _ay;
+    panAxis = _panAxis;
+    tiltAxis = _tiltAxis;
+    truckAxis = _truckAxis;
+    dollyAxis = _dollyAxis;
 
     tilt = M_PI/2.0;
     pan = -M_PI/2.0;
@@ -11,8 +13,8 @@ FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _ax, I
 
 void FirstPersonControllerComponent::update()
 {
-    pan += ax->getAxis();
-    tilt += ay->getAxis();
+    pan += panAxis->getAxis();
+    tilt += tiltAxis->getAxis();
 
     if(tilt <= 0.0) tilt = 0.0;
     if(tilt >= M_PI) tilt = M_PI;
@@ -22,7 +24,12 @@ void FirstPersonControllerComponent::update()
         glm::angleAxis(pan, glm::vec3(0.0, 0.0, 1.0));
 
     transform->orientation = newOrientation;
-    transform->position = glm::vec3(0.0, 0.0, 1.0);
+
+    glm::vec3 truckDirection = glm::vec3(glm::cos(pan), -glm::sin(pan), 0.0) * cameraSpeed;
+    glm::vec3 dollyDirection = glm::vec3(glm::sin(pan) * glm::sin(tilt), glm::cos(pan) * glm::sin(tilt), glm::cos(tilt)) * cameraSpeed;
+
+    transform->position += truckDirection * truckAxis->getAxis();
+    transform->position += dollyDirection * dollyAxis->getAxis();
 }
 
 void FirstPersonControllerComponent::finalize(ComponentSet&, EntityTransform& _transform)

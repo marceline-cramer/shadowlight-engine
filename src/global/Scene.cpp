@@ -190,7 +190,11 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle FirstPersonControllerComponent
     else if(componentType == FirstPersonControllerComponent::ComponentType) {
-        auto c = new FirstPersonControllerComponent(window->getMouseX(), window->getMouseY());
+        // TODO Input config JSON
+        auto c = new FirstPersonControllerComponent(
+            window->getMouseX(), window->getMouseY(),
+            window->createKeyboardAxis(SDL_SCANCODE_A, SDL_SCANCODE_D),
+            window->createKeyboardAxis(SDL_SCANCODE_S, SDL_SCANCODE_W));
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
