@@ -13,7 +13,7 @@ public:
     CameraComponent(const char*, CameraMap*, float);
     ~CameraComponent();
 
-    virtual void update();
+    virtual void update(double);
     virtual void finalize(ComponentSet&, EntityTransform&);
 
     glm::mat4 getViewMatrix() { return viewMatrix; }

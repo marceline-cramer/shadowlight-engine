@@ -11,7 +11,7 @@ FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _panAx
     pan = -M_PI/2.0;
 }
 
-void FirstPersonControllerComponent::update()
+void FirstPersonControllerComponent::update(double dt)
 {
     pan += panAxis->getAxis();
     tilt += tiltAxis->getAxis();

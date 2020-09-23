@@ -11,6 +11,14 @@ ScriptComponent::ScriptComponent(AssetHandle<ScriptAsset>& _scriptAsset)
     selfIndex = luaL_ref(thread, LUA_REGISTRYINDEX);
 }
 
+void ScriptComponent::update(double dt)
+{
+    // Call update function
+    lua_getglobal(thread, "update");
+    lua_rawgeti(thread, LUA_REGISTRYINDEX, selfIndex);
+    lua_call(thread, 1, 0);
+}
+
 void ScriptComponent::finalize(ComponentSet& components, EntityTransform& transform)
 {
     // Fetch self table
@@ -26,12 +34,4 @@ void ScriptComponent::finalize(ComponentSet& components, EntityTransform& transf
 
     // Toss self table
     lua_pop(thread, 1);
-}
-
-void ScriptComponent::update()
-{
-    // Call update function
-    lua_getglobal(thread, "update");
-    lua_rawgeti(thread, LUA_REGISTRYINDEX, selfIndex);
-    lua_call(thread, 1, 0);
 }

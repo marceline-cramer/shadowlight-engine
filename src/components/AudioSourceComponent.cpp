@@ -22,7 +22,7 @@ AudioSourceComponent::~AudioSourceComponent()
     alDeleteSources(1, &source);
 }
 
-void AudioSourceComponent::update()
+void AudioSourceComponent::update(double dt)
 {
     // TODO AudioSource velocity
     alSource3f(source, AL_POSITION, transform->position.x, transform->position.y, transform->position.z);

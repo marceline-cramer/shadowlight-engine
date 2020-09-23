@@ -30,7 +30,7 @@ class Component
 {
 public:
     virtual ~Component() {};
-    virtual void update() {};
+    virtual void update(double) {};
     virtual const char* getComponentType() = 0;
     virtual void finalize(ComponentSet&, EntityTransform&) {};
     virtual void createBindings(lua_State*) {};

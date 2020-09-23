@@ -38,7 +38,7 @@ public:
 
     const char* getComponentString(rapidjson::Value&, const char*, const char*);
 
-    void update();
+    void update(double);
     void addEntity(Entity*);
 
     bool shouldQuit() { return quitFlag; };

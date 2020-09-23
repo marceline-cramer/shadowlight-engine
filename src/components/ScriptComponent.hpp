@@ -19,10 +19,9 @@ public:
     COMPONENT_TYPE("Script");
     
     ScriptComponent(AssetHandle<ScriptAsset>&);
-    virtual ~ScriptComponent() {};
+    ~ScriptComponent() {};
 
-    virtual void update();
-
+    virtual void update(double);
     virtual void finalize(ComponentSet&, EntityTransform&);
 private:
     AssetHandle<ScriptAsset> scriptAsset;

@@ -11,9 +11,9 @@ public:
     COMPONENT_TYPE("AudioSource");
     
     AudioSourceComponent(AssetHandle<AudioAsset>&);
-    virtual ~AudioSourceComponent();
+    ~AudioSourceComponent();
 
-    virtual void update();
+    virtual void update(double);
     virtual void finalize(ComponentSet&, EntityTransform&);
     virtual void createBindings(lua_State*);
 

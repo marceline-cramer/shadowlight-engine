@@ -37,7 +37,7 @@ void ShadowlightEngine::run()
         window->update(dt);
         bullet->update(dt);
         lua->update();
-        scene->update();
+        scene->update(dt);
         vulkan->update();
         oal->update();
 

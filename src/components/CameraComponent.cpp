@@ -17,7 +17,7 @@ CameraComponent::~CameraComponent()
     parentMap->erase(target);
 }
 
-void CameraComponent::update()
+void CameraComponent::update(double dt)
 {
     viewMatrix = glm::translate(glm::mat4(transform->orientation), -transform->position);
 }

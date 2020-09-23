@@ -16,7 +16,7 @@ public:
     RigidBodyComponent(BulletBinding*, rapidjson::Value&);
     virtual ~RigidBodyComponent();
 
-    virtual void update();
+    virtual void update(double);
     virtual void finalize(ComponentSet&, EntityTransform&);
     virtual void createBindings(lua_State*);
 private:

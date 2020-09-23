@@ -224,7 +224,7 @@ const char* Scene::getComponentString(rapidjson::Value& component, const char* c
     return component[stringName].GetString();
 }
 
-void Scene::update()
+void Scene::update(double dt)
 {
     // Create "buckets" for each component
     BucketMap buckets;
@@ -252,7 +252,7 @@ void Scene::update()
     // Update all components
     for(auto bucket : buckets) {
         for(auto c : bucket.second) {
-            c->update();
+            c->update(dt);
         }
     }
 

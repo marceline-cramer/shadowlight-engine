@@ -25,7 +25,7 @@ RigidBodyComponent::~RigidBodyComponent()
     delete shape;
 }
 
-void RigidBodyComponent::update()
+void RigidBodyComponent::update(double dt)
 {
     auto bodyTransform = body->getCenterOfMassTransform();
     auto position = bodyTransform.getOrigin();
