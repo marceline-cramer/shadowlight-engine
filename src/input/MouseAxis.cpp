@@ -1,6 +1,11 @@
 #include "input/MouseAxis.hpp"
 
-void MouseAxis::process(int _axis)
+void MouseAxis::updateRelative(int rel)
 {
-    axis = _axis / (float) 50.0;
+    axis = rel / (float) 50.0;
+}
+
+void MouseAxis::process()
+{
+    // TODO Mouse smoothing
 }

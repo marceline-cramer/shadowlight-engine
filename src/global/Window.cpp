@@ -21,12 +21,19 @@ Window::Window()
     SDL_FillRect(surface, nullptr, 0);
     SDL_UpdateWindowSurface(window);
 
-    // Setup mouse input
+    // Setup input
     SDL_SetRelativeMouseMode(SDL_TRUE);
+
+    axes.insert(&mouseX);
+    axes.insert(&mouseY);
 }
 
 Window::~Window()
 {
+    for(auto axis : axes) {
+        delete axis;
+    }
+
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
@@ -54,6 +61,7 @@ void Window::update()
     int relx = 0;
     int rely = 0;
 
+    SDL_PumpEvents();
     while(SDL_PollEvent(&e) != 0)
     {
         switch(e.type)
@@ -68,6 +76,10 @@ void Window::update()
         }
     }
 
-    mouseX.process(relx);
-    mouseY.process(rely);
+    mouseX.updateRelative(relx);
+    mouseY.updateRelative(rely);
+
+    for(auto axis : axes) {
+        axis->process();
+    }
 }

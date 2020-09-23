@@ -5,8 +5,9 @@
 class MouseAxis : public InputAxis
 {
 public:
-    void process(int);
+    void updateRelative(int);
 
+    virtual void process();
     virtual float getAxis() { return axis; }
 private:
     float axis;

@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <set>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -28,6 +29,8 @@ private:
 
     MouseAxis mouseX;
     MouseAxis mouseY;
+
+    std::set<InputAxis*> axes;
     
     bool quitFlag = false;
 };
