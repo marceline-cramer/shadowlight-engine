@@ -27,7 +27,7 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
 
     VkDescriptorPoolCreateInfo poolInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .maxSets = 1,
+        .maxSets = 2,
         .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
         .pPoolSizes = poolSizes.data()
     };
@@ -36,11 +36,12 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         throw std::runtime_error("Failed to create descriptor pool");
     }
 
+    auto setLayouts = material.getAsset()->getSetLayouts();
     VkDescriptorSetAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .descriptorPool = descriptorPool,
-        .descriptorSetCount = 1,
-        .pSetLayouts = &material.getAsset()->descriptorSetLayout
+        .descriptorSetCount = static_cast<uint32_t>(setLayouts.size()),
+        .pSetLayouts = setLayouts.data()
     };
 
     if(vkAllocateDescriptorSets(vk->device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
@@ -112,7 +113,7 @@ void MeshRendererComponent::render(VkCommandBuffer commandBuffer, CameraComponen
         memcpy(data, &ubo, sizeof(ubo));
     vkUnmapMemory(vk->device, uniformBufferMemory);
 
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.getAsset()->pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.getAsset()->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     material.getAsset()->bindPipeline(commandBuffer);
     mesh.getAsset()->render(commandBuffer);
 }

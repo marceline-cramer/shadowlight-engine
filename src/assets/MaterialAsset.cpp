@@ -44,33 +44,37 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
 
     const char* fragFile = config["fragShader"].GetString();
 
-    std::string vertShaderCode, fragShaderCode;
-    vk->fs->loadFile(vertFile, vertShaderCode);
-    vk->fs->loadFile(fragFile, fragShaderCode);
+    createLightSet();
+    createObjectSet();
+    createPipelineLayout();
+    createPipeline(vertFile, fragFile);
+}
 
-    // Load shader modules
-    VkShaderModule vertShaderModule = compileShader(vertFile, vertShaderCode, shaderc_vertex_shader);
-    VkShaderModule fragShaderModule = compileShader(fragFile, fragShaderCode, shaderc_fragment_shader);
+void MaterialAsset::createLightSet()
+{
+    std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 
-    VkPipelineShaderStageCreateInfo vertShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = vertShaderModule,
-        .pName = "main"
+    layoutBindings.push_back({
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .pImmutableSamplers = nullptr
+    });
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo{
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .bindingCount = static_cast<uint32_t>(layoutBindings.size()),
+        .pBindings = layoutBindings.data()
     };
 
-    VkPipelineShaderStageCreateInfo fragShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = fragShaderModule,
-        .pName = "main"
-    };
+    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &lightSetLayout) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create descriptor set layout");
+    }
+}
 
-    VkPipelineShaderStageCreateInfo shaderStages[] = {
-        vertShaderStageInfo,
-        fragShaderStageInfo
-    };
-
+void MaterialAsset::createObjectSet()
+{
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 
     layoutBindings.push_back({
@@ -97,9 +101,55 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         .pBindings = layoutBindings.data()
     };
 
-    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
+    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &objectSetLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create descriptor set layout");
     }
+}
+
+void MaterialAsset::createPipelineLayout()
+{
+    auto setLayouts = getSetLayouts();
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .setLayoutCount = static_cast<uint32_t>(setLayouts.size()),
+        .pSetLayouts = setLayouts.data(),
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = nullptr
+    };
+
+    if(vkCreatePipelineLayout(vk->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create pipeline layout");
+    }
+}
+
+void MaterialAsset::createPipeline(const char* vertFile, const char* fragFile)
+{
+    std::string vertShaderCode, fragShaderCode;
+    vk->fs->loadFile(vertFile, vertShaderCode);
+    vk->fs->loadFile(fragFile, fragShaderCode);
+
+    // Load shader modules
+    VkShaderModule vertShaderModule = compileShader(vertFile, vertShaderCode, shaderc_vertex_shader);
+    VkShaderModule fragShaderModule = compileShader(fragFile, fragShaderCode, shaderc_fragment_shader);
+
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_VERTEX_BIT,
+        .module = vertShaderModule,
+        .pName = "main"
+    };
+
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .module = fragShaderModule,
+        .pName = "main"
+    };
+
+    VkPipelineShaderStageCreateInfo shaderStages[] = {
+        vertShaderStageInfo,
+        fragShaderStageInfo
+    };
 
     auto bindingDescription = MeshVertex::getBindingDescription();
     auto attributeDescriptions = MeshVertex::getAttributeDescriptions();
@@ -202,18 +252,6 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
     colorBlending.blendConstants[1] = 0.0f;
     colorBlending.blendConstants[2] = 0.0f;
     colorBlending.blendConstants[3] = 0.0f;
-    
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 1,
-        .pSetLayouts = &descriptorSetLayout,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = nullptr
-    };
-
-    if(vkCreatePipelineLayout(vk->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create pipeline layout");
-    }
 
     VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -247,12 +285,22 @@ void MaterialAsset::unload()
 {
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
-    vkDestroyDescriptorSetLayout(vk->device, descriptorSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(vk->device, objectSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(vk->device, lightSetLayout, nullptr);
 }
 
 void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+}
+
+std::vector<VkDescriptorSetLayout> MaterialAsset::getSetLayouts()
+{
+    // TODO Light descriptors
+    return {
+        //lightSetLayout,
+        objectSetLayout
+    };
 }
 
 VkShaderModule MaterialAsset::compileShader(const char* fileName, std::string source, shaderc_shader_kind kind)
