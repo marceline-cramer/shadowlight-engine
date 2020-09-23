@@ -101,6 +101,9 @@ private:
     void createAllocator();
     void createSwapchain();
     void createImageViews();
+    VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
+    bool hasStencilComponent(VkFormat);
+    void createDepthResources();
     void createRenderPass();
     void createFramebuffers();
     void createCommandPool();
@@ -133,6 +136,11 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+
+    VkFormat depthFormat;
+    VkImage depthImage;
+    VkDeviceMemory depthImageMemory;
+    VkImageView depthImageView;
 
     CameraMap cameras;
 

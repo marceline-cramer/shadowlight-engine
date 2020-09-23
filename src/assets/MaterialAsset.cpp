@@ -166,6 +166,19 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         .alphaToOneEnable = VK_FALSE
     };
 
+    VkPipelineDepthStencilStateCreateInfo depthStencil{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .depthTestEnable = VK_TRUE,
+        .depthWriteEnable = VK_TRUE,
+        .depthCompareOp = VK_COMPARE_OP_LESS,
+        .depthBoundsTestEnable = VK_FALSE,
+        .stencilTestEnable = VK_FALSE,
+        .front = {},
+        .back = {},
+        .minDepthBounds = 0.0,
+        .maxDepthBounds = 1.0
+    };
+
     VkPipelineColorBlendAttachmentState colorBlendAttachment{
         .blendEnable = VK_FALSE,
         .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
@@ -211,7 +224,7 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
         .pViewportState = &viewportState,
         .pRasterizationState = &rasterizer,
         .pMultisampleState = &multisampling,
-        .pDepthStencilState = nullptr,
+        .pDepthStencilState = &depthStencil,
         .pColorBlendState = &colorBlending,
         .pDynamicState = nullptr,
         .layout = pipelineLayout,
