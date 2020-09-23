@@ -17,6 +17,7 @@
 #include "components/RigidBodyComponent.hpp"
 #include "components/AudioSourceComponent.hpp"
 #include "components/MeshRendererComponent.hpp"
+#include "components/CameraComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
 

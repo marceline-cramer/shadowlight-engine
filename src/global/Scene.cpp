@@ -118,20 +118,8 @@ void Scene::loadEntity(rapidjson::Value& entity)
 
 void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 {
-    if(!component.HasMember("type")) {
-        throw std::runtime_error("component must have a type");
-    }
-
-    if(!component["type"].IsString()) {
-        throw std::runtime_error("component.type must be a string");
-    }
-
-    std::string componentType = component["type"].GetString();
-
+    std::string componentType = getComponentString(component, componentType.data(), "type");
     std::cout << "Processing component of type " << componentType << std::endl;
-
-    // Create the component
-    Component* c;
 
     // Handle ScriptComponent
     if(componentType == ScriptComponent::ComponentType) {
@@ -140,17 +128,17 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         AssetHandle<ScriptAsset> script;
         scriptPool->load(scriptName, script);
 
-        c = new ScriptComponent(script);
+        auto c = new ScriptComponent(script);
         e->addComponent(c);
     }
     // Handle SceneComponent
     else if(componentType == SceneComponent::ComponentType) {
-        c = new SceneComponent(this);
+        auto c = new SceneComponent(this);
         e->addComponent(c);
     }
     // Handle RigidBodyComponent
     else if(componentType == RigidBodyComponent::ComponentType) {
-        c = new RigidBodyComponent(bullet, component);
+        auto c = new RigidBodyComponent(bullet, component);
         e->addComponent(c);
     }
     // Handle AudioSourceComponent
@@ -160,9 +148,11 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
         AssetHandle<AudioAsset> audioAsset;
         audioPool->load(audioName, audioAsset);
 
-        c = new AudioSourceComponent(audioAsset);
+        auto c = new AudioSourceComponent(audioAsset);
         e->addComponent(c);
-    } else if(componentType == MeshRendererComponent::ComponentType) {
+    }
+    // Handle MeshRendererComponent
+    else if(componentType == MeshRendererComponent::ComponentType) {
         const char* meshName = getComponentString(component, componentType.data(), "mesh");
         const char* materialName = getComponentString(component, componentType.data(), "material");
 
@@ -183,11 +173,18 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
                     throw std::runtime_error("component(MeshRenderer).textures value must be a string");
                 }
 
-                textures.insert(std::pair<std::string, const char*>(t->name.GetString(), t->value.GetString()));
+                textures.emplace(t->name.GetString(), t->value.GetString());
             }
         }
 
-        c = meshPipeline->createMeshRenderer(meshName, materialName, textures);
+        auto c = meshPipeline->createMeshRenderer(meshName, materialName, textures);
+        e->addComponent(c);
+    }
+    // Handle CameraComponent
+    else if(componentType == CameraComponent::ComponentType) {
+        const char* cameraTarget = getComponentString(component, componentType.data(), "target");
+
+        auto c = new CameraComponent(cameraTarget, 1.0);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
