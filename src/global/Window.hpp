@@ -9,6 +9,7 @@
 #include <vulkan/vulkan.h>
 
 #include "input/MouseAxis.hpp"
+#include "input/KeyboardAxis.hpp"
 
 class Window
 {
@@ -23,12 +24,13 @@ public:
 
     InputAxis* getMouseX() { return &mouseX; }
     InputAxis* getMouseY() { return &mouseY; }
+    InputAxis* createKeyboardAxis(SDL_Scancode, SDL_Scancode);
 private:
     SDL_Window* window;
     SDL_Surface* surface;
 
-    MouseAxis mouseX;
-    MouseAxis mouseY;
+    MouseAxis* mouseX;
+    MouseAxis* mouseY;
 
     std::set<InputAxis*> axes;
     

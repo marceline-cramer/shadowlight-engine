@@ -23,9 +23,11 @@ Window::Window()
 
     // Setup input
     SDL_SetRelativeMouseMode(SDL_TRUE);
+    mouseX = new MouseAxis();
+    mouseY = new MouseAxis();
 
-    axes.insert(&mouseX);
-    axes.insert(&mouseY);
+    axes.insert(mouseX);
+    axes.insert(mouseY);
 }
 
 Window::~Window()
@@ -76,10 +78,17 @@ void Window::update()
         }
     }
 
-    mouseX.updateRelative(relx);
-    mouseY.updateRelative(rely);
+    mouseX->updateRelative(relx);
+    mouseY->updateRelative(rely);
 
     for(auto axis : axes) {
         axis->process();
     }
+}
+
+InputAxis* Window::createKeyboardAxis(SDL_Scancode negKey, SDL_Scancode posKey)
+{
+    auto axis = new KeyboardAxis(negKey, posKey);
+    axes.insert(axis);
+    return axis;
 }
