@@ -553,7 +553,7 @@ void VulkanBinding::createGBuffers()
     );
 
     createAttachment(
-        normalAttachment, VK_FORMAT_R16G16B16A16_SFLOAT,
+        normalAttachment, VK_FORMAT_R32G32B32A32_SFLOAT,
         width, height,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
