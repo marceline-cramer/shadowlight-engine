@@ -15,7 +15,10 @@ Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBin
 
     // Create pipelines
     meshPipeline = new MeshPipeline(vk);
+    deferredPipelines.insert(meshPipeline);
+    compositePipeline = new CompositePipeline(vk);
     pointLightPipeline = new PointLightPipeline(vk);
+    overlayPipelines.insert(pointLightPipeline);
 
     // Load the config.json file
     rapidjson::Document config;
@@ -44,6 +47,7 @@ Scene::~Scene()
 
     // Delete graphics pipelines
     delete meshPipeline;
+    delete compositePipeline;
     delete pointLightPipeline;
 
     // Delete asset pools
@@ -264,8 +268,7 @@ void Scene::update(double dt)
     }
 
     // Draw scene
-    std::vector<Pipeline*> pipelines = {meshPipeline};
-    vk->render(pipelines);
+    vk->render(deferredPipelines, compositePipeline, overlayPipelines);
 
     if(reloadFlag) {
         load();

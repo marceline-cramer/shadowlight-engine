@@ -7,6 +7,9 @@
 #include "components/RendererComponent.hpp"
 #include "components/CameraComponent.hpp"
 
+class Pipeline;
+using PipelineSet = std::set<Pipeline*>;
+
 class Pipeline
 {
 public:

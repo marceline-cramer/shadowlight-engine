@@ -999,7 +999,7 @@ void VulkanBinding::update()
 
 }
 
-void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
+void VulkanBinding::render(PipelineSet& deferredPipelines, Pipeline* compositePipeline, PipelineSet& overlayPipelines)
 {
     auto it = cameras.find("main");
     if(it == cameras.end()) {
@@ -1044,13 +1044,17 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // Deferred pass
+    for(auto p : deferredPipelines) {
+        p->render(commandBuffer, mainCamera);
+    }
     vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 
     // Composite pass
+    compositePipeline->render(commandBuffer, mainCamera);
     vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 
     // Overlay pass
-    for(auto p : pipelines) {
+    for(auto p : overlayPipelines) {
         p->render(commandBuffer, mainCamera);
     }
     vkCmdEndRenderPass(commandBuffer);

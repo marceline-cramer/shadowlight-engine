@@ -73,7 +73,7 @@ public:
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
     void update();
-    void render(std::vector<Pipeline*>&);
+    void render(PipelineSet&, Pipeline*, PipelineSet&);
 
     CameraComponent* createCamera(const char*);
 private:

@@ -242,7 +242,7 @@ void MaterialAsset::createPipeline(const char* vertFile, const char* fragFile)
         .pDynamicState = nullptr,
         .layout = pipelineLayout,
         .renderPass = vk->mainRenderPass,
-        .subpass = 2,
+        .subpass = 0,
         .basePipelineHandle = VK_NULL_HANDLE,
         .basePipelineIndex = -1
     };
