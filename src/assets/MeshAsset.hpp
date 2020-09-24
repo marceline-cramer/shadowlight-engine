@@ -64,7 +64,7 @@ struct MeshVertex
     }
 
     bool operator==(const MeshVertex& other) const {
-        return pos == other.pos && color == other.color && texCoord == other.texCoord;
+        return pos == other.pos && color == other.color && texCoord == other.texCoord && normal == other.normal;
     }
 };
 
