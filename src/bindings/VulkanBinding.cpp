@@ -43,7 +43,7 @@ VulkanBinding::VulkanBinding(Filesystem* _fs, Window* _window)
     createAllocator();
     createSwapchain();
     createImageViews();
-    createDepthResources();
+    createGBuffers();
     createRenderPass();
     createFramebuffers();
     createCommandPool();
@@ -484,9 +484,23 @@ bool VulkanBinding::hasStencilComponent(VkFormat format)
     return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
-void VulkanBinding::createDepthResources()
+void VulkanBinding::createAttachment(
+    VulkanAttachment& attachment,
+    VkFormat format,
+    uint32_t width, uint32_t height,
+    VkImageTiling tiling, VkImageUsageFlags usage,
+    VkMemoryPropertyFlags memoryFlags,
+    VkImageAspectFlags aspect
+)
 {
-    depthAttachment.format = findSupportedFormat(
+    attachment.format = format;
+    createImage(width, height, attachment.format, tiling, usage, memoryFlags, attachment.image, attachment.memory);
+    createImageView(attachment.image, attachment.format, VK_IMAGE_ASPECT_DEPTH_BIT, attachment.imageView);
+}
+
+void VulkanBinding::createGBuffers()
+{
+    auto depthFormat = findSupportedFormat(
         {VK_FORMAT_D32_SFLOAT,
         VK_FORMAT_D32_SFLOAT_S8_UINT,
         VK_FORMAT_D24_UNORM_S8_UINT},
@@ -494,18 +508,16 @@ void VulkanBinding::createDepthResources()
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
     );
 
-    createImage(
-        swapChainExtent.width, swapChainExtent.height,
-        depthAttachment.format, VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        depthAttachment.image, depthAttachment.memory
-    );
+    auto width = swapChainExtent.width;
+    auto height = swapChainExtent.height;
 
-    createImageView(
-        depthAttachment.image, depthAttachment.format,
-        VK_IMAGE_ASPECT_DEPTH_BIT,
-        depthAttachment.imageView
-    );
+    createAttachment(
+        depthAttachment, depthFormat,
+        width, height,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_IMAGE_ASPECT_DEPTH_BIT);
 }
 
 void VulkanBinding::createRenderPass()

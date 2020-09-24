@@ -119,7 +119,8 @@ private:
     void createImageViews();
     VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
     bool hasStencilComponent(VkFormat);
-    void createDepthResources();
+    void createAttachment(VulkanAttachment&, VkFormat, uint32_t, uint32_t, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImageAspectFlags);
+    void createGBuffers();
     void createRenderPass();
     void createFramebuffers();
     void createCommandPool();
