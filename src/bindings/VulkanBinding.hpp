@@ -39,6 +39,20 @@ struct SwapChainSupportDetails
     std::vector<VkPresentModeKHR> presentModes;
 };
 
+struct VulkanAttachment
+{
+    VkFormat format;
+    VkImage image;
+    VkDeviceMemory memory;
+    VkImageView imageView;
+
+    void destroy(VkDevice device) {
+        vkDestroyImageView(device, imageView, nullptr);
+        vkDestroyImage(device, image, nullptr);
+        vkFreeMemory(device, memory, nullptr);
+    }
+};
+
 class VulkanBinding : public Binding
 {
 public:
@@ -139,10 +153,7 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
 
-    VkFormat depthFormat;
-    VkImage depthImage;
-    VkDeviceMemory depthImageMemory;
-    VkImageView depthImageView;
+    VulkanAttachment depthAttachment;
 
     CameraMap cameras;
 

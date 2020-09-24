@@ -66,9 +66,7 @@ VulkanBinding::~VulkanBinding()
 
     vkDestroyRenderPass(device, mainRenderPass, nullptr);
 
-    vkDestroyImageView(device, depthImageView, nullptr);
-    vkDestroyImage(device, depthImage, nullptr);
-    vkFreeMemory(device, depthImageMemory, nullptr);
+    depthAttachment.destroy(device);
 
     for(auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
@@ -488,7 +486,7 @@ bool VulkanBinding::hasStencilComponent(VkFormat format)
 
 void VulkanBinding::createDepthResources()
 {
-    depthFormat = findSupportedFormat(
+    depthAttachment.format = findSupportedFormat(
         {VK_FORMAT_D32_SFLOAT,
         VK_FORMAT_D32_SFLOAT_S8_UINT,
         VK_FORMAT_D24_UNORM_S8_UINT},
@@ -498,22 +496,22 @@ void VulkanBinding::createDepthResources()
 
     createImage(
         swapChainExtent.width, swapChainExtent.height,
-        depthFormat, VK_IMAGE_TILING_OPTIMAL,
+        depthAttachment.format, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        depthImage, depthImageMemory
+        depthAttachment.image, depthAttachment.memory
     );
 
     createImageView(
-        depthImage, depthFormat,
+        depthAttachment.image, depthAttachment.format,
         VK_IMAGE_ASPECT_DEPTH_BIT,
-        depthImageView
+        depthAttachment.imageView
     );
 }
 
 void VulkanBinding::createRenderPass()
 {
     // Create attachment data
-    VkAttachmentDescription colorAttachment{
+    VkAttachmentDescription colorAttachmentDescription{
         .format = swapChainImageFormat,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -529,8 +527,8 @@ void VulkanBinding::createRenderPass()
         .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    VkAttachmentDescription depthAttachment{
-        .format = depthFormat,
+    VkAttachmentDescription depthAttachmentDescription{
+        .format = depthAttachment.format,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -563,8 +561,8 @@ void VulkanBinding::createRenderPass()
     });
 
     std::vector<VkAttachmentDescription> attachments = {
-        colorAttachment,
-        depthAttachment
+        colorAttachmentDescription,
+        depthAttachmentDescription
     };
 
     std::vector<VkSubpassDescription> subpasses = {
@@ -593,7 +591,7 @@ void VulkanBinding::createFramebuffers()
     for(size_t i = 0; i < swapChainImageViews.size(); i++) {
         std::array<VkImageView, 2> attachments = {
             swapChainImageViews[i],
-            depthImageView
+            depthAttachment.imageView
         };
 
         VkFramebufferCreateInfo framebufferInfo{
