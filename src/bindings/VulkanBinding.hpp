@@ -55,6 +55,8 @@ public:
     void endSingleTimeCommands(VkCommandBuffer);
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
     void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
+    void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
+    void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
     void update();
     void render(std::vector<Pipeline*>&);

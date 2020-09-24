@@ -456,29 +456,12 @@ void VulkanBinding::createImageViews()
     swapChainImageViews.resize(swapChainImages.size());
 
     for(size_t i = 0; i < swapChainImages.size(); i++) {
-        VkImageViewCreateInfo createInfo{
-            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .image = swapChainImages[i],
-            .viewType = VK_IMAGE_VIEW_TYPE_2D,
-            .format = swapChainImageFormat,
-            .components = {
-                .r = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .a = VK_COMPONENT_SWIZZLE_IDENTITY
-            },
-            .subresourceRange = {
-                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-                .baseMipLevel = 0,
-                .levelCount = 1,
-                .baseArrayLayer = 0,
-                .layerCount = 1
-            }
-        };
-
-        if(vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to create swap chain image views");
-        }
+        createImageView(
+            swapChainImages[i],
+            swapChainImageFormat,
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            swapChainImageViews[i]
+        );
     }
 }
 
@@ -513,70 +496,23 @@ void VulkanBinding::createDepthResources()
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
     );
 
-    VkImageCreateInfo imageInfo{
-        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
-        .format = depthFormat,
-        .extent = {
-            .width = swapChainExtent.width,
-            .height = swapChainExtent.height,
-            .depth = 1
-        },
-        .mipLevels = 1,
-        .arrayLayers = 1,
-        .samples = VK_SAMPLE_COUNT_1_BIT,
-        .tiling = VK_IMAGE_TILING_OPTIMAL,
-        .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
-    };
+    createImage(
+        swapChainExtent.width, swapChainExtent.height,
+        depthFormat, VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        depthImage, depthImageMemory
+    );
 
-    if(vkCreateImage(device, &imageInfo, nullptr, &depthImage) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create depth image");
-    }
-
-    VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(device, depthImage, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .allocationSize = memRequirements.size,
-        .memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
-    };
-
-    if(vkAllocateMemory(device, &allocInfo, nullptr, &depthImageMemory) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to allocate depth image memory");
-    }
-
-    vkBindImageMemory(device, depthImage, depthImageMemory, 0);
-
-    VkImageViewCreateInfo viewInfo{
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .image = depthImage,
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
-        .format = depthFormat,
-        .components = {
-            .r = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-            .a = VK_COMPONENT_SWIZZLE_IDENTITY
-        },
-        .subresourceRange = {
-            .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
-            .baseMipLevel = 0,
-            .levelCount = 1,
-            .baseArrayLayer = 0,
-            .layerCount = 1
-        }
-    };
-
-    if(vkCreateImageView(device, &viewInfo, nullptr, &depthImageView) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create depth image view");
-    }
+    createImageView(
+        depthImage, depthFormat,
+        VK_IMAGE_ASPECT_DEPTH_BIT,
+        depthImageView
+    );
 }
 
 void VulkanBinding::createRenderPass()
 {
+    // Create attachment data
     VkAttachmentDescription colorAttachment{
         .format = swapChainImageFormat,
         .samples = VK_SAMPLE_COUNT_1_BIT,
@@ -609,35 +545,40 @@ void VulkanBinding::createRenderPass()
         .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
-    VkSubpassDescription subpass{
+    VkSubpassDescription overlayPass = {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .colorAttachmentCount = 1,
         .pColorAttachments = &colorAttachmentRef,
         .pDepthStencilAttachment = &depthAttachmentRef
     };
 
-    VkSubpassDependency dependency{
+    std::vector<VkSubpassDependency> subpassDependencies;
+    subpassDependencies.push_back({
         .srcSubpass = VK_SUBPASS_EXTERNAL,
         .dstSubpass = 0,
         .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         .srcAccessMask = 0,
         .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
-    };
+    });
 
-    std::array<VkAttachmentDescription, 2> attachments = {
+    std::vector<VkAttachmentDescription> attachments = {
         colorAttachment,
         depthAttachment
+    };
+
+    std::vector<VkSubpassDescription> subpasses = {
+        overlayPass
     };
 
     VkRenderPassCreateInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
         .attachmentCount = static_cast<uint32_t>(attachments.size()),
         .pAttachments = attachments.data(),
-        .subpassCount = 1,
-        .pSubpasses = &subpass,
-        .dependencyCount = 1,
-        .pDependencies = &dependency
+        .subpassCount = static_cast<uint32_t>(subpasses.size()),
+        .pSubpasses = subpasses.data(),
+        .dependencyCount = static_cast<uint32_t>(subpassDependencies.size()),
+        .pDependencies = subpassDependencies.data()
     };
 
     if(vkCreateRenderPass(device, &renderPassInfo, nullptr, &mainRenderPass) != VK_SUCCESS) {
@@ -894,6 +835,80 @@ void VulkanBinding::copyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer bu
         1,
         &region
     );
+}
+
+void VulkanBinding::createImage(
+    uint32_t width, uint32_t height,
+    VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
+    VkMemoryPropertyFlags properties,
+    VkImage& image, VkDeviceMemory& imageMemory)
+{
+    VkImageCreateInfo imageInfo{
+        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+        .imageType = VK_IMAGE_TYPE_2D,
+        .format = format,
+        .extent = {
+            .width = width,
+            .height = height,
+            .depth = 1
+        },
+        .mipLevels = 1,
+        .arrayLayers = 1,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .tiling = tiling,
+        .usage = usage,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
+    };
+
+    if(vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create image");
+    }
+
+    VkMemoryRequirements memRequirements;
+    vkGetImageMemoryRequirements(device, image, &memRequirements);
+
+    VkMemoryAllocateInfo allocInfo{
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = memRequirements.size,
+        .memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties)
+    };
+
+    if(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to allocate depth image memory");
+    }
+
+    vkBindImageMemory(device, image, imageMemory, 0);
+}
+
+void VulkanBinding::createImageView(
+    VkImage image, VkFormat format,
+    VkImageAspectFlags aspectFlags,
+    VkImageView& imageView)
+{
+    VkImageViewCreateInfo viewInfo{
+        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        .image = image,
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .format = format,
+        .components = {
+            .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .a = VK_COMPONENT_SWIZZLE_IDENTITY
+        },
+        .subresourceRange = {
+            .aspectMask = aspectFlags,
+            .baseMipLevel = 0,
+            .levelCount = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        }
+    };
+
+    if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create image view");
+    }
 }
 
 void VulkanBinding::update()
