@@ -3,6 +3,7 @@
 AmbientLightPipeline::AmbientLightPipeline(VulkanBinding* _vk)
 {
     vk = _vk;
+    gBuffer = vk->getGBuffer();
 
     createSetLayout();
     createPipelineLayout();
@@ -24,13 +25,15 @@ void AmbientLightPipeline::createSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 
-    layoutBindings.push_back({
-        .binding = 0,
+    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+        layoutBindings.push_back({
+        .binding = i,
         .descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
         .descriptorCount = 1,
         .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
         .pImmutableSamplers = nullptr
     });
+    }
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
@@ -218,10 +221,13 @@ void AmbientLightPipeline::createPipeline()
 void AmbientLightPipeline::createDescriptorPool()
 {
     std::vector<VkDescriptorPoolSize> poolSizes;
-    poolSizes.push_back({
-        .type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
-        .descriptorCount = 1
-    });
+
+    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+        poolSizes.push_back({
+            .type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+            .descriptorCount = 1
+        });
+    }
 
     VkDescriptorPoolCreateInfo poolInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
@@ -252,21 +258,26 @@ void AmbientLightPipeline::createDescriptorSet()
 void AmbientLightPipeline::writeDescriptorSet()
 {
     std::vector<VkWriteDescriptorSet> descriptorWrites;
+    std::vector<VkDescriptorImageInfo> imageInfo;
 
-    VkDescriptorImageInfo albedoInfo{
-        .imageView = vk->getAlbedoView(),
-        .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-    };
+    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+        imageInfo.push_back({
+            .imageView = gBuffer[i]->imageView,
+            .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        });
+    }
 
-    descriptorWrites.push_back({
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .dstSet = descriptorSet,
-        .dstBinding = 0,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
-        .pImageInfo = &albedoInfo
-    });
+    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+        descriptorWrites.push_back({
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .dstSet = descriptorSet,
+            .dstBinding = i,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+            .pImageInfo = &imageInfo[i]
+        });
+    }
 
     vkUpdateDescriptorSets(vk->device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }

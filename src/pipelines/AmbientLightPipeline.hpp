@@ -24,6 +24,7 @@ private:
     void writeDescriptorSet();
     VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
 
+    GBuffer gBuffer;
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;

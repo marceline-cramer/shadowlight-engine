@@ -53,6 +53,8 @@ struct VulkanAttachment
     }
 };
 
+using GBuffer = std::vector<VulkanAttachment*>;
+
 class VulkanBinding : public Binding
 {
 public:
@@ -72,7 +74,7 @@ public:
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
-    VkImageView getAlbedoView() { return albedoAttachment.imageView; }
+    GBuffer getGBuffer() { return gBuffer; }
     VkImageView getRadianceView() { return radianceAttachment.imageView; }
 
     void update();
@@ -160,8 +162,12 @@ private:
     VkExtent2D swapChainExtent;
 
     VulkanAttachment depthAttachment;
-    VulkanAttachment albedoAttachment;
     VulkanAttachment radianceAttachment;
+    VulkanAttachment albedoAttachment;
+    VulkanAttachment positionAttachment;
+    VulkanAttachment normalAttachment;
+    VulkanAttachment propertyAttachment;
+    GBuffer gBuffer;
 
     CameraMap cameras;
 

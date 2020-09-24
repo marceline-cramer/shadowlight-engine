@@ -67,8 +67,11 @@ VulkanBinding::~VulkanBinding()
     vkDestroyRenderPass(device, mainRenderPass, nullptr);
 
     depthAttachment.destroy(device);
-    albedoAttachment.destroy(device);
     radianceAttachment.destroy(device);
+    albedoAttachment.destroy(device);
+    positionAttachment.destroy(device);
+    normalAttachment.destroy(device);
+    propertyAttachment.destroy(device);
 
     for(auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
@@ -539,6 +542,40 @@ void VulkanBinding::createGBuffers()
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         VK_IMAGE_ASPECT_COLOR_BIT
     );
+
+    createAttachment(
+        positionAttachment, VK_FORMAT_R32G32B32A32_SFLOAT,
+        width, height,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT
+    );
+
+    createAttachment(
+        normalAttachment, VK_FORMAT_R16G16B16A16_SFLOAT,
+        width, height,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT
+    );
+
+    createAttachment(
+        propertyAttachment, VK_FORMAT_R8G8B8A8_UNORM,
+        width, height,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT
+    );
+
+    gBuffer = {
+        &albedoAttachment,
+        &positionAttachment,
+        &normalAttachment,
+        &propertyAttachment
+    };
 }
 
 void VulkanBinding::createRenderPass()
@@ -597,45 +634,49 @@ void VulkanBinding::createRenderPass()
         .layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
     };
 
-    VkAttachmentDescription albedoDescription{
-        .format = albedoAttachment.format,
-        .samples = VK_SAMPLE_COUNT_1_BIT,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-        .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-    };
-
-    VkAttachmentReference albedoTargetRef{
-        .attachment = 3,
-        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-    };
-
-    VkAttachmentReference albedoInputRef{
-        .attachment = 3,
-        .layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-    };
-
     std::vector<VkAttachmentDescription> attachments = {
         presentDescription,
         depthDescription,
-        radianceDescription,
-        albedoDescription
+        radianceDescription
     };
+
+    std::vector<VkAttachmentReference> gTargetRef;
+    std::vector<VkAttachmentReference> gInputRef;
+
+    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+        attachments.push_back({
+            .format = gBuffer[i]->format,
+            .samples = VK_SAMPLE_COUNT_1_BIT,
+            .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+            .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+            .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+            .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+            .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+            .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        });
+
+        gTargetRef.push_back({
+            .attachment = 3 + i,
+            .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+        });
+
+        gInputRef.push_back({
+            .attachment = 3 + i,
+            .layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        });
+    }
 
     VkSubpassDescription deferredPass = {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-        .colorAttachmentCount = 1,
-        .pColorAttachments = &albedoTargetRef,
+        .colorAttachmentCount = static_cast<uint32_t>(gTargetRef.size()),
+        .pColorAttachments = gTargetRef.data(),
         .pDepthStencilAttachment = &depthRef
     };
 
     VkSubpassDescription lightingPass = {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-        .inputAttachmentCount = 1,
-        .pInputAttachments = &albedoInputRef,
+        .inputAttachmentCount = static_cast<uint32_t>(gInputRef.size()),
+        .pInputAttachments = gInputRef.data(),
         .colorAttachmentCount = 1,
         .pColorAttachments = &radianceTargetRef,
         .pDepthStencilAttachment = &depthRef
@@ -726,12 +767,15 @@ void VulkanBinding::createFramebuffers()
     swapChainFramebuffers.resize(swapChainImageViews.size());
 
     for(size_t i = 0; i < swapChainImageViews.size(); i++) {
-        std::array<VkImageView, 4> attachments = {
+        std::vector<VkImageView> attachments = {
             swapChainImageViews[i],
             depthAttachment.imageView,
-            radianceAttachment.imageView,
-            albedoAttachment.imageView
+            radianceAttachment.imageView
         };
+
+        for(auto attachment : gBuffer) {
+            attachments.push_back(attachment->imageView);
+        }
 
         VkFramebufferCreateInfo framebufferInfo{
             .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -1078,7 +1122,7 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, PipelineSet& lighting
         throw std::runtime_error("Failed to begin command buffer");
     }
 
-    std::array<VkClearValue, 4> clearValues;
+    std::array<VkClearValue, 7> clearValues;
     // Swapchain
     clearValues[0].color = {0.2, 0.0, 0.0, 1.0};
     // Shared depth
@@ -1087,6 +1131,12 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, PipelineSet& lighting
     clearValues[2].color = {0.0, 0.0, 0.0, 1.0};
     // Albedo
     clearValues[3].color = {0.0, 0.0, 0.2, 1.0};
+    // Position
+    clearValues[4].color = {0.0, 0.1, 0.0, 1.0};
+    // Normal
+    clearValues[5].color = {1.0, 0.0, 0.0, 1.0};
+    // Properties
+    clearValues[6].color = {0.5, 0.5, 0.5, 1.0};
 
     VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
