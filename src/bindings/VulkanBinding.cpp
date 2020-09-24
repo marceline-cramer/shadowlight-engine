@@ -592,6 +592,13 @@ void VulkanBinding::createRenderPass()
         albedoDescription
     };
 
+    VkSubpassDescription deferredPass = {
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &albedoTargetRef,
+        .pDepthStencilAttachment = &depthRef
+    };
+
     VkSubpassDescription overlayPass = {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .colorAttachmentCount = 1,
@@ -599,14 +606,47 @@ void VulkanBinding::createRenderPass()
         .pDepthStencilAttachment = &depthRef
     };
 
+    VkSubpassDescription compositePass = {
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .inputAttachmentCount = 1,
+        .pInputAttachments = &albedoInputRef,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &presentRef,
+        .pDepthStencilAttachment = &depthRef
+    };
+
     std::vector<VkSubpassDescription> subpasses = {
+        deferredPass,
+        compositePass,
         overlayPass
     };
 
     std::vector<VkSubpassDependency> subpassDependencies;
+
+    // Wait until G-Buffer is ready before drawing geometry
     subpassDependencies.push_back({
         .srcSubpass = VK_SUBPASS_EXTERNAL,
         .dstSubpass = 0,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+    });
+
+    // Wait until deferred rendering is done before compositing
+    subpassDependencies.push_back({
+        .srcSubpass = 0,
+        .dstSubpass = 1,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+    });
+
+    // Wait until compositing is done before adding overlays
+    subpassDependencies.push_back({
+        .srcSubpass = 1,
+        .dstSubpass = 2,
         .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
         .srcAccessMask = 0,
@@ -1003,11 +1043,16 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-    // Render each pipeline
+    // Deferred pass
+    vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
+
+    // Composite pass
+    vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
+
+    // Overlay pass
     for(auto p : pipelines) {
         p->render(commandBuffer, mainCamera);
     }
-
     vkCmdEndRenderPass(commandBuffer);
 
     // End the command buffer
