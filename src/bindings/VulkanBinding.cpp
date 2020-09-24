@@ -67,6 +67,7 @@ VulkanBinding::~VulkanBinding()
     vkDestroyRenderPass(device, mainRenderPass, nullptr);
 
     depthAttachment.destroy(device);
+    albedoAttachment.destroy(device);
 
     for(auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
@@ -495,7 +496,7 @@ void VulkanBinding::createAttachment(
 {
     attachment.format = format;
     createImage(width, height, attachment.format, tiling, usage, memoryFlags, attachment.image, attachment.memory);
-    createImageView(attachment.image, attachment.format, VK_IMAGE_ASPECT_DEPTH_BIT, attachment.imageView);
+    createImageView(attachment.image, attachment.format, aspect, attachment.imageView);
 }
 
 void VulkanBinding::createGBuffers()
@@ -518,12 +519,21 @@ void VulkanBinding::createGBuffers()
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         VK_IMAGE_ASPECT_DEPTH_BIT);
+    
+    createAttachment(
+        albedoAttachment, VK_FORMAT_R8G8B8A8_SRGB,
+        width, height,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_IMAGE_ASPECT_COLOR_BIT
+    );
 }
 
 void VulkanBinding::createRenderPass()
 {
     // Create attachment data
-    VkAttachmentDescription colorAttachmentDescription{
+    VkAttachmentDescription presentDescription{
         .format = swapChainImageFormat,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -534,12 +544,12 @@ void VulkanBinding::createRenderPass()
         .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
     };
 
-    VkAttachmentReference colorAttachmentRef{
+    VkAttachmentReference presentRef{
         .attachment = 0,
         .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    VkAttachmentDescription depthAttachmentDescription{
+    VkAttachmentDescription depthDescription{
         .format = depthAttachment.format,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -550,16 +560,47 @@ void VulkanBinding::createRenderPass()
         .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
     };
 
-    VkAttachmentReference depthAttachmentRef{
+    VkAttachmentReference depthRef{
         .attachment = 1,
         .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+    };
+
+    VkAttachmentDescription albedoDescription{
+        .format = albedoAttachment.format,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+
+    VkAttachmentReference albedoTargetRef{
+        .attachment = 2,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+
+    VkAttachmentReference albedoInputRef{
+        .attachment = 2,
+        .layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    };
+
+    std::vector<VkAttachmentDescription> attachments = {
+        presentDescription,
+        depthDescription,
+        albedoDescription
     };
 
     VkSubpassDescription overlayPass = {
         .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
         .colorAttachmentCount = 1,
-        .pColorAttachments = &colorAttachmentRef,
-        .pDepthStencilAttachment = &depthAttachmentRef
+        .pColorAttachments = &presentRef,
+        .pDepthStencilAttachment = &depthRef
+    };
+
+    std::vector<VkSubpassDescription> subpasses = {
+        overlayPass
     };
 
     std::vector<VkSubpassDependency> subpassDependencies;
@@ -571,15 +612,6 @@ void VulkanBinding::createRenderPass()
         .srcAccessMask = 0,
         .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
     });
-
-    std::vector<VkAttachmentDescription> attachments = {
-        colorAttachmentDescription,
-        depthAttachmentDescription
-    };
-
-    std::vector<VkSubpassDescription> subpasses = {
-        overlayPass
-    };
 
     VkRenderPassCreateInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
@@ -601,9 +633,10 @@ void VulkanBinding::createFramebuffers()
     swapChainFramebuffers.resize(swapChainImageViews.size());
 
     for(size_t i = 0; i < swapChainImageViews.size(); i++) {
-        std::array<VkImageView, 2> attachments = {
+        std::array<VkImageView, 3> attachments = {
             swapChainImageViews[i],
-            depthAttachment.imageView
+            depthAttachment.imageView,
+            albedoAttachment.imageView
         };
 
         VkFramebufferCreateInfo framebufferInfo{
@@ -951,9 +984,10 @@ void VulkanBinding::render(std::vector<Pipeline*>& pipelines)
         throw std::runtime_error("Failed to begin command buffer");
     }
 
-    std::array<VkClearValue, 2> clearValues;
+    std::array<VkClearValue, 3> clearValues;
     clearValues[0].color = {0.2, 0.0, 0.0, 1.0};
     clearValues[1].depthStencil = {1.0, 0};
+    clearValues[2].color = {0.0, 0.0, 0.2, 1.0};
 
     VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,

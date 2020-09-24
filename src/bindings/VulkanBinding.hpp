@@ -155,6 +155,7 @@ private:
     VkExtent2D swapChainExtent;
 
     VulkanAttachment depthAttachment;
+    VulkanAttachment albedoAttachment;
 
     CameraMap cameras;
 
