@@ -14,11 +14,13 @@ Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBin
     audioPool = new AssetPool<AudioAsset>(oal);
 
     // Create pipelines
-    meshPipeline = new MeshPipeline(vk);
-    deferredPipelines.insert(meshPipeline);
+    deferredPipelines.insert(meshPipeline = new MeshPipeline(vk));
+
+    lightingPipelines.insert(ambientLightPipeline = new AmbientLightPipeline(vk));
+
     compositePipeline = new CompositePipeline(vk);
-    pointLightPipeline = new PointLightPipeline(vk);
-    overlayPipelines.insert(pointLightPipeline);
+
+    overlayPipelines.insert(pointLightPipeline = new PointLightPipeline(vk));
 
     // Load the config.json file
     rapidjson::Document config;
@@ -47,6 +49,7 @@ Scene::~Scene()
 
     // Delete graphics pipelines
     delete meshPipeline;
+    delete ambientLightPipeline;
     delete compositePipeline;
     delete pointLightPipeline;
 
@@ -268,7 +271,7 @@ void Scene::update(double dt)
     }
 
     // Draw scene
-    vk->render(deferredPipelines, compositePipeline, overlayPipelines);
+    vk->render(deferredPipelines, lightingPipelines, compositePipeline, overlayPipelines);
 
     if(reloadFlag) {
         load();

@@ -76,7 +76,7 @@ public:
     VkImageView getRadianceView() { return radianceAttachment.imageView; }
 
     void update();
-    void render(PipelineSet&, Pipeline*, PipelineSet&);
+    void render(PipelineSet&, PipelineSet&, Pipeline*, PipelineSet&);
 
     CameraComponent* createCamera(const char*);
 private:
@@ -96,6 +96,7 @@ private:
     // so friend classes are necessary
     friend class MeshFeedForwardPipeline;
     friend class CompositePipeline;
+    friend class AmbientLightPipeline;
     
     friend class MeshAsset;
     friend class MaterialAsset;

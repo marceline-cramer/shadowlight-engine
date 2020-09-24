@@ -31,6 +31,7 @@ src = [
     'src/pipelines/MeshPipeline.cpp',
     'src/pipelines/PointLightPipeline.cpp',
     'src/pipelines/CompositePipeline.cpp',
+    'src/pipelines/AmbientLightPipeline.cpp',
 
     'src/input/MouseAxis.cpp',
     'src/input/KeyboardAxis.cpp'

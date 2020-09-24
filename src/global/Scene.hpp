@@ -25,6 +25,7 @@
 #include "pipelines/MeshPipeline.hpp"
 #include "pipelines/PointLightPipeline.hpp"
 #include "pipelines/CompositePipeline.hpp"
+#include "pipelines/AmbientLightPipeline.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 
@@ -66,8 +67,10 @@ private:
 
     // Graphics pipelines
     PipelineSet deferredPipelines;
+    PipelineSet lightingPipelines;
     PipelineSet overlayPipelines;
     MeshPipeline* meshPipeline;
+    AmbientLightPipeline* ambientLightPipeline;
     CompositePipeline* compositePipeline;
     PointLightPipeline* pointLightPipeline;
 };

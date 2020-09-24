@@ -1053,7 +1053,7 @@ void VulkanBinding::update()
 
 }
 
-void VulkanBinding::render(PipelineSet& deferredPipelines, Pipeline* compositePipeline, PipelineSet& overlayPipelines)
+void VulkanBinding::render(PipelineSet& deferredPipelines, PipelineSet& lightingPipelines, Pipeline* compositePipeline, PipelineSet& overlayPipelines)
 {
     auto it = cameras.find("main");
     if(it == cameras.end()) {
@@ -1084,7 +1084,7 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, Pipeline* compositePi
     // Shared depth
     clearValues[1].depthStencil = {1.0, 0};
     // Radiance
-    clearValues[2].color = {0.0, 0.2, 0.0, 1.0};
+    clearValues[2].color = {0.0, 0.0, 0.0, 1.0};
     // Albedo
     clearValues[3].color = {0.0, 0.0, 0.2, 1.0};
 
@@ -1109,6 +1109,9 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, Pipeline* compositePi
     vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 
     // Lighting pass
+    for(auto p : lightingPipelines) {
+        p->render(commandBuffer, mainCamera);
+    }
     vkCmdNextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
 
     // Composite pass
