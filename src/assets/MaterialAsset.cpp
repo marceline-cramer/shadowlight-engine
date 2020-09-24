@@ -44,36 +44,12 @@ void MaterialAsset::load(Binding* _vk, const char* fileName)
 
     const char* fragFile = config["fragShader"].GetString();
 
-    createLightSet();
-    createObjectSet();
+    createSetLayout();
     createPipelineLayout();
     createPipeline(vertFile, fragFile);
 }
 
-void MaterialAsset::createLightSet()
-{
-    std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
-
-    layoutBindings.push_back({
-        .binding = 0,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .pImmutableSamplers = nullptr
-    });
-
-    VkDescriptorSetLayoutCreateInfo layoutInfo{
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .bindingCount = static_cast<uint32_t>(layoutBindings.size()),
-        .pBindings = layoutBindings.data()
-    };
-
-    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &lightSetLayout) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create descriptor set layout");
-    }
-}
-
-void MaterialAsset::createObjectSet()
+void MaterialAsset::createSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 
@@ -101,18 +77,17 @@ void MaterialAsset::createObjectSet()
         .pBindings = layoutBindings.data()
     };
 
-    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &objectSetLayout) != VK_SUCCESS) {
+    if(vkCreateDescriptorSetLayout(vk->device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create descriptor set layout");
     }
 }
 
 void MaterialAsset::createPipelineLayout()
 {
-    auto setLayouts = getSetLayouts();
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = static_cast<uint32_t>(setLayouts.size()),
-        .pSetLayouts = setLayouts.data(),
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = nullptr
     };
@@ -285,22 +260,12 @@ void MaterialAsset::unload()
 {
     vkDestroyPipeline(vk->device, graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(vk->device, pipelineLayout, nullptr);
-    vkDestroyDescriptorSetLayout(vk->device, objectSetLayout, nullptr);
-    vkDestroyDescriptorSetLayout(vk->device, lightSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(vk->device, descriptorSetLayout, nullptr);
 }
 
 void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-}
-
-std::vector<VkDescriptorSetLayout> MaterialAsset::getSetLayouts()
-{
-    // TODO Light descriptors
-    return {
-        //lightSetLayout,
-        objectSetLayout
-    };
 }
 
 VkShaderModule MaterialAsset::compileShader(const char* fileName, std::string source, shaderc_shader_kind kind)

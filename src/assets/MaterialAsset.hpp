@@ -16,19 +16,17 @@ public:
     void bindPipeline(VkCommandBuffer);
 
     std::vector<std::string> getTextures() { return textures; }
-    std::vector<VkDescriptorSetLayout> getSetLayouts();
+    VkDescriptorSetLayout getSetLayout() { return descriptorSetLayout; };
     VkPipelineLayout getPipelineLayout() { return pipelineLayout; }
 private:
     // Utility functions
-    void createLightSet();
-    void createObjectSet();
+    void createSetLayout();
     void createPipelineLayout();
     void createPipeline(const char*, const char*);
     VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
     
     // Vulkan objects
-    VkDescriptorSetLayout lightSetLayout;
-    VkDescriptorSetLayout objectSetLayout;
+    VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
 

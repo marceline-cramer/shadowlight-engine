@@ -36,12 +36,12 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
         throw std::runtime_error("Failed to create descriptor pool");
     }
 
-    auto setLayouts = material.getAsset()->getSetLayouts();
+    auto setLayout = material.getAsset()->getSetLayout();
     VkDescriptorSetAllocateInfo allocInfo{
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .descriptorPool = descriptorPool,
-        .descriptorSetCount = static_cast<uint32_t>(setLayouts.size()),
-        .pSetLayouts = setLayouts.data()
+        .descriptorSetCount = 1,
+        .pSetLayouts = &setLayout
     };
 
     if(vkAllocateDescriptorSets(vk->device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
