@@ -72,6 +72,9 @@ public:
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
+    VkImageView getAlbedoView() { return albedoAttachment.imageView; }
+    VkImageView getRadianceView() { return radianceAttachment.imageView; }
+
     void update();
     void render(PipelineSet&, Pipeline*, PipelineSet&);
 
@@ -92,6 +95,7 @@ private:
     // Pipelines, Vulkan assets, and Vulkan bindings are tightly coupled,
     // so friend classes are necessary
     friend class MeshFeedForwardPipeline;
+    friend class CompositePipeline;
     
     friend class MeshAsset;
     friend class MaterialAsset;
@@ -156,6 +160,7 @@ private:
 
     VulkanAttachment depthAttachment;
     VulkanAttachment albedoAttachment;
+    VulkanAttachment radianceAttachment;
 
     CameraMap cameras;
 
