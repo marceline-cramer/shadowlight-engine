@@ -2,8 +2,8 @@
 
 PointLightShader::PointLightShader(VkDevice device)
 {
-    vertShader = new ShaderModule(device, "Composite.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "Composite.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(device, "PointLight.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(device, "PointLight.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec2 positions[4] = vec2[](

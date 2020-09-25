@@ -2,8 +2,8 @@
 
 AmbientLightShader::AmbientLightShader(VkDevice device)
 {
-    vertShader = new ShaderModule(device, "Composite.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "Composite.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(device, "AmbientLight.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(device, "AmbientLight.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec2 positions[4] = vec2[](
