@@ -6,7 +6,7 @@
 
 #include "pipelines/Pipeline.hpp"
 
-#include "shaders/ShaderModule.hpp"
+#include "shaders/AmbientLightShader.hpp"
 
 class AmbientLightPipeline : public Pipeline
 {

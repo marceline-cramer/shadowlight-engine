@@ -37,7 +37,8 @@ src = [
     'src/input/KeyboardAxis.cpp',
 
     'src/shaders/ShaderModule.cpp',
-    'src/shaders/CompositeShader.cpp'
+    'src/shaders/CompositeShader.cpp',
+    'src/shaders/AmbientLightShader.cpp'
 ]
 
 dependencies = [
