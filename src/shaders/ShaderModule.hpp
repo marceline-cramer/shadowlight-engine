@@ -3,10 +3,13 @@
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 #include <vulkan/vulkan.h>
 
 #include <shaderc/shaderc.hpp>
+
+using ShaderStages = std::vector<VkPipelineShaderStageCreateInfo>;
 
 class ShaderModule
 {
@@ -18,6 +21,7 @@ public:
     void pushFullscreenQuad();
 
     VkShaderModule compile();
+    VkPipelineShaderStageCreateInfo getStageCreateInfo();
 private:
     VkDevice device;
     std::ostringstream glslSource;

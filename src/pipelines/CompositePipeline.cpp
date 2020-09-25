@@ -60,39 +60,8 @@ void CompositePipeline::createPipelineLayout()
 
 void CompositePipeline::createPipeline()
 {
-    // TODO Config JSON
-    const char* fragFile = "shaders/composite.frag";
-    std::string fragShaderCode;
-    vk->fs->loadFile(fragFile, fragShaderCode);
-
-    // Load shader modules
-    ShaderModule vertShader(vk->device, "Composite.vert", shaderc_vertex_shader);
-    vertShader.pushFullscreenQuad();
-
-    ShaderModule fragShader(vk->device, "Composite.frag", shaderc_fragment_shader);
-    fragShader.pushCustom(fragShaderCode);
-
-    VkShaderModule vertShaderModule = vertShader.compile();
-    VkShaderModule fragShaderModule = fragShader.compile();
-
-    VkPipelineShaderStageCreateInfo vertShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_VERTEX_BIT,
-        .module = vertShaderModule,
-        .pName = "main"
-    };
-
-    VkPipelineShaderStageCreateInfo fragShaderStageInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-        .module = fragShaderModule,
-        .pName = "main"
-    };
-
-    VkPipelineShaderStageCreateInfo shaderStages[] = {
-        vertShaderStageInfo,
-        fragShaderStageInfo
-    };
+    CompositeShader shader(vk->device);
+    auto shaderStages = shader.getStages();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
@@ -193,8 +162,8 @@ void CompositePipeline::createPipeline()
 
     VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-        .stageCount = 2,
-        .pStages = shaderStages,
+        .stageCount = static_cast<uint32_t>(shaderStages.size()),
+        .pStages = shaderStages.data(),
         .pVertexInputState = &vertexInputInfo,
         .pInputAssemblyState = &inputAssembly,
         .pViewportState = &viewportState,

@@ -36,7 +36,8 @@ src = [
     'src/input/MouseAxis.cpp',
     'src/input/KeyboardAxis.cpp',
 
-    'src/shaders/ShaderModule.cpp'
+    'src/shaders/ShaderModule.cpp',
+    'src/shaders/CompositeShader.cpp'
 ]
 
 dependencies = [

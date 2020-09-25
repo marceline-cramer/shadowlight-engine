@@ -7,7 +7,7 @@
 
 #include "pipelines/Pipeline.hpp"
 
-#include "shaders/ShaderModule.hpp"
+#include "shaders/CompositeShader.hpp"
 
 class CompositePipeline : public Pipeline
 {

@@ -83,3 +83,24 @@ VkShaderModule ShaderModule::compile()
     compiled = true;
     return shaderModule;
 }
+
+VkPipelineShaderStageCreateInfo ShaderModule::getStageCreateInfo()
+{
+    if(shaderKind == shaderc_vertex_shader) {
+        return{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = VK_SHADER_STAGE_VERTEX_BIT,
+            .module = shaderModule,
+            .pName = "main"
+        };
+    } else if(shaderKind == shaderc_fragment_shader) {
+        return{
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .module = shaderModule,
+            .pName = "main"
+        };
+    } else {
+        throw std::runtime_error("Unrecognized shader type");
+    }
+}
