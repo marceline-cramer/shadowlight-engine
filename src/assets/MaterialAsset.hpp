@@ -5,7 +5,7 @@
 
 #include "bindings/VulkanBinding.hpp"
 
-#include "global/ShaderModule.hpp"
+#include "shaders/ShaderModule.hpp"
 
 class MaterialAsset : public Asset
 {

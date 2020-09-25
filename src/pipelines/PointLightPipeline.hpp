@@ -6,7 +6,7 @@
 
 #include "components/PointLightComponent.hpp"
 
-#include "global/ShaderModule.hpp"
+#include "shaders/ShaderModule.hpp"
 
 #include "pipelines/Pipeline.hpp"
 

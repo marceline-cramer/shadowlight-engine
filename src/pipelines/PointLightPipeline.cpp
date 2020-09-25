@@ -85,15 +85,13 @@ void PointLightPipeline::createPipelineLayout()
 void PointLightPipeline::createPipeline()
 {
     // TODO Config JSON
-    const char* vertFile = "shaders/pointLight.vert";
     const char* fragFile = "shaders/pointLight.frag";
-    std::string vertShaderCode, fragShaderCode;
-    vk->fs->loadFile(vertFile, vertShaderCode);
+    std::string fragShaderCode;
     vk->fs->loadFile(fragFile, fragShaderCode);
 
     // Load shader modules
     ShaderModule vertShader(vk->device, "PointLight.vert", shaderc_vertex_shader);
-    vertShader.pushCustom(vertShaderCode);
+    vertShader.pushFullscreenQuad();
 
     ShaderModule fragShader(vk->device, "PointLight.frag", shaderc_fragment_shader);
     fragShader.pushCustom(fragShaderCode);

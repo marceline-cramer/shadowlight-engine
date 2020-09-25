@@ -7,7 +7,6 @@ src = [
     'src/global/Scene.cpp',
     'src/global/Filesystem.cpp',
     'src/global/Window.cpp',
-    'src/global/ShaderModule.cpp',
 
     'src/assets/ScriptAsset.cpp',
     'src/assets/AudioAsset.cpp',
@@ -35,7 +34,9 @@ src = [
     'src/pipelines/AmbientLightPipeline.cpp',
 
     'src/input/MouseAxis.cpp',
-    'src/input/KeyboardAxis.cpp'
+    'src/input/KeyboardAxis.cpp',
+
+    'src/shaders/ShaderModule.cpp'
 ]
 
 dependencies = [

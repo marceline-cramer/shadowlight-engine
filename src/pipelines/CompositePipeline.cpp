@@ -61,15 +61,13 @@ void CompositePipeline::createPipelineLayout()
 void CompositePipeline::createPipeline()
 {
     // TODO Config JSON
-    const char* vertFile = "shaders/composite.vert";
     const char* fragFile = "shaders/composite.frag";
-    std::string vertShaderCode, fragShaderCode;
-    vk->fs->loadFile(vertFile, vertShaderCode);
+    std::string fragShaderCode;
     vk->fs->loadFile(fragFile, fragShaderCode);
 
     // Load shader modules
     ShaderModule vertShader(vk->device, "Composite.vert", shaderc_vertex_shader);
-    vertShader.pushCustom(vertShaderCode);
+    vertShader.pushFullscreenQuad();
 
     ShaderModule fragShader(vk->device, "Composite.frag", shaderc_fragment_shader);
     fragShader.pushCustom(fragShaderCode);

@@ -1,4 +1,4 @@
-#include "global/ShaderModule.hpp"
+#include "shaders/ShaderModule.hpp"
 
 ShaderModule::ShaderModule(VkDevice _device, std::string _shaderName, shaderc_shader_kind _shaderKind)
 {
@@ -7,6 +7,9 @@ ShaderModule::ShaderModule(VkDevice _device, std::string _shaderName, shaderc_sh
     shaderKind = _shaderKind;
 
     compiled = false;
+
+    glslSource << "#version 450" << std::endl;
+    glslSource << "#extension GL_ARB_separate_shader_objects : enable" << std::endl;
 }
 
 ShaderModule::~ShaderModule()
@@ -19,6 +22,32 @@ ShaderModule::~ShaderModule()
 void ShaderModule::pushCustom(std::string code)
 {
     glslSource << code << std::endl;
+}
+
+void ShaderModule::pushFullscreenQuad()
+{
+    glslSource << R"""(
+layout(location = 0) out vec2 fragTexCoord;
+
+vec2 positions[4] = vec2[](
+    vec2( 1.0, -1.0),
+    vec2(-1.0, -1.0),
+    vec2( 1.0,  1.0),
+    vec2(-1.0,  1.0)
+);
+
+vec2 texCoords[4] = vec2[](
+    vec2(1.0, 0.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 1.0)
+);
+
+void main() {
+    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
+    fragTexCoord = texCoords[gl_VertexIndex];
+}
+    )""" << std::endl;
 }
 
 VkShaderModule ShaderModule::compile()

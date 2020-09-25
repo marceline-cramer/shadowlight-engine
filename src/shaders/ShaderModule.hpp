@@ -15,6 +15,7 @@ public:
     ~ShaderModule();
 
     void pushCustom(std::string);
+    void pushFullscreenQuad();
 
     VkShaderModule compile();
 private:
