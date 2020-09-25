@@ -18,6 +18,7 @@ public:
 
     glm::mat4 getViewMatrix() { return viewMatrix; }
     glm::mat4 getProjectionMatrix() { return projectionMatrix; }
+    glm::vec3 getPosition() { return transform->position; }
 private:
     std::string target;
     CameraMap* parentMap;

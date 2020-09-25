@@ -1130,11 +1130,11 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, PipelineSet& lighting
     // Radiance
     clearValues[2].color = {0.0, 0.0, 0.0, 1.0};
     // Albedo
-    clearValues[3].color = {0.0, 0.0, 0.2, 1.0};
+    clearValues[3].color = {0.0, 0.0, 0.0, 1.0};
     // Position
-    clearValues[4].color = {0.0, 0.1, 0.0, 1.0};
+    clearValues[4].color = {0.0, 0.0, 0.0, 1.0};
     // Normal
-    clearValues[5].color = {1.0, 0.0, 0.0, 1.0};
+    clearValues[5].color = {0.0, 0.0, 1.0, 1.0};
     // Properties
     clearValues[6].color = {0.5, 0.5, 0.5, 1.0};
 

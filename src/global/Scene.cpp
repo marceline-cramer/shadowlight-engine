@@ -17,10 +17,9 @@ Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBin
     deferredPipelines.insert(meshPipeline = new MeshPipeline(vk));
 
     lightingPipelines.insert(ambientLightPipeline = new AmbientLightPipeline(vk));
+    lightingPipelines.insert(pointLightPipeline = new PointLightPipeline(vk));
 
     compositePipeline = new CompositePipeline(vk);
-
-    overlayPipelines.insert(pointLightPipeline = new PointLightPipeline(vk));
 
     // Load the config.json file
     rapidjson::Document config;

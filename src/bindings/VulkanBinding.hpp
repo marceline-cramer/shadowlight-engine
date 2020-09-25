@@ -99,12 +99,14 @@ private:
     friend class MeshFeedForwardPipeline;
     friend class CompositePipeline;
     friend class AmbientLightPipeline;
+    friend class PointLightPipeline;
     
     friend class MeshAsset;
     friend class MaterialAsset;
     friend class TextureAsset;
 
     friend class MeshRendererComponent;
+    friend class PointLightComponent;
 
     // Convenience functions
     bool checkValidationLayerSupport();
