@@ -39,7 +39,8 @@ src = [
     'src/shaders/ShaderModule.cpp',
     'src/shaders/CompositeShader.cpp',
     'src/shaders/AmbientLightShader.cpp',
-    'src/shaders/PointLightShader.cpp'
+    'src/shaders/PointLightShader.cpp',
+    'src/shaders/MaterialShader.cpp'
 ]
 
 dependencies = [

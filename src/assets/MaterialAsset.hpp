@@ -5,7 +5,7 @@
 
 #include "bindings/VulkanBinding.hpp"
 
-#include "shaders/ShaderModule.hpp"
+#include "shaders/MaterialShader.hpp"
 
 class MaterialAsset : public Asset
 {
@@ -22,7 +22,7 @@ private:
     // Utility functions
     void createSetLayout();
     void createPipelineLayout();
-    void createPipeline(const char*, const char*);
+    void createPipeline(const char*);
     
     // Vulkan objects
     VkDescriptorSetLayout descriptorSetLayout;
