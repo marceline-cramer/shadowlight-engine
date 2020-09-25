@@ -7,6 +7,7 @@ src = [
     'src/global/Scene.cpp',
     'src/global/Filesystem.cpp',
     'src/global/Window.cpp',
+    'src/global/ShaderModule.cpp',
 
     'src/assets/ScriptAsset.cpp',
     'src/assets/AudioAsset.cpp',
