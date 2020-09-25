@@ -43,10 +43,10 @@ layout(location = 1) in vec3 fragColor;
 layout(location = 2) in vec2 fragTexCoord;
 layout(location = 3) in vec3 fragNormal;
 
-layout(location = 0) out vec3 albedo;
-layout(location = 1) out vec3 position;
-layout(location = 2) out vec3 normal;
-layout(location = 3) out vec4 properties;
+layout(location = 0) out vec3 outAlbedo;
+layout(location = 1) out vec3 outPosition;
+layout(location = 2) out vec3 outNormal;
+layout(location = 3) out vec4 outProperties;
 
 void shadeMaterial(out vec3, out vec2, out float, out float);
 
@@ -55,11 +55,11 @@ void main() {
     float roughness;
     vec2 normalDisplace;
 
-    shadeMaterial(albedo, normalDisplace, metallic, roughness);
+    shadeMaterial(outAlbedo, normalDisplace, metallic, roughness);
 
-    position = fragPosition;
-    normal = fragNormal;
-    properties = vec4(metallic, roughness, 0.0, 0.0);
+    outPosition = fragPosition;
+    outNormal = fragNormal;
+    outProperties = vec4(metallic, roughness, 0.0, 0.0);
 }
     )""");
 
