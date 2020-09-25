@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include "shaderc/shaderc.hpp"
-
 #include "bindings/VulkanBinding.hpp"
 
 #include "pipelines/Pipeline.hpp"
+
+#include "global/ShaderModule.hpp"
 
 class AmbientLightPipeline : public Pipeline
 {
@@ -22,7 +22,6 @@ private:
     void createDescriptorPool();
     void createDescriptorSet();
     void writeDescriptorSet();
-    VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
 
     GBuffer gBuffer;
     VkDescriptorSetLayout descriptorSetLayout;

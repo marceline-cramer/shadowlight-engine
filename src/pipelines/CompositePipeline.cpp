@@ -68,8 +68,14 @@ void CompositePipeline::createPipeline()
     vk->fs->loadFile(fragFile, fragShaderCode);
 
     // Load shader modules
-    VkShaderModule vertShaderModule = compileShader(vertFile, vertShaderCode, shaderc_vertex_shader);
-    VkShaderModule fragShaderModule = compileShader(fragFile, fragShaderCode, shaderc_fragment_shader);
+    ShaderModule vertShader(vk->device, "Composite.vert", shaderc_vertex_shader);
+    vertShader.pushCustom(vertShaderCode);
+
+    ShaderModule fragShader(vk->device, "Composite.frag", shaderc_fragment_shader);
+    fragShader.pushCustom(fragShaderCode);
+
+    VkShaderModule vertShaderModule = vertShader.compile();
+    VkShaderModule fragShaderModule = fragShader.compile();
 
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -209,10 +215,6 @@ void CompositePipeline::createPipeline()
     if(vkCreateGraphicsPipelines(vk->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create graphics pipeline");
     }
-
-    // Clean up shader modules
-    vkDestroyShaderModule(vk->device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(vk->device, vertShaderModule, nullptr);
 }
 
 void CompositePipeline::createDescriptorPool()
@@ -276,23 +278,4 @@ void CompositePipeline::render(VkCommandBuffer commandBuffer, CameraComponent*)
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
     vkCmdDraw(commandBuffer, 4, 1, 0, 0);
-}
-
-VkShaderModule CompositePipeline::compileShader(const char* fileName, std::string source, shaderc_shader_kind kind)
-{
-    shaderc::Compiler compiler;
-    shaderc::CompileOptions options;
-
-    auto spirvModule = compiler.CompileGlslToSpv(source, kind, fileName, options);
-
-    if(spirvModule.GetCompilationStatus() != shaderc_compilation_status_success) {
-        std::ostringstream errorMessage;
-        errorMessage << "Shader " << fileName;
-        errorMessage << " compilation failed with ";
-        errorMessage << spirvModule.GetErrorMessage();
-        throw std::runtime_error(errorMessage.str());
-    }
-
-    std::vector<uint32_t> spirv = {spirvModule.cbegin(), spirvModule.cend()};
-    return vk->createShaderModule(spirv);
 }

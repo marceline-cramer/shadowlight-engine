@@ -104,8 +104,14 @@ void MaterialAsset::createPipeline(const char* vertFile, const char* fragFile)
     vk->fs->loadFile(fragFile, fragShaderCode);
 
     // Load shader modules
-    VkShaderModule vertShaderModule = compileShader(vertFile, vertShaderCode, shaderc_vertex_shader);
-    VkShaderModule fragShaderModule = compileShader(fragFile, fragShaderCode, shaderc_fragment_shader);
+    ShaderModule vertShader(vk->device, "Material.vert", shaderc_vertex_shader);
+    vertShader.pushCustom(vertShaderCode);
+
+    ShaderModule fragShader(vk->device, "Material.frag", shaderc_fragment_shader);
+    fragShader.pushCustom(fragShaderCode);
+
+    VkShaderModule vertShaderModule = vertShader.compile();
+    VkShaderModule fragShaderModule = fragShader.compile();
 
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -250,10 +256,6 @@ void MaterialAsset::createPipeline(const char* vertFile, const char* fragFile)
     if(vkCreateGraphicsPipelines(vk->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create graphics pipeline");
     }
-
-    // Clean up shader modules
-    vkDestroyShaderModule(vk->device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(vk->device, vertShaderModule, nullptr);
 }
 
 void MaterialAsset::unload()
@@ -266,23 +268,4 @@ void MaterialAsset::unload()
 void MaterialAsset::bindPipeline(VkCommandBuffer commandBuffer)
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-}
-
-VkShaderModule MaterialAsset::compileShader(const char* fileName, std::string source, shaderc_shader_kind kind)
-{
-    shaderc::Compiler compiler;
-    shaderc::CompileOptions options;
-
-    auto spirvModule = compiler.CompileGlslToSpv(source, kind, fileName, options);
-
-    if(spirvModule.GetCompilationStatus() != shaderc_compilation_status_success) {
-        std::ostringstream errorMessage;
-        errorMessage << "Shader " << fileName;
-        errorMessage << " compilation failed with ";
-        errorMessage << spirvModule.GetErrorMessage();
-        throw std::runtime_error(errorMessage.str());
-    }
-
-    std::vector<uint32_t> spirv = {spirvModule.cbegin(), spirvModule.cend()};
-    return vk->createShaderModule(spirv);
 }

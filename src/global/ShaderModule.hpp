@@ -14,6 +14,8 @@ public:
     ShaderModule(VkDevice, std::string, shaderc_shader_kind);
     ~ShaderModule();
 
+    void pushCustom(std::string);
+
     VkShaderModule compile();
 private:
     VkDevice device;

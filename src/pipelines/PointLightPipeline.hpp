@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include "shaderc/shaderc.hpp"
-
 #include "bindings/VulkanBinding.hpp"
 
 #include "components/PointLightComponent.hpp"
+
+#include "global/ShaderModule.hpp"
 
 #include "pipelines/Pipeline.hpp"
 
@@ -27,7 +27,6 @@ private:
     void createDescriptorPool();
     void createInputSet();
     void writeInputSet();
-    VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
 
     VulkanBinding* vk;
 

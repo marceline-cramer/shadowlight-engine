@@ -16,6 +16,11 @@ ShaderModule::~ShaderModule()
     }
 }
 
+void ShaderModule::pushCustom(std::string code)
+{
+    glslSource << code << std::endl;
+}
+
 VkShaderModule ShaderModule::compile()
 {
     if(compiled) return shaderModule;

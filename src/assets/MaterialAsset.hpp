@@ -1,11 +1,11 @@
 #pragma once
 
-#include "shaderc/shaderc.hpp"
-
 #include "assets/Asset.hpp"
 #include "assets/MeshAsset.hpp"
 
 #include "bindings/VulkanBinding.hpp"
+
+#include "global/ShaderModule.hpp"
 
 class MaterialAsset : public Asset
 {
@@ -23,7 +23,6 @@ private:
     void createSetLayout();
     void createPipelineLayout();
     void createPipeline(const char*, const char*);
-    VkShaderModule compileShader(const char*, std::string, shaderc_shader_kind);
     
     // Vulkan objects
     VkDescriptorSetLayout descriptorSetLayout;
