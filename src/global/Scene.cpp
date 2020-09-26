@@ -196,7 +196,13 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle PointLightComponent
     else if(componentType == PointLightComponent::ComponentType) {
-        auto c = pointLightPipeline->createPointLight();
+        ConfigData configData{
+            .root = component.GetObject(),
+            .name = componentType
+        };
+
+        PointLightConfig config(configData);
+        auto c = pointLightPipeline->createPointLight(config);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);

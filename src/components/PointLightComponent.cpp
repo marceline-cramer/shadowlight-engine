@@ -1,6 +1,6 @@
 #include "components/PointLightComponent.hpp"
 
-PointLightComponent::PointLightComponent(VulkanBinding* _vk, PointLightSet* _parentSet, VkPipelineLayout _pipelineLayout, VkDescriptorSetLayout _descriptorSetLayout)
+PointLightComponent::PointLightComponent(VulkanBinding* _vk, PointLightSet* _parentSet, VkPipelineLayout _pipelineLayout, VkDescriptorSetLayout _descriptorSetLayout, PointLightConfig& config)
 {
     vk = _vk;
     parentSet = _parentSet;
@@ -11,6 +11,9 @@ PointLightComponent::PointLightComponent(VulkanBinding* _vk, PointLightSet* _par
     createUniform();
     createDescriptorSet();
     writeDescriptorSet();
+
+    position = config.position;
+    flux = config.flux;
 
     parentSet->insert(this);
 }
@@ -39,8 +42,8 @@ void PointLightComponent::render(VkCommandBuffer commandBuffer, CameraComponent*
     // TODO Shadow mapping
     // TODO Light volumes
     PointLightUniform ubo{};
-    ubo.position = glm::vec3(4.0, -4.0, 4.0);
-    ubo.flux = glm::vec3(1.0, 1.0, 1.0);
+    ubo.position = position;
+    ubo.flux = flux;
     ubo.cameraPosition = camera->getPosition();
 
     void* data;

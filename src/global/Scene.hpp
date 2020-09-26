@@ -28,6 +28,7 @@
 #include "pipelines/AmbientLightPipeline.hpp"
 
 #include "config/EngineConfig.hpp"
+#include "config/PointLightConfig.hpp"
 
 using BucketMap = std::map<std::string, ComponentSet>;
 

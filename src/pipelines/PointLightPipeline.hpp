@@ -10,6 +10,8 @@
 
 #include "pipelines/Pipeline.hpp"
 
+#include "config/PointLightConfig.hpp"
+
 class PointLightPipeline : public Pipeline
 {
 public:
@@ -18,7 +20,7 @@ public:
 
     virtual void render(VkCommandBuffer, CameraComponent*);
 
-    PointLightComponent* createPointLight();
+    PointLightComponent* createPointLight(PointLightConfig&);
 private:
     void createInputSetLayout();
     void createUBOSetLayout();

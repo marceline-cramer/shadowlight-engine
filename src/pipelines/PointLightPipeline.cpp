@@ -294,8 +294,8 @@ void PointLightPipeline::render(VkCommandBuffer commandBuffer, CameraComponent* 
     }
 }
 
-PointLightComponent* PointLightPipeline::createPointLight()
+PointLightComponent* PointLightPipeline::createPointLight(PointLightConfig& config)
 {
-    auto pointLight = new PointLightComponent(vk, &pointLights, pipelineLayout, uboSetLayout);
+    auto pointLight = new PointLightComponent(vk, &pointLights, pipelineLayout, uboSetLayout, config);
     return pointLight;
 }

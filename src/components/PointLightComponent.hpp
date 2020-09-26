@@ -6,6 +6,8 @@
 
 #include "components/RendererComponent.hpp"
 
+#include "config/PointLightConfig.hpp"
+
 class PointLightComponent;
 using PointLightSet = std::set<PointLightComponent*>;
 
@@ -21,7 +23,7 @@ class PointLightComponent : public RendererComponent
 public:
     COMPONENT_TYPE("PointLight");
 
-    PointLightComponent(VulkanBinding*, PointLightSet*, VkPipelineLayout, VkDescriptorSetLayout);
+    PointLightComponent(VulkanBinding*, PointLightSet*, VkPipelineLayout, VkDescriptorSetLayout, PointLightConfig&);
     ~PointLightComponent();
 
     virtual void update(double);
@@ -43,4 +45,7 @@ private:
     VkDescriptorSet descriptorSet;
     VkBuffer uniformBuffer;
     VkDeviceMemory uniformBufferMemory;
+
+    glm::vec3 position;
+    glm::vec3 flux;
 };

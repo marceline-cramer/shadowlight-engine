@@ -47,7 +47,8 @@ src = [
     'src/shaders/MaterialShader.cpp',
 
     'src/config/Config.cpp',
-    'src/config/EngineConfig.cpp'
+    'src/config/EngineConfig.cpp',
+    'src/config/PointLightConfig.cpp'
 ]
 
 dependencies = [
