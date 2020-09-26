@@ -27,12 +27,14 @@
 #include "pipelines/CompositePipeline.hpp"
 #include "pipelines/AmbientLightPipeline.hpp"
 
+#include "config/EngineConfig.hpp"
+
 using BucketMap = std::map<std::string, ComponentSet>;
 
 class Scene
 {
 public:
-    Scene(Window*, VulkanBinding*, OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
+    Scene(EngineConfig*, Window*, VulkanBinding*, OpenALBinding*, BulletBinding*, LuaBinding*, Filesystem*);
     ~Scene();
     
     void load();
@@ -47,6 +49,9 @@ public:
 
     bool shouldQuit() { return quitFlag; };
 private:
+    // Config
+    EngineConfig* engineConfig;
+    
     // Scene state
     std::set<Entity*> entities;
     std::string currentScene;

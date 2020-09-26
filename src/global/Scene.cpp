@@ -1,7 +1,8 @@
 #include "global/Scene.hpp"
 
-Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
+Scene::Scene(EngineConfig* _engineConfig, Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    engineConfig = _engineConfig;
     window = _window;
     vk = _vk;
     oal = _oal;
@@ -21,20 +22,8 @@ Scene::Scene(Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBin
 
     compositePipeline = new CompositePipeline(vk);
 
-    // Load the config.json file
-    rapidjson::Document config;
-    fs->loadJson("config.json", config);
-
     // Load the first scene
-    if(!config.HasMember("firstScene")) {
-        throw std::runtime_error("Config file has no firstScene");
-    }
-
-    if(!config["firstScene"].IsString()) {
-        throw std::runtime_error("firstScene must be a string");
-    }
-
-    currentScene = config["firstScene"].GetString();
+    currentScene = engineConfig->firstScene;
     reloadFlag = true;
 }
 

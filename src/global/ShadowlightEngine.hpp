@@ -9,6 +9,8 @@
 #include "global/Scene.hpp"
 #include "global/Filesystem.hpp"
 
+#include "config/EngineConfig.hpp"
+
 class ShadowlightEngine {
 public:
     ShadowlightEngine();
@@ -16,6 +18,9 @@ public:
 
     void run();
 private:
+    // Config
+    EngineConfig* engineConfig;
+
     // Engine bindings
     LuaBinding* lua;
     BulletBinding* bullet;

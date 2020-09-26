@@ -5,12 +5,15 @@
 ShadowlightEngine::ShadowlightEngine()
 {
     fs = new Filesystem("../test-folder/");
+
+    engineConfig = fs->loadConfig<EngineConfig>("config.json");
+
     bullet = new BulletBinding();
     window = new Window();
     vulkan = new VulkanBinding(fs, window);
     oal = new OpenALBinding();
     lua = new LuaBinding(fs);
-    scene = new Scene(window, vulkan, oal, bullet, lua, fs);
+    scene = new Scene(engineConfig, window, vulkan, oal, bullet, lua, fs);
 }
 
 ShadowlightEngine::~ShadowlightEngine()
@@ -21,6 +24,8 @@ ShadowlightEngine::~ShadowlightEngine()
     delete vulkan;
     delete window;
     delete bullet;
+
+    delete engineConfig;
     delete fs;
 }
 
