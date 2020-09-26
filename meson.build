@@ -21,6 +21,7 @@ src = [
 
     'src/bindings/vk/RenderAttachment.cpp',
     'src/bindings/vk/GBuffer.cpp',
+    'src/bindings/vk/VulkanInstance.cpp',
 
     'src/components/ScriptComponent.cpp',
     'src/components/SceneComponent.cpp',

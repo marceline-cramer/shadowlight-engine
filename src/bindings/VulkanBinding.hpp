@@ -8,10 +8,9 @@
 
 #include <vulkan/vulkan.h>
 
-#include "vk_mem_alloc.h"
-
 #include "bindings/Binding.hpp"
 #include "bindings/vk/GBuffer.hpp"
+#include "bindings/vk/VulkanInstance.hpp"
 
 #include "components/CameraComponent.hpp"
 
@@ -19,26 +18,6 @@
 
 #include "global/Window.hpp"
 #include "global/Filesystem.hpp"
-
-struct QueueFamilyIndices
-{
-    uint32_t graphicsFamily;
-    bool hasGraphicsFamily = false;
-
-    uint32_t presentFamily;
-    bool hasPresentFamily = false;
-
-    bool isComplete() {
-        return hasGraphicsFamily && hasPresentFamily;
-    }
-};
-
-struct SwapChainSupportDetails
-{
-    VkSurfaceCapabilitiesKHR capabilities;
-    std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR> presentModes;
-};
 
 class VulkanBinding : public Binding
 {
@@ -51,13 +30,11 @@ public:
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
     void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
     void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);
-    size_t getSwapchainSize() { return swapChainImages.size(); };
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer);
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
     void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
-    void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
     GBuffer* getGBuffer() { return gBuffer; }
     VkImageView getRadianceView() { return gBuffer->radianceAttachment->getImageView(); }
@@ -67,17 +44,6 @@ public:
 
     CameraComponent* createCamera(const char*);
 private:
-    // Constants
-    const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
-    };
-
-    const std::vector<const char*> deviceExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
-    };
-
-    const bool enableValidationLayers = true;
-
     // Friend classes
     // Pipelines, Vulkan assets, and Vulkan bindings are tightly coupled,
     // so friend classes are necessary
@@ -93,30 +59,16 @@ private:
     friend class MeshRendererComponent;
     friend class PointLightComponent;
 
+    // TODO You're better than this, Mars.
+    VkDevice device;
+    VkExtent2D swapChainExtent;
+
     // Convenience functions
-    bool checkValidationLayerSupport();
-    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
-    void createInstance();
-    void setupDebugMessenger();
-    void createSurface();
-    void pickPhysicalDevice();
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice);
-    bool checkDeviceExtensionSupport(VkPhysicalDevice);
-    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice);
-    bool isDeviceSuitable(VkPhysicalDevice);
-    void createLogicalDevice();
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>&);
-    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>&);
-    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR&);
-    void createAllocator();
-    void createSwapchain();
-    void createImageViews();
     VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
     bool hasStencilComponent(VkFormat);
     void createGBuffers();
     void createRenderPass();
     void createFramebuffers();
-    void createCommandPool();
     void createCommandBuffers();
     void createSemaphores();
 
@@ -125,35 +77,16 @@ private:
     Filesystem* fs;
 
     // Vulkan data
-    VkInstance instance;
-    VkDebugUtilsMessengerEXT debugMessenger;
-    VkPhysicalDevice physicalDevice;
-    VkDevice device;
+    VulkanInstance* vulkanInstance;
 
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
-
-    VkCommandPool commandPool;
     std::vector<VkCommandBuffer> commandBuffers;
 
-    VkSurfaceKHR surface;
+    std::vector<VkFramebuffer> swapChainFramebuffers;
 
     VkRenderPass mainRenderPass;
-    
-    VkSwapchainKHR swapChain;
-    std::vector<VkImage> swapChainImages;
-    std::vector<VkImageView> swapChainImageViews;
-    std::vector<VkFramebuffer> swapChainFramebuffers;
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
-
     GBuffer* gBuffer;
-
     CameraMap cameras;
 
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;
-
-    // VulkanMemoryAllocator data
-    VmaAllocator allocator;
 };

@@ -111,6 +111,7 @@ void MaterialAsset::createPipeline(const char* materialFile)
         .primitiveRestartEnable = VK_FALSE
     };
     
+    // TODO Dynamic viewport state
     VkViewport viewport{
         .x = 0.0f,
         .y = 0.0f,
