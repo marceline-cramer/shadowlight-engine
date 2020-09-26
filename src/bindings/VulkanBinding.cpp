@@ -66,12 +66,7 @@ VulkanBinding::~VulkanBinding()
 
     vkDestroyRenderPass(device, mainRenderPass, nullptr);
 
-    depthAttachment.destroy(device);
-    radianceAttachment.destroy(device);
-    albedoAttachment.destroy(device);
-    positionAttachment.destroy(device);
-    normalAttachment.destroy(device);
-    propertyAttachment.destroy(device);
+    delete gBuffer;
 
     for(auto imageView : swapChainImageViews) {
         vkDestroyImageView(device, imageView, nullptr);
@@ -488,93 +483,12 @@ bool VulkanBinding::hasStencilComponent(VkFormat format)
     return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
-void VulkanBinding::createAttachment(
-    VulkanAttachment& attachment,
-    VkFormat format,
-    uint32_t width, uint32_t height,
-    VkImageTiling tiling, VkImageUsageFlags usage,
-    VkMemoryPropertyFlags memoryFlags,
-    VkImageAspectFlags aspect
-)
-{
-    attachment.format = format;
-    createImage(width, height, attachment.format, tiling, usage, memoryFlags, attachment.image, attachment.memory);
-    createImageView(attachment.image, attachment.format, aspect, attachment.imageView);
-}
-
 void VulkanBinding::createGBuffers()
 {
-    auto depthFormat = findSupportedFormat(
-        {VK_FORMAT_D32_SFLOAT,
-        VK_FORMAT_D32_SFLOAT_S8_UINT,
-        VK_FORMAT_D24_UNORM_S8_UINT},
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-    );
-
     auto width = swapChainExtent.width;
     auto height = swapChainExtent.height;
 
-    createAttachment(
-        depthAttachment, depthFormat,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_DEPTH_BIT
-    );
-
-    createAttachment(
-        radianceAttachment, VK_FORMAT_R32G32B32A32_SFLOAT,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_COLOR_BIT
-    );
-    
-    createAttachment(
-        albedoAttachment, VK_FORMAT_R8G8B8A8_UNORM,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_COLOR_BIT
-    );
-
-    createAttachment(
-        positionAttachment, VK_FORMAT_R32G32B32A32_SFLOAT,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_COLOR_BIT
-    );
-
-    createAttachment(
-        normalAttachment, VK_FORMAT_R32G32B32A32_SFLOAT,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_COLOR_BIT
-    );
-
-    createAttachment(
-        propertyAttachment, VK_FORMAT_R8G8B8A8_UNORM,
-        width, height,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        VK_IMAGE_ASPECT_COLOR_BIT
-    );
-
-    gBuffer = {
-        &albedoAttachment,
-        &positionAttachment,
-        &normalAttachment,
-        &propertyAttachment
-    };
+    gBuffer = new GBuffer(physicalDevice, device, width, height);
 }
 
 void VulkanBinding::createRenderPass()
@@ -597,7 +511,7 @@ void VulkanBinding::createRenderPass()
     };
 
     VkAttachmentDescription depthDescription{
-        .format = depthAttachment.format,
+        .format = gBuffer->depthAttachment->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -613,7 +527,7 @@ void VulkanBinding::createRenderPass()
     };
 
     VkAttachmentDescription radianceDescription{
-        .format = radianceAttachment.format,
+        .format = gBuffer->radianceAttachment->getFormat(),
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -642,9 +556,10 @@ void VulkanBinding::createRenderPass()
     std::vector<VkAttachmentReference> gTargetRef;
     std::vector<VkAttachmentReference> gInputRef;
 
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    auto gAttachments = gBuffer->getDeferredAttachments();
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         attachments.push_back({
-            .format = gBuffer[i]->format,
+            .format = gAttachments[i]->getFormat(),
             .samples = VK_SAMPLE_COUNT_1_BIT,
             .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
             .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -768,12 +683,13 @@ void VulkanBinding::createFramebuffers()
     for(size_t i = 0; i < swapChainImageViews.size(); i++) {
         std::vector<VkImageView> attachments = {
             swapChainImageViews[i],
-            depthAttachment.imageView,
-            radianceAttachment.imageView
+            gBuffer->depthAttachment->getImageView(),
+            gBuffer->radianceAttachment->getImageView()
         };
 
-        for(auto attachment : gBuffer) {
-            attachments.push_back(attachment->imageView);
+        auto gAttachments = gBuffer->getDeferredAttachments();
+        for(auto attachment : gAttachments) {
+            attachments.push_back(attachment->getImageView());
         }
 
         VkFramebufferCreateInfo framebufferInfo{

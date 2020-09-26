@@ -11,6 +11,7 @@
 #include "vk_mem_alloc.h"
 
 #include "bindings/Binding.hpp"
+#include "bindings/vk/GBuffer.hpp"
 
 #include "components/CameraComponent.hpp"
 
@@ -39,22 +40,6 @@ struct SwapChainSupportDetails
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-struct VulkanAttachment
-{
-    VkFormat format;
-    VkImage image;
-    VkDeviceMemory memory;
-    VkImageView imageView;
-
-    void destroy(VkDevice device) {
-        vkDestroyImageView(device, imageView, nullptr);
-        vkDestroyImage(device, image, nullptr);
-        vkFreeMemory(device, memory, nullptr);
-    }
-};
-
-using GBuffer = std::vector<VulkanAttachment*>;
-
 class VulkanBinding : public Binding
 {
 public:
@@ -74,8 +59,8 @@ public:
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 
-    GBuffer getGBuffer() { return gBuffer; }
-    VkImageView getRadianceView() { return radianceAttachment.imageView; }
+    GBuffer* getGBuffer() { return gBuffer; }
+    VkImageView getRadianceView() { return gBuffer->radianceAttachment->getImageView(); }
 
     void update();
     void render(PipelineSet&, PipelineSet&, Pipeline*, PipelineSet&);
@@ -128,7 +113,6 @@ private:
     void createImageViews();
     VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
     bool hasStencilComponent(VkFormat);
-    void createAttachment(VulkanAttachment&, VkFormat, uint32_t, uint32_t, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImageAspectFlags);
     void createGBuffers();
     void createRenderPass();
     void createFramebuffers();
@@ -163,13 +147,7 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
 
-    VulkanAttachment depthAttachment;
-    VulkanAttachment radianceAttachment;
-    VulkanAttachment albedoAttachment;
-    VulkanAttachment positionAttachment;
-    VulkanAttachment normalAttachment;
-    VulkanAttachment propertyAttachment;
-    GBuffer gBuffer;
+    GBuffer* gBuffer;
 
     CameraMap cameras;
 

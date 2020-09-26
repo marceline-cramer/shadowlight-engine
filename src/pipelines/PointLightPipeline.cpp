@@ -18,7 +18,8 @@ void PointLightPipeline::createInputSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings;
 
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    auto gAttachments = gBuffer->getDeferredAttachments();
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         layoutBindings.push_back({
         .binding = i,
         .descriptorType = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
@@ -212,7 +213,8 @@ void PointLightPipeline::createDescriptorPool()
 {
     std::vector<VkDescriptorPoolSize> poolSizes;
 
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    auto gAttachments = gBuffer->getDeferredAttachments();
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         poolSizes.push_back({
             .type = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
             .descriptorCount = 1
@@ -250,14 +252,15 @@ void PointLightPipeline::writeInputSet()
     std::vector<VkWriteDescriptorSet> descriptorWrites;
     std::vector<VkDescriptorImageInfo> imageInfo;
 
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    auto gAttachments = gBuffer->getDeferredAttachments();
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         imageInfo.push_back({
-            .imageView = gBuffer[i]->imageView,
+            .imageView = gAttachments[i]->getImageView(),
             .imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
         });
     }
 
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         descriptorWrites.push_back({
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .dstSet = inputSet,

@@ -19,6 +19,9 @@ src = [
     'src/bindings/OpenALBinding.cpp',
     'src/bindings/VulkanBinding.cpp',
 
+    'src/bindings/vk/RenderAttachment.cpp',
+    'src/bindings/vk/GBuffer.cpp',
+
     'src/components/ScriptComponent.cpp',
     'src/components/SceneComponent.cpp',
     'src/components/RigidBodyComponent.cpp',

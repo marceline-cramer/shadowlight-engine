@@ -172,9 +172,9 @@ void MaterialAsset::createPipeline(const char* materialFile)
         .maxDepthBounds = 1.0
     };
 
-    auto gBuffer = vk->getGBuffer();
+    auto gAttachments = vk->getGBuffer()->getDeferredAttachments();
     std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
-    for(uint32_t i = 0; i < gBuffer.size(); i++) {
+    for(uint32_t i = 0; i < gAttachments.size(); i++) {
         colorBlendAttachments.push_back({
             .blendEnable = VK_FALSE,
             .srcColorBlendFactor = VK_BLEND_FACTOR_ONE,

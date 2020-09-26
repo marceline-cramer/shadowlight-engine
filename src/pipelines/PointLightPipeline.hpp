@@ -30,7 +30,7 @@ private:
 
     VulkanBinding* vk;
 
-    GBuffer gBuffer;
+    GBuffer* gBuffer;
     VkDescriptorSetLayout inputSetLayout;
     VkDescriptorSetLayout uboSetLayout;
     VkPipelineLayout pipelineLayout;

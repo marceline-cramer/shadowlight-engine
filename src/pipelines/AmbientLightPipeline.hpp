@@ -23,7 +23,7 @@ private:
     void createDescriptorSet();
     void writeDescriptorSet();
 
-    GBuffer gBuffer;
+    GBuffer* gBuffer;
     VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
