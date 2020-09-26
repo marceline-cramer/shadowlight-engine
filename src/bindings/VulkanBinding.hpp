@@ -35,6 +35,7 @@ public:
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
     void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
 
+    VulkanInstance* getInstance() { return vulkanInstance; }
     GBuffer* getGBuffer() { return gBuffer; }
     VkImageView getRadianceView() { return gBuffer->radianceAttachment->getImageView(); }
 
