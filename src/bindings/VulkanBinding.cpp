@@ -63,7 +63,7 @@ void VulkanBinding::createGBuffers()
     auto width = swapChainExtent.width;
     auto height = swapChainExtent.height;
 
-    gBuffer = new GBuffer(vulkanInstance->physicalDevice, device, width, height);
+    gBuffer = new GBuffer(vulkanInstance, width, height);
 }
 
 void VulkanBinding::createRenderPass()
@@ -491,50 +491,6 @@ void VulkanBinding::copyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer bu
         1,
         &region
     );
-}
-
-void VulkanBinding::createImage(
-    uint32_t width, uint32_t height,
-    VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage,
-    VkMemoryPropertyFlags properties,
-    VkImage& image, VkDeviceMemory& imageMemory)
-{
-    VkImageCreateInfo imageInfo{
-        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .imageType = VK_IMAGE_TYPE_2D,
-        .format = format,
-        .extent = {
-            .width = width,
-            .height = height,
-            .depth = 1
-        },
-        .mipLevels = 1,
-        .arrayLayers = 1,
-        .samples = VK_SAMPLE_COUNT_1_BIT,
-        .tiling = tiling,
-        .usage = usage,
-        .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
-    };
-
-    if(vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create image");
-    }
-
-    VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(device, image, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .allocationSize = memRequirements.size,
-        .memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties)
-    };
-
-    if(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to allocate depth image memory");
-    }
-
-    vkBindImageMemory(device, image, imageMemory, 0);
 }
 
 void VulkanBinding::update()

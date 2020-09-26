@@ -35,6 +35,9 @@ public:
     VulkanInstance(Window*);
     ~VulkanInstance();
 
+    VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+    void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
 private:
     bool checkValidationLayerSupport();
@@ -56,7 +59,9 @@ private:
     void createImageViews();
     void createCommandPool();
 
+    // TODO Vulkan object wrapper classes
     friend class VulkanBinding;
+    friend class RenderAttachment;
 
     // Constants
     const std::vector<const char*> validationLayers = {
