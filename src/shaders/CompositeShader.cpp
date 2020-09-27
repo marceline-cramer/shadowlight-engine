@@ -26,11 +26,10 @@ layout(location = 0) out vec4 outColor;
 void main() {
     vec3 radiance = max(subpassLoad(subpassRadiance).rgb, vec3(0));
 
-    //vec3 color = radiance;
-    //color = color / (color + vec3(1.0));
-    //color = pow(color, vec3(1.0/2.2));  
-    //outColor = vec4(color, 1.0);
-    outColor = vec4(radiance, 1.0);
+    vec3 color = radiance;
+    color = color / (color + vec3(1000.0));
+    color = pow(color, vec3(1.0/2.2));  
+    outColor = vec4(color, 1.0);
 }
     )""");
 
