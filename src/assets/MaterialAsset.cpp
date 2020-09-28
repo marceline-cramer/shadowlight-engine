@@ -166,8 +166,17 @@ void MaterialAsset::createPipeline(const char* materialFile)
         .depthWriteEnable = VK_TRUE,
         .depthCompareOp = VK_COMPARE_OP_LESS,
         .depthBoundsTestEnable = VK_FALSE,
-        .stencilTestEnable = VK_FALSE,
-        .front = {},
+        // Replace stencil with 1 to flag for lighting
+        .stencilTestEnable = VK_TRUE,
+        .front = {
+            .failOp = VK_STENCIL_OP_KEEP,
+            .passOp = VK_STENCIL_OP_REPLACE,
+            .depthFailOp = VK_STENCIL_OP_REPLACE,
+            .compareOp = VK_COMPARE_OP_ALWAYS,
+            .compareMask = 0xFFFFFFFF,
+            .writeMask = 0xFFFFFFFF,
+            .reference = 1
+        },
         .back = {},
         .minDepthBounds = 0.0,
         .maxDepthBounds = 1.0

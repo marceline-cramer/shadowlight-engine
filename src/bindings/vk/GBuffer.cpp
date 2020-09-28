@@ -3,8 +3,7 @@
 GBuffer::GBuffer(VulkanInstance* vki, uint32_t width, uint32_t height)
 {
     auto depthFormat = vki->findSupportedFormat(
-        {VK_FORMAT_D32_SFLOAT,
-        VK_FORMAT_D32_SFLOAT_S8_UINT,
+        {VK_FORMAT_D32_SFLOAT_S8_UINT,
         VK_FORMAT_D24_UNORM_S8_UINT},
         VK_IMAGE_TILING_OPTIMAL,
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
@@ -55,8 +54,16 @@ GBuffer::GBuffer(VulkanInstance* vki, uint32_t width, uint32_t height)
         .depthWriteEnable = VK_FALSE,
         .depthCompareOp = VK_COMPARE_OP_LESS,
         .depthBoundsTestEnable = VK_FALSE,
-        .stencilTestEnable = VK_FALSE,
-        .front = {},
+        .stencilTestEnable = VK_TRUE,
+        .front = {
+            .failOp = VK_STENCIL_OP_KEEP,
+            .passOp = VK_STENCIL_OP_KEEP,
+            .depthFailOp = VK_STENCIL_OP_KEEP,
+            .compareOp = VK_COMPARE_OP_EQUAL,
+            .compareMask = 0xFFFFFFFF,
+            .writeMask = 0xFFFFFFFF,
+            .reference = 1
+        },
         .back = {},
         .minDepthBounds = 0.0,
         .maxDepthBounds = 1.0
