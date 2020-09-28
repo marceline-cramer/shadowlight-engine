@@ -13,6 +13,7 @@ src = [
     'src/assets/MeshAsset.cpp',
     'src/assets/MaterialAsset.cpp',
     'src/assets/TextureAsset.cpp',
+    'src/assets/EnvironmentMapAsset.cpp',
 
     'src/bindings/BulletBinding.cpp',
     'src/bindings/LuaBinding.cpp',
@@ -36,6 +37,7 @@ src = [
     'src/pipelines/PointLightPipeline.cpp',
     'src/pipelines/CompositePipeline.cpp',
     'src/pipelines/AmbientLightPipeline.cpp',
+    'src/pipelines/EnvironmentMapPipeline.cpp',
 
     'src/input/MouseAxis.cpp',
     'src/input/KeyboardAxis.cpp',

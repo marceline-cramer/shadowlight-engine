@@ -17,6 +17,7 @@ Scene::Scene(EngineConfig* _engineConfig, Window* _window, VulkanBinding* _vk, O
     // Create pipelines
     deferredPipelines.insert(meshPipeline = new MeshPipeline(vk));
 
+    lightingPipelines.insert(environmentMapPipeline = new EnvironmentMapPipeline(vk));
     lightingPipelines.insert(ambientLightPipeline = new AmbientLightPipeline(vk));
     lightingPipelines.insert(pointLightPipeline = new PointLightPipeline(vk));
 
@@ -55,6 +56,17 @@ void Scene::load()
 
     rapidjson::Document scene;
     fs->loadJson(currentScene.c_str(), scene);
+
+    // Load skybox
+    if(scene.HasMember("skybox")) {
+        if(!scene["skybox"].IsString()) {
+            throw std::runtime_error("scene.skybox must be a string");
+        }
+
+        environmentMapPipeline->setSkybox(scene["skybox"].GetString());
+    } else {
+        environmentMapPipeline->clearSkybox();
+    }
 
     // Create entities
     if(scene.HasMember("entities")) {

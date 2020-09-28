@@ -26,6 +26,7 @@
 #include "pipelines/PointLightPipeline.hpp"
 #include "pipelines/CompositePipeline.hpp"
 #include "pipelines/AmbientLightPipeline.hpp"
+#include "pipelines/EnvironmentMapPipeline.hpp"
 
 #include "config/EngineConfig.hpp"
 #include "config/PointLightConfig.hpp"
@@ -79,4 +80,5 @@ private:
     AmbientLightPipeline* ambientLightPipeline;
     CompositePipeline* compositePipeline;
     PointLightPipeline* pointLightPipeline;
+    EnvironmentMapPipeline* environmentMapPipeline;
 };
