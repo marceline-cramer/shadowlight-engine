@@ -79,7 +79,7 @@ void PointLightComponent::createDescriptorPool()
 void PointLightComponent::createUniform()
 {
     VkDeviceSize uniformBufferSize = sizeof(PointLightUniform);
-    vk->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+    vk->getInstance()->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
 }
 
 void PointLightComponent::createDescriptorSet()

@@ -28,12 +28,12 @@ public:
     // Utilities for other Vulkan objects to use
     VkShaderModule createShaderModule(const std::vector<uint32_t>&);
     uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags);
-    void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
+    /*void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
     void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer);
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
-    void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
+    void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);*/
 
     VulkanInstance* getInstance() { return vulkanInstance; }
     GBuffer* getGBuffer() { return gBuffer; }

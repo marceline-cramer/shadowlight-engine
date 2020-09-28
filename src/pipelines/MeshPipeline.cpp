@@ -4,9 +4,9 @@ MeshPipeline::MeshPipeline(VulkanBinding* _vk)
 {
     vk = _vk;
 
-    meshPool = new AssetPool<MeshAsset>(vk);
+    meshPool = new AssetPool<MeshAsset>(vk->getInstance());
     materialPool = new AssetPool<MaterialAsset>(vk);
-    texturePool = new AssetPool<TextureAsset>(vk);
+    texturePool = new AssetPool<TextureAsset>(vk->getInstance());
 }
 
 MeshPipeline::~MeshPipeline()

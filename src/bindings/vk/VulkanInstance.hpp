@@ -7,7 +7,10 @@
 
 #include <vk_mem_alloc.h>
 
+#include "bindings/Binding.hpp"
+
 #include "global/Window.hpp"
+#include "global/Filesystem.hpp"
 
 struct QueueFamilyIndices
 {
@@ -29,10 +32,10 @@ struct SwapChainSupportDetails
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-class VulkanInstance
+class VulkanInstance : public Binding
 {
 public:
-    VulkanInstance(Window*);
+    VulkanInstance(Window*, Filesystem*);
     ~VulkanInstance();
 
     VkFormat findSupportedFormat(const std::vector<VkFormat>&, VkImageTiling, VkFormatFeatureFlags);
@@ -40,6 +43,12 @@ public:
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
     void createSampler(VkSampler&);
+    void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
+    void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer);
+    void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
+    void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
 
     VkExtent2D getSwapChainExtent() { return swapChainExtent; }
 private:
@@ -66,6 +75,9 @@ private:
     friend class VulkanBinding;
     friend class RenderAttachment;
 
+    friend class TextureAsset;
+    friend class MeshAsset;
+
     // Constants
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
@@ -79,6 +91,7 @@ private:
 
     // Bindings
     Window* window;
+    Filesystem* fs;
 
     // Vulkan data
     VkInstance instance;

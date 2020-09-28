@@ -10,7 +10,7 @@
 
 #include "assets/Asset.hpp"
 
-#include "bindings/VulkanBinding.hpp"
+#include "bindings/vk/VulkanInstance.hpp"
 
 struct MeshVertex
 {
@@ -97,7 +97,7 @@ private:
     void createVertexBuffer();
     void createIndexBuffer();
 
-    VulkanBinding* vk;
+    VulkanInstance* vki;
 
     std::vector<MeshVertex> vertices;
     std::vector<uint32_t> indices;

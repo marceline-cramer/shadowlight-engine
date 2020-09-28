@@ -10,7 +10,7 @@ MeshRendererComponent::MeshRendererComponent(Pipeline* _pipeline, AssetHandle<Me
     pipeline->rendererComponents.insert(this);
 
     VkDeviceSize uniformBufferSize = sizeof(MeshRendererUniform);
-    vk->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
+    vk->getInstance()->createBuffer(uniformBufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffer, uniformBufferMemory);
 
     std::vector<VkDescriptorPoolSize> poolSizes;
     poolSizes.push_back({

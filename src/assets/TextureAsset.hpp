@@ -4,7 +4,7 @@
 
 #include "assets/Asset.hpp"
 
-#include "bindings/VulkanBinding.hpp"
+#include "bindings/vk/VulkanInstance.hpp"
 
 class TextureAsset : public Asset
 {
@@ -15,7 +15,7 @@ public:
     VkImageView getImageView() { return textureView; }
     VkSampler getSampler() { return textureSampler; }
 private:
-    VulkanBinding* vk;
+    VulkanInstance* vki;
 
     VkImage textureImage;
     VkDeviceMemory textureMemory;

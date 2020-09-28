@@ -1,8 +1,8 @@
 #include "assets/MeshAsset.hpp"
 
-void MeshAsset::load(Binding* _vk, const char* fileName)
+void MeshAsset::load(Binding* _vki, const char* fileName)
 {
-    vk = static_cast<VulkanBinding*>(_vk);
+    vki = static_cast<VulkanInstance*>(_vki);
 
     loadModel(fileName);
     createVertexBuffer();
@@ -13,7 +13,7 @@ void MeshAsset::loadModel(const char* fileName)
 {
     // Create file stream
     std::string objContents;
-    vk->fs->loadFile(fileName, objContents);
+    vki->fs->loadFile(fileName, objContents);
     std::istringstream objStream(objContents);
 
     // Load OBJ file
@@ -67,23 +67,23 @@ void MeshAsset::createVertexBuffer()
 
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
-    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+    vki->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
     // Fill staging buffer
     void* data;
-    vkMapMemory(vk->device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    vkMapMemory(vki->device, stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, vertices.data(), (size_t) bufferSize);
-    vkUnmapMemory(vk->device, stagingBufferMemory);
+    vkUnmapMemory(vki->device, stagingBufferMemory);
 
     // Create and copy vertex buffer
-    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+    vki->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 
-    VkCommandBuffer commandBuffer = vk->beginSingleTimeCommands();
-    vk->copyBuffer(commandBuffer, stagingBuffer, vertexBuffer, bufferSize);
-    vk->endSingleTimeCommands(commandBuffer);
+    VkCommandBuffer commandBuffer = vki->beginSingleTimeCommands();
+    vki->copyBuffer(commandBuffer, stagingBuffer, vertexBuffer, bufferSize);
+    vki->endSingleTimeCommands(commandBuffer);
 
-    vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
-    vkFreeMemory(vk->device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(vki->device, stagingBuffer, nullptr);
+    vkFreeMemory(vki->device, stagingBufferMemory, nullptr);
 }
 
 void MeshAsset::createIndexBuffer()
@@ -93,31 +93,31 @@ void MeshAsset::createIndexBuffer()
 
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
-    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+    vki->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
     // Fill staging buffer
     void* data;
-    vkMapMemory(vk->device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    vkMapMemory(vki->device, stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, indices.data(), (size_t) bufferSize);
-    vkUnmapMemory(vk->device, stagingBufferMemory);
+    vkUnmapMemory(vki->device, stagingBufferMemory);
 
     // Create and copy index buffer
-    vk->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+    vki->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 
-    VkCommandBuffer commandBuffer = vk->beginSingleTimeCommands();
-    vk->copyBuffer(commandBuffer, stagingBuffer, indexBuffer, bufferSize);
-    vk->endSingleTimeCommands(commandBuffer);
+    VkCommandBuffer commandBuffer = vki->beginSingleTimeCommands();
+    vki->copyBuffer(commandBuffer, stagingBuffer, indexBuffer, bufferSize);
+    vki->endSingleTimeCommands(commandBuffer);
 
-    vkDestroyBuffer(vk->device, stagingBuffer, nullptr);
-    vkFreeMemory(vk->device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(vki->device, stagingBuffer, nullptr);
+    vkFreeMemory(vki->device, stagingBufferMemory, nullptr);
 }
 
 void MeshAsset::unload()
 {
-    vkDestroyBuffer(vk->device, indexBuffer, nullptr);
-    vkFreeMemory(vk->device, indexBufferMemory, nullptr);
-    vkDestroyBuffer(vk->device, vertexBuffer, nullptr);
-    vkFreeMemory(vk->device, vertexBufferMemory, nullptr);
+    vkDestroyBuffer(vki->device, indexBuffer, nullptr);
+    vkFreeMemory(vki->device, indexBufferMemory, nullptr);
+    vkDestroyBuffer(vki->device, vertexBuffer, nullptr);
+    vkFreeMemory(vki->device, vertexBufferMemory, nullptr);
 }
 
 void MeshAsset::render(VkCommandBuffer commandBuffer)
