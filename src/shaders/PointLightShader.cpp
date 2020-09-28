@@ -103,7 +103,6 @@ vec3 shadePointLight(
     vec3 F  = SchlickFresnel(LdotH, F0);
 
     // Combine BRDF
-    //vec3 specularity = (NDF * F * G) / (4 * (NdotL * NdotV));
     vec3 specularity = (NDF * F * G) / (4 * (NdotL * NdotV));
 
     return specularity * received;
