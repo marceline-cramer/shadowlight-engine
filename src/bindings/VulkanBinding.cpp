@@ -90,7 +90,7 @@ void VulkanBinding::createRenderPass()
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
         .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
@@ -530,14 +530,14 @@ void VulkanBinding::render(PipelineSet& deferredPipelines, PipelineSet& lighting
     clearValues[1].depthStencil = {1.0, 0};
     // Radiance
     clearValues[2].color = {0.0, 0.0, 0.0, 1.0};
-    // Albedo
-    clearValues[3].color = {0.0, 0.0, 0.0, 1.0};
+    // Albedo: Clear to magenta to make lighting errors visible
+    clearValues[3].color = {1.0, 0.0, 1.0, 1.0};
     // Position
     clearValues[4].color = {0.0, 0.0, 0.0, 1.0};
     // Normal
     clearValues[5].color = {0.0, 0.0, 1.0, 1.0};
     // Properties
-    clearValues[6].color = {0.5, 0.5, 0.5, 1.0};
+    clearValues[6].color = {0.0, 1.0, 0.5, 1.0};
 
     VkRenderPassBeginInfo renderPassInfo{
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
