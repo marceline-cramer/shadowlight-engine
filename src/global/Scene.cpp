@@ -41,6 +41,7 @@ Scene::~Scene()
     delete ambientLightPipeline;
     delete compositePipeline;
     delete pointLightPipeline;
+    delete environmentMapPipeline;
 
     // Delete asset pools
     delete scriptPool;
