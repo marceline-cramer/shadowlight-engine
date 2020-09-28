@@ -12,6 +12,10 @@ public:
     ~GBuffer();
 
     std::vector<RenderAttachment*> getDeferredAttachments() { return deferredAttachments; }
+    VkPipelineViewportStateCreateInfo getViewportState() { return viewportState; }
+    VkPipelineDepthStencilStateCreateInfo getDepthStencilState() { return depthStencilState; }
+    VkPipelineMultisampleStateCreateInfo getMultisampleState() { return multisampleState; }
+    VkPipelineColorBlendStateCreateInfo getColorBlendState() { return colorBlendState; }
 //private:
     RenderAttachment* depthAttachment;
     RenderAttachment* radianceAttachment;
@@ -21,4 +25,12 @@ public:
     RenderAttachment* propertyAttachment;
 
     std::vector<RenderAttachment*> deferredAttachments;
+
+    VkPipelineViewportStateCreateInfo viewportState;
+        VkViewport viewport;
+        VkRect2D scissor;
+    VkPipelineDepthStencilStateCreateInfo depthStencilState;
+    VkPipelineMultisampleStateCreateInfo multisampleState;
+    VkPipelineColorBlendStateCreateInfo colorBlendState;
+        VkPipelineColorBlendAttachmentState colorBlendAttachment;
 };

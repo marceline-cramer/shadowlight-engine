@@ -40,6 +40,8 @@ public:
     void createImage(uint32_t, uint32_t, VkFormat, VkImageTiling, VkImageUsageFlags, VkMemoryPropertyFlags, VkImage&, VkDeviceMemory&);
     void createImageView(VkImage, VkFormat, VkImageAspectFlags, VkImageView&);
     void createSampler(VkSampler&);
+
+    VkExtent2D getSwapChainExtent() { return swapChainExtent; }
 private:
     bool checkValidationLayerSupport();
     void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
