@@ -1,9 +1,7 @@
 #pragma once
 
 #include "assets/AssetPool.hpp"
-#include "assets/MeshAsset.hpp"
 #include "assets/MaterialAsset.hpp"
-#include "assets/TextureAsset.hpp"
 
 #include "bindings/VulkanBinding.hpp"
 
@@ -21,7 +19,5 @@ public:
 
     MeshRendererComponent* createMeshRenderer(const char*, const char*, std::map<std::string, const char*>);
 private:
-    AssetPool<MeshAsset>* meshPool;
     AssetPool<MaterialAsset>* materialPool;
-    AssetPool<TextureAsset>* texturePool;
 };

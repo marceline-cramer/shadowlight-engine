@@ -17,11 +17,19 @@ VulkanBinding::VulkanBinding(Filesystem* _fs, Window* _window)
     createFramebuffers();
     createCommandBuffers();
     createSemaphores();
+
+    // Create asset pools
+    meshPool = new AssetPool<MeshAsset>(vulkanInstance);
+    texturePool = new AssetPool<TextureAsset>(vulkanInstance);
 }
 
 VulkanBinding::~VulkanBinding()
 {
     vkDeviceWaitIdle(device);
+
+    // Destroy asset pools
+    delete meshPool;
+    delete texturePool;
     
     vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
     vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);

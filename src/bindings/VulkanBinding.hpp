@@ -8,6 +8,10 @@
 
 #include <vulkan/vulkan.h>
 
+#include "assets/AssetPool.hpp"
+#include "assets/MeshAsset.hpp"
+#include "assets/TextureAsset.hpp"
+
 #include "bindings/Binding.hpp"
 #include "bindings/vk/GBuffer.hpp"
 #include "bindings/vk/VulkanInstance.hpp"
@@ -31,6 +35,10 @@ public:
 
     void update();
     void render(PipelineSet&, PipelineSet&, Pipeline*, PipelineSet&);
+    
+    // Asset pools
+    AssetPool<MeshAsset>* meshPool;
+    AssetPool<TextureAsset>* texturePool;
 
     CameraComponent* createCamera(const char*);
 private:

@@ -4,16 +4,12 @@ MeshPipeline::MeshPipeline(VulkanBinding* _vk)
 {
     vk = _vk;
 
-    meshPool = new AssetPool<MeshAsset>(vk->getInstance());
     materialPool = new AssetPool<MaterialAsset>(vk);
-    texturePool = new AssetPool<TextureAsset>(vk->getInstance());
 }
 
 MeshPipeline::~MeshPipeline()
 {
-    delete meshPool;
     delete materialPool;
-    delete texturePool;
 }
 
 void MeshPipeline::render(VkCommandBuffer commandBuffer, CameraComponent* camera)
@@ -27,7 +23,7 @@ void MeshPipeline::render(VkCommandBuffer commandBuffer, CameraComponent* camera
 MeshRendererComponent* MeshPipeline::createMeshRenderer(const char* meshName, const char* materialName, std::map<std::string, const char*> textureNames)
 {
     AssetHandle<MeshAsset> meshAsset;
-    meshPool->load(meshName, meshAsset);
+    vk->meshPool->load(meshName, meshAsset);
 
     AssetHandle<MaterialAsset> materialAsset;
     materialPool->load(materialName, materialAsset);
@@ -48,7 +44,7 @@ MeshRendererComponent* MeshPipeline::createMeshRenderer(const char* meshName, co
         auto textureFile = textureLookup->second;
 
         AssetHandle<TextureAsset> textureAsset;
-        texturePool->load(textureFile, textureAsset);
+        vk->texturePool->load(textureFile, textureAsset);
 
         textureAssets.push_back(textureAsset);
     }
