@@ -314,36 +314,6 @@ void VulkanBinding::createSemaphores()
     }
 }
 
-VkShaderModule VulkanBinding::createShaderModule(const std::vector<uint32_t>& code)
-{
-    VkShaderModuleCreateInfo createInfo{
-        .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        .codeSize = code.size() * sizeof(uint32_t),
-        .pCode = code.data()
-    };
-
-    VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create shader module!");
-    }
-
-    return shaderModule;
-}
-
-uint32_t VulkanBinding::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-{
-    VkPhysicalDeviceMemoryProperties memProperties;
-    vkGetPhysicalDeviceMemoryProperties(vulkanInstance->physicalDevice, &memProperties);
-
-    for(uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-        if((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-            return i;
-        }
-    }
-
-    throw std::runtime_error("Failed to find suitable memory type");
-}
-
 void VulkanBinding::update()
 {
 
