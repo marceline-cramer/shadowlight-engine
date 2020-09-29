@@ -236,6 +236,27 @@ void VulkanInstance::copyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffe
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 }
 
+void VulkanInstance::stageBuffer(VkBuffer dstBuffer, VkDeviceSize size, void* toStage)
+{
+    // Create staging buffer
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+    // Fill staging buffer
+    void* data;
+    vkMapMemory(device, stagingBufferMemory, 0, size, 0, &data);
+    memcpy(data, toStage, (size_t) size);
+    vkUnmapMemory(device, stagingBufferMemory);
+
+    VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+    copyBuffer(commandBuffer, stagingBuffer, dstBuffer, size);
+    endSingleTimeCommands(commandBuffer);
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
 VkCommandBuffer VulkanInstance::beginSingleTimeCommands()
 {
     VkCommandBufferAllocateInfo allocInfo{

@@ -45,6 +45,7 @@ public:
     void createSampler(VkSampler&);
     void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags, VkBuffer&, VkDeviceMemory&);
     void copyBuffer(VkCommandBuffer, VkBuffer, VkBuffer, VkDeviceSize);
+    void stageBuffer(VkBuffer, VkDeviceSize, void*);
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer);
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);

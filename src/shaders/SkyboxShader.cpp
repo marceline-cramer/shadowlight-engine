@@ -8,36 +8,31 @@ SkyboxShader::SkyboxShader(VulkanInstance* _vki)
     fragShader = new ShaderModule(vki->device, "Skybox.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
-vec3 positions[4] = vec3[](
-    vec3( 1.0, -1.0, 1.0),
-    vec3(-1.0, -1.0, 1.0),
-    vec3( 1.0,  1.0, 1.0),
-    vec3(-1.0,  1.0, 1.0)
-);
-
 layout(set = 0, binding = 0) uniform UniformBufferObject {
     mat4 view;
     mat4 proj;
 } ubo;
 
-layout(location = 0) out vec3 texCoord;
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec2 inTexCoord;
+
+layout(location = 0) out vec2 fragTexCoord;
 
 void main() {
-    vec3 position = positions[gl_VertexIndex];
-    gl_Position = ubo.proj * vec4((ubo.view * vec4(position, 0.0)).xyz, 1.0);
-    texCoord = position;
+    gl_Position = ubo.proj * vec4((ubo.view * vec4(inPosition, 0.0)).xyz, 1.0);
+    fragTexCoord = inTexCoord;
 }
     )""");
 
     fragShader->pushCustom(R"""(
 layout(binding = 1) uniform sampler2D environmentMap;
 
-layout(location = 0) in vec3 texCoord;
+layout(location = 0) in vec2 fragTexCoord;
 
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = texture(environmentMap, texCoord.xy);
+    outColor = texture(environmentMap, fragTexCoord);
 }
     )""");
 

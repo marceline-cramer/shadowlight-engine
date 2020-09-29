@@ -8,6 +8,8 @@
 
 #include "components/SkyboxComponent.hpp"
 
+#include "global/Geometry.hpp"
+
 #include "pipelines/Pipeline.hpp"
 
 #include "shaders/SkyboxShader.hpp"
@@ -22,10 +24,17 @@ public:
 
     SkyboxComponent* createSkybox(const char*);
 private:
+    void createSkyboxSphere();
     void createSkyboxPipeline();
 
     GBuffer* gBuffer;
     VkPipeline skyboxGraphicsPipeline;
+
+    Geometry::GenericGeometry sphereGeometry;
+    VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
+    VkBuffer indexBuffer;
+    VkDeviceMemory indexBufferMemory;
 
     AssetPool<EnvironmentMapAsset>* environmentMapPool;
 

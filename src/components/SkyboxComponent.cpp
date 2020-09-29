@@ -34,7 +34,6 @@ void SkyboxComponent::render(VkCommandBuffer commandBuffer, CameraComponent* cam
     vkUnmapMemory(shader->getInstance()->device, uniformBufferMemory);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
-    vkCmdDraw(commandBuffer, 4, 1, 0, 0);
 }
 
 void SkyboxComponent::createDescriptorPool()

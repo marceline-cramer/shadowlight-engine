@@ -9,12 +9,18 @@ EnvironmentMapPipeline::EnvironmentMapPipeline(VulkanBinding* _vk)
 
     skyboxShader = new SkyboxShader(vk->getInstance());
 
+    createSkyboxSphere();
     createSkyboxPipeline();
 }
 
 EnvironmentMapPipeline::~EnvironmentMapPipeline()
 {
     vkDestroyPipeline(vk->device, skyboxGraphicsPipeline, nullptr);
+
+    vkDestroyBuffer(vk->device, indexBuffer, nullptr);
+    vkFreeMemory(vk->device, indexBufferMemory, nullptr);
+    vkDestroyBuffer(vk->device, vertexBuffer, nullptr);
+    vkFreeMemory(vk->device, vertexBufferMemory, nullptr);
 
     delete environmentMapPool;
 
@@ -24,10 +30,14 @@ EnvironmentMapPipeline::~EnvironmentMapPipeline()
 void EnvironmentMapPipeline::render(VkCommandBuffer commandBuffer, CameraComponent* camera)
 {
     if(!skyboxSet.empty()) {
+        VkDeviceSize offsets[] = {0};
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxGraphicsPipeline);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertexBuffer, offsets);
+        vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
         for(auto skybox : skyboxSet) {
             skybox->render(commandBuffer, camera);
+            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(sphereGeometry.indices.size()), 1, 0, 0, 0);
         }
     }
 }
@@ -40,19 +50,38 @@ SkyboxComponent* EnvironmentMapPipeline::createSkybox(const char* environmentMap
     return new SkyboxComponent(&skyboxSet, skyboxShader, environmentMap);
 }
 
+void EnvironmentMapPipeline::createSkyboxSphere()
+{
+    Geometry::createUVSphere(10, 10, 1.0, &sphereGeometry);
+
+    VkDeviceSize vertexBufferSize = sizeof(Geometry::GeometryVertex) * sphereGeometry.vertices.size();
+    VkDeviceSize indexBufferSize = sizeof(Geometry::GeometryIndex) * sphereGeometry.indices.size();
+
+    vk->getInstance()->createBuffer(vertexBufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+    vk->getInstance()->createBuffer(indexBufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+
+    vk->getInstance()->stageBuffer(vertexBuffer, vertexBufferSize, sphereGeometry.vertices.data());
+    vk->getInstance()->stageBuffer(indexBuffer, indexBufferSize, sphereGeometry.indices.data());
+}
+
 void EnvironmentMapPipeline::createSkyboxPipeline()
 {
     auto shaderStages = skyboxShader->getStages();
 
+    auto vertexBindingDescription = Geometry::GeometryVertex::getBindingDescription();
+    auto vertexAttributeDescriptions = Geometry::GeometryVertex::getAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 0,
-        .vertexAttributeDescriptionCount = 0
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &vertexBindingDescription,
+        .vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexAttributeDescriptions.size()),
+        .pVertexAttributeDescriptions = vertexAttributeDescriptions.data()
     };
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         .primitiveRestartEnable = VK_FALSE
     };
 
