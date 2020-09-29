@@ -6,7 +6,16 @@ void ShapeAsset::load(Binding* _bti, const char* fileName)
 
     config = bti->fs->loadConfig<ShapeConfig>(fileName);
 
-    shape = new btBoxShape(btVector3(1, 1, 1));
+    switch(config->shapeType) {
+    case SHAPE_TYPE_PLANE:
+        shape = new btStaticPlaneShape(config->shapeVector, 0.0);
+        break;
+    case SHAPE_TYPE_SPHERE:
+        shape = new btSphereShape(config->shapeScalar);
+        break;
+    default:
+        throw std::runtime_error("Unrecognized shape asset type");
+    }
 }
 
 void ShapeAsset::unload()
