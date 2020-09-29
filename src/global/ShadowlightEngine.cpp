@@ -10,7 +10,7 @@ ShadowlightEngine::ShadowlightEngine()
 
     engineConfig = fs->loadConfig<EngineConfig>("config.json");
 
-    bullet = new BulletBinding();
+    bullet = new BulletBinding(fs);
     window = new Window();
     vulkan = new VulkanBinding(fs, window);
     oal = new OpenALBinding();

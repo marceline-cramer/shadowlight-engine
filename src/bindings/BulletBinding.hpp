@@ -10,15 +10,17 @@
 
 #include "components/RigidBodyComponent.hpp"
 
+#include "global/Filesystem.hpp"
+
 class BulletBinding : public Binding
 {
 public:
-    BulletBinding();
+    BulletBinding(Filesystem*);
     ~BulletBinding();
     
     void update(double);
 
-    RigidBodyComponent* createRigidBody();
+    RigidBodyComponent* createRigidBody(const char*);
 private:
     BulletInstance* bulletInstance;
 

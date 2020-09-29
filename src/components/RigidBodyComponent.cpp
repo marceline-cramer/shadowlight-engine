@@ -13,22 +13,14 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
     return 3;
 }
 
-RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti)
+RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti, AssetHandle<ShapeAsset>& _shapeAsset)
 {
     bti = _bti;
-}
+    shapeAsset = _shapeAsset;
 
-RigidBodyComponent::~RigidBodyComponent()
-{
-    bti->world->removeRigidBody(body);
-    delete body;
-    delete shape;
-}
-
-void RigidBodyComponent::finalize(ComponentSet&)
-{
     mass = 1;
-    shape = new btBoxShape(btVector3(1, 1, 1));
+
+    btCollisionShape* shape = shapeAsset.getAsset()->shape;
 
     btTransform startTransform;
     //btVector3 startOrigin = {transform->position.x, transform->position.y, transform->position.z};
@@ -46,6 +38,12 @@ void RigidBodyComponent::finalize(ComponentSet&)
     btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, shape, localInertia);
     body = new btRigidBody(constructionInfo);
     bti->world->addRigidBody(body);
+}
+
+RigidBodyComponent::~RigidBodyComponent()
+{
+    bti->world->removeRigidBody(body);
+    delete body;
 }
 
 void RigidBodyComponent::createBindings(lua_State* L)

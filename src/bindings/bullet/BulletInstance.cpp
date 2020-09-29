@@ -1,7 +1,9 @@
 #include "bindings/bullet/BulletInstance.hpp"
 
-BulletInstance::BulletInstance()
+BulletInstance::BulletInstance(Filesystem* _fs)
 {
+    fs = _fs;
+
     // Create physics objects
     broadphase = new btDbvtBroadphase();
     collisionConfiguration = new btDefaultCollisionConfiguration();

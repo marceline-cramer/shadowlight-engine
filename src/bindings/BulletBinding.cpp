@@ -1,9 +1,9 @@
 #include "bindings/BulletBinding.hpp"
 
-BulletBinding::BulletBinding()
+BulletBinding::BulletBinding(Filesystem* fs)
 {
     // Create instance
-    bulletInstance = new BulletInstance();
+    bulletInstance = new BulletInstance(fs);
 
     // Create asset pools
     shapePool = new AssetPool<ShapeAsset>(bulletInstance);
@@ -25,7 +25,10 @@ void BulletBinding::update(double dt)
     bulletInstance->stepSimulation(dt);
 }
 
-RigidBodyComponent* BulletBinding::createRigidBody()
+RigidBodyComponent* BulletBinding::createRigidBody(const char* shapeName)
 {
-    return new RigidBodyComponent(bulletInstance);
+    AssetHandle<ShapeAsset> shape;
+    shapePool->load(shapeName, shape);
+
+    return new RigidBodyComponent(bulletInstance, shape);
 }
