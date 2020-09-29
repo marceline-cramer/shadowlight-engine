@@ -6,7 +6,11 @@
 
 #include "bindings/VulkanBinding.hpp"
 
+#include "components/SkyboxComponent.hpp"
+
 #include "pipelines/Pipeline.hpp"
+
+#include "shaders/SkyboxShader.hpp"
 
 class EnvironmentMapPipeline : public Pipeline
 {
@@ -16,10 +20,16 @@ public:
 
     virtual void render(VkCommandBuffer, CameraComponent*);
 
-    void setSkybox(const char*);
-    void clearSkybox();
+    SkyboxComponent* createSkybox(const char*);
 private:
+    void createSkyboxPipeline();
+
+    GBuffer* gBuffer;
+    VkPipeline skyboxGraphicsPipeline;
+
     AssetPool<EnvironmentMapAsset>* environmentMapPool;
 
-    AssetHandle<EnvironmentMapAsset>* skybox;
+    SkyboxComponentSet skyboxSet;
+
+    SkyboxShader* skyboxShader;
 };
