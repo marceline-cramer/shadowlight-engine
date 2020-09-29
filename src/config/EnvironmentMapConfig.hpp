@@ -4,14 +4,14 @@
 
 // TODO Cube maps
 enum EnvironmentMapType {
-    ENVIRONMENT_MAP_TYPE_CYLINDRICAL
+    ENVIRONMENT_MAP_TYPE_SPHERICAL
 };
 
 class EnvironmentMapConfig : public Config
 {
 public:
     EnvironmentMapConfig(ConfigData&);
-private:
+
     EnvironmentMapType mapType;
-    std::string cylinderMap;
+    std::string sphereMap;
 };
