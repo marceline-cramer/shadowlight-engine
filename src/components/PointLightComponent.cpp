@@ -27,14 +27,9 @@ PointLightComponent::~PointLightComponent()
     parentSet->erase(this);
 }
 
-void PointLightComponent::update(double)
+void PointLightComponent::update(EntityTransform transform, double dt)
 {
-
-}
-
-void PointLightComponent::finalize(ComponentSet&, EntityTransform& _transform)
-{
-    transform = &_transform;
+    position = transform.position;
 }
 
 void PointLightComponent::render(VkCommandBuffer commandBuffer, CameraComponent* camera)

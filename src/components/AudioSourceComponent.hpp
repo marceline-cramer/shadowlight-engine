@@ -13,8 +13,8 @@ public:
     AudioSourceComponent(AssetHandle<AudioAsset>&);
     ~AudioSourceComponent();
 
-    virtual void update(double);
-    virtual void finalize(ComponentSet&, EntityTransform&);
+    virtual void update(EntityTransform, double);    
+    virtual void finalize(ComponentSet&) {};
     virtual void createBindings(lua_State*);
 
     ALuint getSource() { return source; };

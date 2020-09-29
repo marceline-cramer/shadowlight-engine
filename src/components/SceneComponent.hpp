@@ -14,7 +14,9 @@ public:
     SceneComponent(Scene*);
     ~SceneComponent() {};
 
+    virtual void update(EntityTransform, double) {};
     virtual void createBindings(lua_State*);
+    virtual void finalize(ComponentSet&) {};
 private:
     Scene* scene;
 };

@@ -8,7 +8,7 @@
 
 #include "components/Component.hpp"
 
-class RigidBodyComponent : public Component
+class RigidBodyComponent : public TransformComponent
 {
 public:
     COMPONENT_TYPE("RigidBody");
@@ -16,13 +16,14 @@ public:
     RigidBodyComponent(BulletBinding*, rapidjson::Value&);
     virtual ~RigidBodyComponent();
 
-    virtual void update(double);
-    virtual void finalize(ComponentSet&, EntityTransform&);
+    virtual void update(EntityTransform, double) {};
+    virtual void finalize(ComponentSet&);
     virtual void createBindings(lua_State*);
+
+    virtual void setTransform(EntityTransform);
+    virtual void getTransform(EntityTransform*);
 private:
     BulletBinding* bullet;
-
-    EntityTransform* transform;
 
     btRigidBody* body;
     btScalar mass;

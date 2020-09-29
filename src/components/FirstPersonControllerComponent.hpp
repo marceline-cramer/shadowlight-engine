@@ -4,17 +4,20 @@
 
 #include "input/InputAxis.hpp"
 
-class FirstPersonControllerComponent : public Component
+class FirstPersonControllerComponent : public TransformComponent
 {
 public:
     COMPONENT_TYPE("FirstPersonController");
 
     FirstPersonControllerComponent(InputAxis*, InputAxis*, InputAxis*, InputAxis*);
 
-    virtual void update(double);
-    virtual void finalize(ComponentSet&, EntityTransform&);
+    virtual void update(EntityTransform, double);
+    virtual void finalize(ComponentSet&) {};
+    virtual void createBindings(lua_State*) {};
+    virtual void setTransform(EntityTransform _transform) { transform = _transform; }
+    virtual void getTransform(EntityTransform* _transform) { *_transform = transform; }
 private:
-    EntityTransform* transform;
+    EntityTransform transform;
 
     const float cameraSpeed = 1.0;
 

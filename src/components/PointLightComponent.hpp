@@ -26,8 +26,10 @@ public:
     PointLightComponent(VulkanBinding*, PointLightSet*, VkPipelineLayout, VkDescriptorSetLayout, PointLightConfig&);
     ~PointLightComponent();
 
-    virtual void update(double);
-    virtual void finalize(ComponentSet&, EntityTransform&);
+    virtual void update(EntityTransform, double);
+    virtual void finalize(ComponentSet&) {};
+    virtual void createBindings(lua_State*) {};
+
     virtual void render(VkCommandBuffer, CameraComponent*);
 private:
     void createDescriptorPool();
@@ -37,7 +39,6 @@ private:
 
     VulkanBinding* vk;
     PointLightSet* parentSet;
-    EntityTransform* transform;
 
     VkPipelineLayout pipelineLayout;
     VkDescriptorSetLayout descriptorSetLayout;

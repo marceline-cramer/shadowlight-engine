@@ -18,6 +18,10 @@ public:
     SkyboxComponent(SkyboxComponentSet*, SkyboxShader*, AssetHandle<EnvironmentMapAsset>&);
     ~SkyboxComponent();
 
+    virtual void update(EntityTransform, double) {};
+    virtual void finalize(ComponentSet&) {};
+    virtual void createBindings(lua_State*) {};
+
     virtual void render(VkCommandBuffer, CameraComponent*);
 private:
     void createDescriptorPool();

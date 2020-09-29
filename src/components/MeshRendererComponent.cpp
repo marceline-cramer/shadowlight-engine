@@ -101,10 +101,15 @@ MeshRendererComponent::~MeshRendererComponent()
     pipeline->rendererComponents.erase(this);
 }
 
+void MeshRendererComponent::update(EntityTransform _transform, double dt)
+{
+    transform = _transform;
+}
+
 void MeshRendererComponent::render(VkCommandBuffer commandBuffer, CameraComponent* camera)
 {
     MeshRendererUniform ubo{};
-    ubo.model = glm::translate(glm::mat4(1.0), transform->position) * glm::mat4(transform->orientation);
+    ubo.model = glm::translate(glm::mat4(1.0), transform.position) * glm::mat4(transform.orientation);
     ubo.view = camera->getViewMatrix();
     ubo.proj = camera->getProjectionMatrix();
 
@@ -116,9 +121,4 @@ void MeshRendererComponent::render(VkCommandBuffer commandBuffer, CameraComponen
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.getAsset()->getPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     material.getAsset()->bindPipeline(commandBuffer);
     mesh.getAsset()->render(commandBuffer);
-}
-
-void MeshRendererComponent::finalize(ComponentSet& components, EntityTransform& _transform)
-{
-    transform = &_transform;
 }

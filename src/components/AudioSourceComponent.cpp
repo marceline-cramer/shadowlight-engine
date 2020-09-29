@@ -22,15 +22,10 @@ AudioSourceComponent::~AudioSourceComponent()
     alDeleteSources(1, &source);
 }
 
-void AudioSourceComponent::update(double dt)
+void AudioSourceComponent::update(EntityTransform transform, double dt)
 {
     // TODO AudioSource velocity
-    alSource3f(source, AL_POSITION, transform->position.x, transform->position.y, transform->position.z);
-}
-
-void AudioSourceComponent::finalize(ComponentSet&, EntityTransform& _transform)
-{
-    transform = &_transform;
+    alSource3f(source, AL_POSITION, transform.position.x, transform.position.y, transform.position.z);
 }
 
 void AudioSourceComponent::createBindings(lua_State* L)

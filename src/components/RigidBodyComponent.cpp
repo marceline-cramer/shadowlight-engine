@@ -25,25 +25,14 @@ RigidBodyComponent::~RigidBodyComponent()
     delete shape;
 }
 
-void RigidBodyComponent::update(double dt)
+void RigidBodyComponent::finalize(ComponentSet&)
 {
-    auto bodyTransform = body->getCenterOfMassTransform();
-    auto position = bodyTransform.getOrigin();
-    auto rotation = bodyTransform.getRotation();
-
-    transform->position = glm::vec3(position.x(), position.y(), position.z());
-    transform->orientation = glm::quat(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-}
-
-void RigidBodyComponent::finalize(ComponentSet&, EntityTransform& _transform)
-{
-    transform = &_transform;
-
     mass = 1;
     shape = new btBoxShape(btVector3(1, 1, 1));
 
     btTransform startTransform;
-    btVector3 startOrigin = {transform->position.x, transform->position.y, transform->position.z};
+    //btVector3 startOrigin = {transform->position.x, transform->position.y, transform->position.z};
+    btVector3 startOrigin = {0.0, 0.0, 0.0};
     startTransform.setIdentity();
     startTransform.setOrigin(startOrigin);
 
@@ -66,4 +55,19 @@ void RigidBodyComponent::createBindings(lua_State* L)
     lua_pushlightuserdata(L, body);
     lua_pushcclosure(L, RigidBodyComponent_getCenterOfMassPosition, 1);
     lua_settable(L, -3);
+}
+
+void RigidBodyComponent::setTransform(EntityTransform)
+{
+    // TODO RigidBody position from EntityTransform
+}
+
+void RigidBodyComponent::getTransform(EntityTransform* transform)
+{
+    auto bodyTransform = body->getCenterOfMassTransform();
+    auto position = bodyTransform.getOrigin();
+    auto rotation = bodyTransform.getRotation();
+
+    transform->position = glm::vec3(position.x(), position.y(), position.z());
+    transform->orientation = glm::quat(rotation.x(), rotation.y(), rotation.z(), rotation.w());
 }
