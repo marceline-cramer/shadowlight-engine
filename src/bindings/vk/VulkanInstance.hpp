@@ -11,6 +11,7 @@
 
 #include "global/Window.hpp"
 #include "global/Filesystem.hpp"
+#include "global/Log.hpp"
 
 struct QueueFamilyIndices
 {

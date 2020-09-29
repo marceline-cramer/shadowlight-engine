@@ -4,6 +4,8 @@
 
 ShadowlightEngine::ShadowlightEngine()
 {
+    log_inf("Starting engine");
+
     fs = new Filesystem("../test-folder/");
 
     engineConfig = fs->loadConfig<EngineConfig>("config.json");

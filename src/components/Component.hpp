@@ -8,6 +8,8 @@
 
 #include "config/Config.hpp"
 
+#include "global/Log.hpp"
+
 #define COMPONENT_TYPE(t) static constexpr const char* ComponentType = t; virtual const char* getComponentType() { return ComponentType; };
 
 class Component;

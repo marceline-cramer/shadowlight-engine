@@ -6,8 +6,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData) {
 
-    // TODO Better global logging
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+    // TODO Support named handles
+    log_dbg(pCallbackData->pMessage);
 
     return VK_FALSE;
 }

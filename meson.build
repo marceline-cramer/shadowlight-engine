@@ -8,6 +8,7 @@ src = [
     'src/global/Filesystem.cpp',
     'src/global/Window.cpp',
     'src/global/Geometry.cpp',
+    'src/global/Log.cpp',
 
     'src/assets/ScriptAsset.cpp',
     'src/assets/AudioAsset.cpp',
