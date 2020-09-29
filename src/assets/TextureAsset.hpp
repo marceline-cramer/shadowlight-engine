@@ -17,6 +17,7 @@ public:
 private:
     VulkanInstance* vki;
 
+    VkFormat textureFormat;
     VkImage textureImage;
     VkDeviceMemory textureMemory;
     VkImageView textureView;
