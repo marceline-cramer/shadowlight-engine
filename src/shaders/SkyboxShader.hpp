@@ -1,19 +1,29 @@
+#pragma once
+
+#include "bindings/vk/VulkanInstance.hpp"
+
 #include "shaders/ShaderModule.hpp"
+
+struct SkyboxUniform {
+    glm::mat4 view;
+    glm::mat4 projection;
+};
 
 class SkyboxShader
 {
 public:
-    SkyboxShader(VkDevice);
+    SkyboxShader(VulkanInstance*);
     ~SkyboxShader();
 
     ShaderStages getStages();
     VkDescriptorSetLayout getSetLayout() { return setLayout; }
     VkPipelineLayout getPipelineLayout() { return pipelineLayout; }
+    VulkanInstance* getInstance() { return vki; }
 private:
     void createSetLayout();
     void createPipelineLayout();
 
-    VkDevice device;
+    VulkanInstance* vki;
 
     ShaderModule* vertShader;
     ShaderModule* fragShader;

@@ -49,10 +49,12 @@ private:
     friend class CompositePipeline;
     friend class AmbientLightPipeline;
     friend class PointLightPipeline;
+    friend class EnvironmentMapPipeline;
     
     friend class MeshAsset;
     friend class MaterialAsset;
     friend class TextureAsset;
+    friend class EnvironmentMapAsset;
 
     friend class MeshRendererComponent;
     friend class PointLightComponent;

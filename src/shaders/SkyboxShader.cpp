@@ -1,30 +1,43 @@
 #include "shaders/SkyboxShader.hpp"
 
-SkyboxShader::SkyboxShader(VkDevice _device)
+SkyboxShader::SkyboxShader(VulkanInstance* _vki)
 {
-    device = _device;
+    vki = _vki;
 
-    vertShader = new ShaderModule(device, "Composite.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "Composite.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki->device, "Skybox.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki->device, "Skybox.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec3 positions[4] = vec3[](
-    vec3( 1.0, -1.0, -1.0),
-    vec3(-1.0, -1.0, -1.0),
-    vec3( 1.0,  1.0, -1.0),
-    vec3(-1.0,  1.0, -1.0)
+    vec3( 1.0, -1.0, 1.0),
+    vec3(-1.0, -1.0, 1.0),
+    vec3( 1.0,  1.0, 1.0),
+    vec3(-1.0,  1.0, 1.0)
 );
 
+layout(set = 0, binding = 0) uniform UniformBufferObject {
+    mat4 view;
+    mat4 proj;
+} ubo;
+
+layout(location = 0) out vec3 texCoord;
+
 void main() {
-    gl_Position = vec4(positions[gl_VertexIndex].xy, 0.0, 1.0);
+    vec3 position = positions[gl_VertexIndex];
+    gl_Position = ubo.proj * vec4((ubo.view * vec4(position, 0.0)).xyz, 1.0);
+    texCoord = position;
 }
     )""");
 
     fragShader->pushCustom(R"""(
+layout(binding = 1) uniform sampler2D environmentMap;
+
+layout(location = 0) in vec3 texCoord;
+
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = vec4(100.0, 0.0, 0.0, 1.0);
+    outColor = texture(environmentMap, texCoord.xy);
 }
     )""");
 
@@ -37,8 +50,8 @@ void main() {
 
 SkyboxShader::~SkyboxShader()
 {
-    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-    vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
+    vkDestroyPipelineLayout(vki->device, pipelineLayout, nullptr);
+    vkDestroyDescriptorSetLayout(vki->device, setLayout, nullptr);
 
     delete vertShader;
     delete fragShader;
@@ -78,7 +91,7 @@ void SkyboxShader::createSetLayout()
         .pBindings = layoutBindings.data()
     };
 
-    if(vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &setLayout) != VK_SUCCESS) {
+    if(vkCreateDescriptorSetLayout(vki->device, &layoutInfo, nullptr, &setLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create skybox descriptor set layout");
     }
 }
@@ -93,7 +106,7 @@ void SkyboxShader::createPipelineLayout()
         .pPushConstantRanges = nullptr
     };
 
-    if(vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+    if(vkCreatePipelineLayout(vki->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create skybox pipeline layout");
     }
 }

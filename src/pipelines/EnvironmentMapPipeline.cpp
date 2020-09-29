@@ -7,7 +7,7 @@ EnvironmentMapPipeline::EnvironmentMapPipeline(VulkanBinding* _vk)
 
     environmentMapPool = new AssetPool<EnvironmentMapAsset>(vk);
 
-    skyboxShader = new SkyboxShader(vk->device);
+    skyboxShader = new SkyboxShader(vk->getInstance());
 
     createSkyboxPipeline();
 }

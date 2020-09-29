@@ -78,6 +78,10 @@ private:
     friend class TextureAsset;
     friend class MeshAsset;
 
+    friend class SkyboxComponent;
+
+    friend class SkyboxShader;
+
     // Constants
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
