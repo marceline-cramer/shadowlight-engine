@@ -13,8 +13,8 @@ FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _panAx
 
 void FirstPersonControllerComponent::update(double dt)
 {
-    pan += panAxis->getAxis();
-    tilt += tiltAxis->getAxis();
+    pan += panAxis->getAxis() * dt;
+    tilt += tiltAxis->getAxis() * dt;
 
     if(tilt <= 0.0) tilt = 0.0;
     if(tilt >= M_PI) tilt = M_PI;
@@ -33,8 +33,8 @@ void FirstPersonControllerComponent::update(double dt)
         forwardDirection.y * upDirection.x,
         upDirection.y) * cameraSpeed;
 
-    transform->position += truckDirection * truckAxis->getAxis();
-    transform->position += dollyDirection * dollyAxis->getAxis();
+    transform->position += truckDirection * truckAxis->getAxis() * glm::vec3(dt);
+    transform->position += dollyDirection * dollyAxis->getAxis() * glm::vec3(dt);
 }
 
 void FirstPersonControllerComponent::finalize(ComponentSet&, EntityTransform& _transform)
