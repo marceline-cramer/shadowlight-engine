@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 
 #define log_at(logLevel, ...) Log::log(__FILE__, __LINE__, logLevel, __VA_ARGS__)
 #define log_inf(...) log_at(Log::LOG_LEVEL_INFO, __VA_ARGS__)
