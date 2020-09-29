@@ -47,6 +47,7 @@ src = [
     'src/shaders/AmbientLightShader.cpp',
     'src/shaders/PointLightShader.cpp',
     'src/shaders/MaterialShader.cpp',
+    'src/shaders/SkyboxShader.cpp',
 
     'src/config/Config.cpp',
     'src/config/EngineConfig.cpp',
