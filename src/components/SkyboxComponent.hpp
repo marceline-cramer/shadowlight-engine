@@ -11,6 +11,8 @@ using SkyboxComponentSet = std::set<SkyboxComponent*>;
 class SkyboxComponent : public Component
 {
 public:
+    COMPONENT_TYPE("Skybox");
+
     SkyboxComponent(SkyboxComponentSet*, AssetHandle<EnvironmentMapAsset>&);
     ~SkyboxComponent();
 private:

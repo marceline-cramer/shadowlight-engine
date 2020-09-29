@@ -21,6 +21,7 @@
 #include "components/CameraComponent.hpp"
 #include "components/FirstPersonControllerComponent.hpp"
 #include "components/PointLightComponent.hpp"
+#include "components/SkyboxComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
 #include "pipelines/PointLightPipeline.hpp"

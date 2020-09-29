@@ -58,17 +58,6 @@ void Scene::load()
     rapidjson::Document scene;
     fs->loadJson(currentScene.c_str(), scene);
 
-    // Load skybox
-    if(scene.HasMember("skybox")) {
-        if(!scene["skybox"].IsString()) {
-            throw std::runtime_error("scene.skybox must be a string");
-        }
-
-        environmentMapPipeline->setSkybox(scene["skybox"].GetString());
-    } else {
-        environmentMapPipeline->clearSkybox();
-    }
-
     // Create entities
     if(scene.HasMember("entities")) {
         if(!scene["entities"].IsArray()) {
@@ -216,6 +205,13 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 
         PointLightConfig config(configData);
         auto c = pointLightPipeline->createPointLight(config);
+        e->addComponent(c);
+    }
+    // Handle SkyboxComponent
+    else if(componentType == SkyboxComponent::ComponentType) {
+        const char* environmentMap = getComponentString(component, componentType.data(), "environmentMap");
+
+        auto c = environmentMapPipeline->createSkybox(environmentMap);
         e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
