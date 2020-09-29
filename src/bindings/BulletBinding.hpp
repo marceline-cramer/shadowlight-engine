@@ -2,7 +2,13 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 
+#include "assets/AssetPool.hpp"
+#include "assets/ShapeAsset.hpp"
+
 #include "bindings/Binding.hpp"
+#include "bindings/bullet/BulletInstance.hpp"
+
+#include "components/RigidBodyComponent.hpp"
 
 class BulletBinding : public Binding
 {
@@ -12,10 +18,9 @@ public:
     
     void update(double);
 
-    btDiscreteDynamicsWorld* world;
+    RigidBodyComponent* createRigidBody();
 private:
-    btBroadphaseInterface* broadphase;
-    btDefaultCollisionConfiguration* collisionConfiguration;
-    btCollisionDispatcher* dispatcher;
-    btSequentialImpulseConstraintSolver* solver;
+    BulletInstance* bulletInstance;
+
+    AssetPool<ShapeAsset>* shapePool;
 };

@@ -13,14 +13,14 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
     return 3;
 }
 
-RigidBodyComponent::RigidBodyComponent(BulletBinding* _bullet, rapidjson::Value& component)
+RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti)
 {
-    bullet = _bullet;
+    bti = _bti;
 }
 
 RigidBodyComponent::~RigidBodyComponent()
 {
-    bullet->world->removeRigidBody(body);
+    bti->world->removeRigidBody(body);
     delete body;
     delete shape;
 }
@@ -45,7 +45,7 @@ void RigidBodyComponent::finalize(ComponentSet&)
     // TODO Bullet error checking
     btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, shape, localInertia);
     body = new btRigidBody(constructionInfo);
-    bullet->world->addRigidBody(body);
+    bti->world->addRigidBody(body);
 }
 
 void RigidBodyComponent::createBindings(lua_State* L)

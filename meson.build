@@ -16,6 +16,7 @@ src = [
     'src/assets/MaterialAsset.cpp',
     'src/assets/TextureAsset.cpp',
     'src/assets/EnvironmentMapAsset.cpp',
+    'src/assets/ShapeAsset.cpp',
 
     'src/bindings/BulletBinding.cpp',
     'src/bindings/LuaBinding.cpp',
@@ -25,6 +26,8 @@ src = [
     'src/bindings/vk/RenderAttachment.cpp',
     'src/bindings/vk/GBuffer.cpp',
     'src/bindings/vk/VulkanInstance.cpp',
+
+    'src/bindings/bullet/BulletInstance.cpp',
 
     'src/components/ScriptComponent.cpp',
     'src/components/SceneComponent.cpp',

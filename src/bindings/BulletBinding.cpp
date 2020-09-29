@@ -2,30 +2,30 @@
 
 BulletBinding::BulletBinding()
 {
-    // Create physics objects
-    broadphase = new btDbvtBroadphase();
-    collisionConfiguration = new btDefaultCollisionConfiguration();
-    dispatcher = new btCollisionDispatcher(collisionConfiguration);
-    solver = new btSequentialImpulseConstraintSolver();
-    world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+    // Create instance
+    bulletInstance = new BulletInstance();
 
-    // Initialize physics settings
-    world->setGravity(btVector3(0, 0, -9.8));
+    // Create asset pools
+    shapePool = new AssetPool<ShapeAsset>(bulletInstance);
 }
 
 BulletBinding::~BulletBinding()
 {
-    // Deallocate all physics objects
-    delete world;
-    delete solver;
-    delete broadphase;
-    delete dispatcher;
-    delete collisionConfiguration;
+    // Destroy asset pools
+    delete shapePool;
+
+    // Destroy instance
+    delete bulletInstance;
 }
 
 
 void BulletBinding::update(double dt)
 {
     // Step the simulation
-    world->stepSimulation(dt, 10);
+    bulletInstance->stepSimulation(dt);
+}
+
+RigidBodyComponent* BulletBinding::createRigidBody()
+{
+    return new RigidBodyComponent(bulletInstance);
 }

@@ -20,6 +20,8 @@ ShadowlightEngine::ShadowlightEngine()
 
 ShadowlightEngine::~ShadowlightEngine()
 {
+    log_inf("Shutting down engine");
+
     delete scene;
     delete lua;
     delete oal;

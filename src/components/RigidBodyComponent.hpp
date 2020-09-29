@@ -4,7 +4,7 @@
 
 #include <rapidjson/document.h>
 
-#include "bindings/BulletBinding.hpp"
+#include "bindings/bullet/BulletInstance.hpp"
 
 #include "components/Component.hpp"
 
@@ -13,7 +13,7 @@ class RigidBodyComponent : public TransformComponent
 public:
     COMPONENT_TYPE("RigidBody");
     
-    RigidBodyComponent(BulletBinding*, rapidjson::Value&);
+    RigidBodyComponent(BulletInstance*);
     virtual ~RigidBodyComponent();
 
     virtual void update(EntityTransform, double) {};
@@ -23,7 +23,7 @@ public:
     virtual void setTransform(EntityTransform);
     virtual void getTransform(EntityTransform*);
 private:
-    BulletBinding* bullet;
+    BulletInstance* bti;
 
     btRigidBody* body;
     btScalar mass;

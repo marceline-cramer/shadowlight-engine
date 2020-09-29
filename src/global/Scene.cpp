@@ -2,6 +2,8 @@
 
 Scene::Scene(EngineConfig* _engineConfig, Window* _window, VulkanBinding* _vk, OpenALBinding* _oal, BulletBinding* _bullet, LuaBinding* _lua, Filesystem* _fs)
 {
+    log_inf("Creating scene");
+
     engineConfig = _engineConfig;
     window = _window;
     vk = _vk;
@@ -30,6 +32,8 @@ Scene::Scene(EngineConfig* _engineConfig, Window* _window, VulkanBinding* _vk, O
 
 Scene::~Scene()
 {
+    log_inf("Destroying scene");
+
     // Delete entities
     for(auto e : entities) {
         delete e;
@@ -92,7 +96,9 @@ void Scene::loadEntity(rapidjson::Value& entity)
         }
 
         std::string name = entity["name"].GetString();
-        std::cout << "Processing entity " << name << std::endl;
+        std::ostringstream logMessage;
+        logMessage << "Processing entity " << name;
+        log_inf(logMessage.str().c_str());
     }
 
     // TODO EntityConfig
@@ -125,7 +131,9 @@ void Scene::loadEntity(rapidjson::Value& entity)
 void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 {
     std::string componentType = getComponentString(component, componentType.data(), "type");
-    std::cout << "Processing component of type " << componentType << std::endl;
+    std::ostringstream logMessage;
+    logMessage << "Processing component of type " << componentType;
+    log_inf(logMessage.str().c_str());
 
     // Handle ScriptComponent
     if(componentType == ScriptComponent::ComponentType) {
@@ -144,7 +152,7 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle RigidBodyComponent
     else if(componentType == RigidBodyComponent::ComponentType) {
-        auto c = new RigidBodyComponent(bullet, component);
+        auto c = bullet->createRigidBody();
         e->addComponent(c);
     }
     // Handle AudioSourceComponent
