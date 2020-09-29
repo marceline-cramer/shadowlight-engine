@@ -21,6 +21,26 @@ glm::vec3 Config::getConfigVec3(ConfigData& configData, const char* member)
     );
 }
 
+bool Config::checkMember(ConfigData& configData, const char* member)
+{
+    if(!configData.root.HasMember(member)) return false;
+    return true;
+}
+
+bool Config::checkString(ConfigData& configData, const char* member)
+{
+    if(!checkMember(configData, member)) return false;
+    if(!configData.root[member].IsString()) return false;
+    return true;
+}
+
+bool Config::checkArray(ConfigData& configData, const char* member)
+{
+    if(!checkMember(configData, member)) return false;
+    if(!configData.root[member].IsArray()) return false;
+    return true;
+}
+
 void Config::assertMember(ConfigData& configData, const char* member)
 {
     if(!configData.root.HasMember(member)) {
@@ -33,7 +53,9 @@ void Config::assertMember(ConfigData& configData, const char* member)
 
 void Config::assertString(ConfigData& configData, const char* member)
 {
-    if(!configData.root[member].IsString()) {
+    assertMember(configData, member);
+
+    if(!checkString(configData, member)) {
         std::ostringstream errorMessage;
         errorMessage << configData.name;
         errorMessage << "." << member << " must be a string";
@@ -43,7 +65,9 @@ void Config::assertString(ConfigData& configData, const char* member)
 
 void Config::assertArray(ConfigData& configData, const char* member)
 {
-    if(!configData.root[member].IsArray()) {
+    assertMember(configData, member);
+
+    if(!checkArray(configData, member)) {
         std::ostringstream errorMessage;
         errorMessage << configData.name;
         errorMessage << "." << member << " must be an array";
@@ -53,6 +77,8 @@ void Config::assertArray(ConfigData& configData, const char* member)
 
 void Config::assertArraySize(ConfigData& configData, const char* member, rapidjson::SizeType size)
 {
+    assertArray(configData, member);
+
     if(configData.root[member].GetArray().Size() != size) {
         std::ostringstream errorMessage;
         errorMessage << configData.name;

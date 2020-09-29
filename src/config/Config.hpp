@@ -24,7 +24,11 @@ class Config
 protected:
     std::string getConfigString (ConfigData&, const char*);
     glm::vec3   getConfigVec3   (ConfigData&, const char*);
-private:
+
+    bool checkMember(ConfigData&, const char*);
+    bool checkString(ConfigData&, const char*);
+    bool checkArray(ConfigData&, const char*);
+
     void assertMember(ConfigData&, const char*);
     void assertString(ConfigData&, const char*);
     void assertArray(ConfigData&, const char*);
