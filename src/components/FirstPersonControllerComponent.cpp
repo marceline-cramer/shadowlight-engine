@@ -9,6 +9,11 @@ FirstPersonControllerComponent::FirstPersonControllerComponent(InputAxis* _panAx
 
     tilt = M_PI/2.0;
     pan = -M_PI/2.0;
+
+    transform = {
+        .position = glm::vec3(0.0),
+        .orientation = glm::quat()
+    };
 }
 
 void FirstPersonControllerComponent::update(EntityTransform, double dt)
