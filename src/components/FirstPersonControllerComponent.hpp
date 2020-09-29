@@ -19,7 +19,7 @@ public:
 private:
     EntityTransform transform;
 
-    const float cameraSpeed = 1.0;
+    const float cameraSpeed = 10.0;
 
     float pan;
     float tilt;
