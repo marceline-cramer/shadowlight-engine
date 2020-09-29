@@ -10,6 +10,8 @@
 
 #include "components/RigidBodyComponent.hpp"
 
+#include "config/RigidBodyConfig.hpp"
+
 #include "global/Filesystem.hpp"
 
 class BulletBinding : public Binding
@@ -20,7 +22,7 @@ public:
     
     void update(double);
 
-    RigidBodyComponent* createRigidBody(const char*);
+    RigidBodyComponent* createRigidBody(RigidBodyConfig*);
 private:
     BulletInstance* bulletInstance;
 

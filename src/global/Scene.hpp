@@ -31,6 +31,7 @@
 
 #include "config/EngineConfig.hpp"
 #include "config/PointLightConfig.hpp"
+#include "config/RigidBodyConfig.hpp"
 
 class Scene
 {

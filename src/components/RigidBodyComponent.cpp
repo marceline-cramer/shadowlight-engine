@@ -13,12 +13,11 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
     return 3;
 }
 
-RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti, AssetHandle<ShapeAsset>& _shapeAsset)
+RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti, btScalar _mass, AssetHandle<ShapeAsset>& _shapeAsset)
 {
     bti = _bti;
     shapeAsset = _shapeAsset;
-
-    mass = 1;
+    mass = _mass;
 
     btCollisionShape* shape = shapeAsset.getAsset()->shape;
 

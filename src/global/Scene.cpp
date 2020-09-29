@@ -152,9 +152,13 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
     }
     // Handle RigidBodyComponent
     else if(componentType == RigidBodyComponent::ComponentType) {
-        const char* shapeName = getComponentString(component, componentType.data(), "shape");
+        ConfigData configData{
+            .root = component.GetObject(),
+            .name = componentType
+        };
 
-        auto c = bullet->createRigidBody(shapeName);
+        RigidBodyConfig config(configData);
+        auto c = bullet->createRigidBody(&config);
         e->addComponent(c);
     }
     // Handle AudioSourceComponent

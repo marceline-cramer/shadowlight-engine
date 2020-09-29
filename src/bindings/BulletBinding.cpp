@@ -25,10 +25,10 @@ void BulletBinding::update(double dt)
     bulletInstance->stepSimulation(dt);
 }
 
-RigidBodyComponent* BulletBinding::createRigidBody(const char* shapeName)
+RigidBodyComponent* BulletBinding::createRigidBody(RigidBodyConfig* config)
 {
     AssetHandle<ShapeAsset> shape;
-    shapePool->load(shapeName, shape);
+    shapePool->load(config->shape.c_str(), shape);
 
-    return new RigidBodyComponent(bulletInstance, shape);
+    return new RigidBodyComponent(bulletInstance, config->mass, shape);
 }

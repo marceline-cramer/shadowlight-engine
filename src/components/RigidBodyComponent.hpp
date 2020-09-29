@@ -16,7 +16,7 @@ class RigidBodyComponent : public TransformComponent
 public:
     COMPONENT_TYPE("RigidBody");
     
-    RigidBodyComponent(BulletInstance*, AssetHandle<ShapeAsset>&);
+    RigidBodyComponent(BulletInstance*, btScalar, AssetHandle<ShapeAsset>&);
     virtual ~RigidBodyComponent();
 
     virtual void update(EntityTransform, double) {};
