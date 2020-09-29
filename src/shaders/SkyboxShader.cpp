@@ -16,23 +16,33 @@ layout(set = 0, binding = 0) uniform UniformBufferObject {
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec2 inTexCoord;
 
-layout(location = 0) out vec2 fragTexCoord;
+layout(location = 0) out vec3 fragPosition;
 
 void main() {
     gl_Position = ubo.proj * vec4((ubo.view * vec4(inPosition, 0.0)).xyz, 1.0);
-    fragTexCoord = inTexCoord;
+    fragPosition = inPosition;
 }
     )""");
 
     fragShader->pushCustom(R"""(
 layout(binding = 1) uniform sampler2D environmentMap;
 
-layout(location = 0) in vec2 fragTexCoord;
+layout(location = 0) in vec3 fragPosition;
 
 layout(location = 0) out vec4 outColor;
 
+const vec2 invAtan = vec2(0.1591, 0.3183);
+vec2 SampleSphericalMap(vec3 v)
+{
+    vec2 uv = vec2(atan(v.x, v.y), asin(-v.z));
+    uv *= invAtan;
+    uv += 0.5;
+    return uv;
+}
+
 void main() {
-    outColor = texture(environmentMap, fragTexCoord);
+    vec2 uv = SampleSphericalMap(normalize(fragPosition));
+    outColor = texture(environmentMap, uv);
 }
     )""");
 
