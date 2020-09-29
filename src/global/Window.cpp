@@ -24,8 +24,8 @@ Window::Window()
     // Setup input
     SDL_SetRelativeMouseMode(SDL_TRUE);
     // TODO Input config JSON
-    mouseX = new MouseAxis(100.0);
-    mouseY = new MouseAxis(100.0);
+    mouseX = new MouseAxis(0.6);
+    mouseY = new MouseAxis(0.6);
 
     axes.insert(mouseX);
     axes.insert(mouseY);

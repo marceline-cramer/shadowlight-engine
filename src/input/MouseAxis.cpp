@@ -13,6 +13,6 @@ void MouseAxis::updateRelative(int _rel)
 void MouseAxis::process(double dt)
 {
     // TODO Mouse smoothing
-    axis = (dt * rel) * sensitivity;
+    axis = rel * sensitivity;
     rel = 0;
 }
