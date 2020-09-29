@@ -58,7 +58,8 @@ src = [
     'src/config/Config.cpp',
     'src/config/EngineConfig.cpp',
     'src/config/PointLightConfig.cpp',
-    'src/config/EnvironmentMapConfig.cpp'
+    'src/config/EnvironmentMapConfig.cpp',
+    'src/config/ShapeConfig.cpp'
 ]
 
 dependencies = [
