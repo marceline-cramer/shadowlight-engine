@@ -2,15 +2,12 @@
 
 std::string Config::getConfigString(ConfigData& configData, const char* member)
 {
-    assertMember(configData, member);
     assertString(configData, member);
     return configData.root[member].GetString();
 }
 
 glm::vec3 Config::getConfigVec3(ConfigData& configData, const char* member)
 {
-    assertMember(configData, member);
-    assertArray(configData, member);
     assertArraySize(configData, member, 3);
 
     auto vecArray = configData.root[member].GetArray();
@@ -19,6 +16,12 @@ glm::vec3 Config::getConfigVec3(ConfigData& configData, const char* member)
         vecArray[1].GetFloat(),
         vecArray[2].GetFloat()
     );
+}
+
+double Config::getConfigDouble(ConfigData& configData, const char* member)
+{
+    assertDouble(configData, member);
+    return configData.root[member].GetDouble();
 }
 
 bool Config::checkMember(ConfigData& configData, const char* member)
@@ -38,6 +41,13 @@ bool Config::checkArray(ConfigData& configData, const char* member)
 {
     if(!checkMember(configData, member)) return false;
     if(!configData.root[member].IsArray()) return false;
+    return true;
+}
+
+bool Config::checkDouble(ConfigData& configData, const char* member)
+{
+    if(!checkMember(configData, member)) return false;
+    if(!configData.root[member].IsDouble()) return false;
     return true;
 }
 
@@ -71,6 +81,18 @@ void Config::assertArray(ConfigData& configData, const char* member)
         std::ostringstream errorMessage;
         errorMessage << configData.name;
         errorMessage << "." << member << " must be an array";
+        throw std::runtime_error(errorMessage.str());
+    }
+}
+
+void Config::assertDouble(ConfigData& configData, const char* member)
+{
+    assertMember(configData, member);
+
+    if(!checkDouble(configData, member)) {
+        std::ostringstream errorMessage;
+        errorMessage << configData.name;
+        errorMessage << "." << member << " must be a number";
         throw std::runtime_error(errorMessage.str());
     }
 }

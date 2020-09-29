@@ -24,14 +24,17 @@ class Config
 protected:
     std::string getConfigString (ConfigData&, const char*);
     glm::vec3   getConfigVec3   (ConfigData&, const char*);
+    double      getConfigDouble (ConfigData&, const char*);
 
     bool checkMember(ConfigData&, const char*);
     bool checkString(ConfigData&, const char*);
     bool checkArray(ConfigData&, const char*);
+    bool checkDouble(ConfigData&, const char*);
 
     void assertMember(ConfigData&, const char*);
     void assertString(ConfigData&, const char*);
     void assertArray(ConfigData&, const char*);
+    void assertDouble(ConfigData&, const char*);
 
     void assertArraySize(ConfigData&, const char*, rapidjson::SizeType);
 };
