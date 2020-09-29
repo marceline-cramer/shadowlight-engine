@@ -95,7 +95,13 @@ void Scene::loadEntity(rapidjson::Value& entity)
         std::cout << "Processing entity " << name << std::endl;
     }
 
-    e = new Entity;
+    // TODO EntityConfig
+    EntityTransform transform{
+        .position = glm::vec3(0.0),
+        .orientation = glm::quat()
+    };
+
+    e = new Entity(transform);
     entities.insert(e);
 
     if(entity.HasMember("components")) {
@@ -243,34 +249,9 @@ const char* Scene::getComponentString(rapidjson::Value& component, const char* c
 
 void Scene::update(double dt)
 {
-    // Create "buckets" for each component
-    BucketMap buckets;
-
-    // Register all components in the scene
+    // Update all entities
     for(auto e : entities) {
-        // Store each component by bucket
-        for(auto c : e->components) {
-            // Get the bucket corresponding to the component type
-            BucketMap::iterator bucket = buckets.find(c->getComponentType());
-
-            // If this component type has no bucket, create one
-            if(bucket == buckets.end()) {
-                auto newBucket = BucketMap::value_type(c->getComponentType(), ComponentSet());
-                bucket = buckets.emplace(newBucket).first;
-            }
-
-            // Add this component to the appropriate bucket
-            bucket->second.insert(c);
-        }
-    }
-
-    // TODO Sort buckets by priority
-
-    // Update all components
-    for(auto bucket : buckets) {
-        for(auto c : bucket.second) {
-            c->update(dt);
-        }
+        e->update(dt);
     }
 
     // Draw scene

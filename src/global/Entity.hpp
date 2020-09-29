@@ -12,8 +12,10 @@ using EntitySet = std::set<Entity*>;
 class Entity
 {
 public:
-    Entity();
+    Entity(EntityTransform);
     ~Entity();
+
+    void update(double);
     
     void finalize();
     void addComponent(Component*);
@@ -23,4 +25,5 @@ public:
 
     ComponentSet components;
     EntityTransform transform;
+    TransformComponent* transformComponent;
 };

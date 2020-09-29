@@ -24,9 +24,19 @@ class Component
 {
 public:
     virtual ~Component() {};
-    virtual void update(double) {};
     virtual const char* getComponentType() = 0;
-    virtual void finalize(ComponentSet&, EntityTransform&) {};
-    virtual void createBindings(lua_State*) {};
+
+    virtual void update(EntityTransform, double) = 0;    
+    virtual void finalize(ComponentSet&) = 0;
+    virtual void createBindings(lua_State*) = 0;
 private:
+};
+
+class TransformComponent : public Component
+{
+public:
+    virtual ~TransformComponent() {};
+
+    virtual void setTransform(EntityTransform) = 0;
+    virtual void getTransform(EntityTransform*) = 0;
 };
