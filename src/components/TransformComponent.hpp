@@ -12,6 +12,6 @@ public:
     virtual ~TransformComponent() {};
 
     virtual void getTransform(EntityTransform* _transform) { *_transform = transform; };
-private:
+protected:
     EntityTransform transform;
 };
