@@ -24,6 +24,5 @@ public:
     EntitySet children;
 
     ComponentSet components;
-    EntityTransform transform;
     TransformComponent* transformComponent;
 };

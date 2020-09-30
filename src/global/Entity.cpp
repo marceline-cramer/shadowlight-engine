@@ -2,8 +2,6 @@
 
 Entity::Entity(EntityTransform _transform)
 {
-    transform = _transform;
-
     transformComponent = nullptr;
 }
 
@@ -17,8 +15,15 @@ Entity::~Entity()
 
 void Entity::update(double dt)
 {
+    EntityTransform transform;
+
     if(transformComponent) {
         transformComponent->getTransform(&transform);
+    } else {
+        transform = {
+            .position = glm::vec3(0.0, 0.0, 0.0),
+            .orientation = glm::quat()
+        };
     }
 
     for(auto c : components) {
@@ -44,6 +49,5 @@ void Entity::addComponent(Component* c)
         }
 
         transformComponent = newTransform;
-        transformComponent->setTransform(transform);
     }
 }
