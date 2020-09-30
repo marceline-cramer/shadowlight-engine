@@ -2,9 +2,9 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 
-#include "config/Config.hpp"
+#include "config/TransformConfig.hpp"
 
-class RigidBodyConfig : public Config
+class RigidBodyConfig : public TransformConfig
 {
 public:
     RigidBodyConfig(ConfigData&);

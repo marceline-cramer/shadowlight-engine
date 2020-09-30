@@ -30,5 +30,5 @@ RigidBodyComponent* BulletBinding::createRigidBody(RigidBodyConfig* config)
     AssetHandle<ShapeAsset> shape;
     shapePool->load(config->shape.c_str(), shape);
 
-    return new RigidBodyComponent(bulletInstance, config->mass, shape);
+    return new RigidBodyComponent(bulletInstance, config, shape);
 }

@@ -11,19 +11,20 @@
 
 #include "components/Component.hpp"
 
+#include "config/RigidBodyConfig.hpp"
+
 class RigidBodyComponent : public TransformComponent
 {
 public:
     COMPONENT_TYPE("RigidBody");
     
-    RigidBodyComponent(BulletInstance*, btScalar, AssetHandle<ShapeAsset>&);
+    RigidBodyComponent(BulletInstance*, RigidBodyConfig*, AssetHandle<ShapeAsset>&);
     virtual ~RigidBodyComponent();
 
     virtual void update(EntityTransform, double) {};
     virtual void finalize(ComponentSet&) {};
     virtual void createBindings(lua_State*);
 
-    virtual void setTransform(EntityTransform);
     virtual void getTransform(EntityTransform*);
 private:
     BulletInstance* bti;

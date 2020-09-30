@@ -13,21 +13,21 @@ static int RigidBodyComponent_getCenterOfMassPosition(lua_State* L)
     return 3;
 }
 
-RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti, btScalar _mass, AssetHandle<ShapeAsset>& _shapeAsset)
+RigidBodyComponent::RigidBodyComponent(BulletInstance* _bti, RigidBodyConfig* config, AssetHandle<ShapeAsset>& _shapeAsset)
 {
     bti = _bti;
     shapeAsset = _shapeAsset;
-    mass = _mass;
 
     btCollisionShape* shape = shapeAsset.getAsset()->shape;
 
+    //// TODO RigidBody origin from config orientation
     btTransform startTransform;
-    //btVector3 startOrigin = {transform->position.x, transform->position.y, transform->position.z};
-    btVector3 startOrigin = {0.0, 0.0, 0.0};
+    btVector3 startOrigin = {config->position.x, config->position.y, config->position.z};
     startTransform.setIdentity();
     startTransform.setOrigin(startOrigin);
 
     btVector3 localInertia;
+    mass = config->mass;
     shape->calculateLocalInertia(mass, localInertia);
 
     motionState = new btDefaultMotionState(startTransform);
@@ -52,11 +52,6 @@ void RigidBodyComponent::createBindings(lua_State* L)
     lua_pushlightuserdata(L, body);
     lua_pushcclosure(L, RigidBodyComponent_getCenterOfMassPosition, 1);
     lua_settable(L, -3);
-}
-
-void RigidBodyComponent::setTransform(EntityTransform)
-{
-    // TODO RigidBody position from EntityTransform
 }
 
 void RigidBodyComponent::getTransform(EntityTransform* transform)

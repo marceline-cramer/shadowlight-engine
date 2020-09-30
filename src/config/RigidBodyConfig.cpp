@@ -1,6 +1,6 @@
 #include "config/RigidBodyConfig.hpp"
 
-RigidBodyConfig::RigidBodyConfig(ConfigData& configData)
+RigidBodyConfig::RigidBodyConfig(ConfigData& configData) : TransformConfig(configData)
 {
     // Default to static (zero mass)
     if(!checkDouble(configData, "mass")) {

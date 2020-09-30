@@ -39,6 +39,5 @@ class TransformComponent : public Component
 public:
     virtual ~TransformComponent() {};
 
-    virtual void setTransform(EntityTransform) = 0;
     virtual void getTransform(EntityTransform*) = 0;
 };
