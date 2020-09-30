@@ -33,11 +33,3 @@ public:
     virtual void createBindings(lua_State*) = 0;
 private:
 };
-
-class TransformComponent : public Component
-{
-public:
-    virtual ~TransformComponent() {};
-
-    virtual void getTransform(EntityTransform*) = 0;
-};

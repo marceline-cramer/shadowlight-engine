@@ -5,6 +5,7 @@
 #include <map>
 
 #include "components/Component.hpp"
+#include "components/TransformComponent.hpp"
 
 class Entity;
 using EntitySet = std::set<Entity*>;

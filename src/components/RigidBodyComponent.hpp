@@ -9,7 +9,7 @@
 
 #include "bindings/bullet/BulletInstance.hpp"
 
-#include "components/Component.hpp"
+#include "components/TransformComponent.hpp"
 
 #include "config/RigidBodyConfig.hpp"
 
