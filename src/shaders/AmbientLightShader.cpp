@@ -29,7 +29,7 @@ layout(location = 0) out vec3 outColor;
 
 void main() {
     vec3 albedo = subpassLoad(subpassAlbedo).rgb;
-    outColor = albedo * vec3(0.03);
+    outColor = albedo * vec3(0.0001);
 }
     )""");
 
