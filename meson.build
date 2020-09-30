@@ -38,6 +38,7 @@ src = [
     'src/components/FirstPersonControllerComponent.cpp',
     'src/components/PointLightComponent.cpp',
     'src/components/SkyboxComponent.cpp',
+    'src/components/TransformComponent.cpp',
 
     'src/pipelines/MeshPipeline.cpp',
     'src/pipelines/PointLightPipeline.cpp',
