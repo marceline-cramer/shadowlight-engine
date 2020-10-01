@@ -233,6 +233,16 @@ void Scene::loadComponent(Entity* e, rapidjson::Value& component)
 
         auto c = environmentMapPipeline->createSkybox(environmentMap);
         e->addComponent(c);
+    // Handle TransformComponent
+    } else if(componentType == TransformComponent::ComponentType) {
+        ConfigData configData{
+            .root = component.GetObject(),
+            .name = componentType
+        };
+
+        TransformConfig config(configData);
+        auto c = new TransformComponent(config);
+        e->addComponent(c);
     } else {
         throw std::runtime_error("Unrecognized component type " + componentType);
     }

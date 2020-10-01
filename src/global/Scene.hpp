@@ -22,6 +22,7 @@
 #include "components/FirstPersonControllerComponent.hpp"
 #include "components/PointLightComponent.hpp"
 #include "components/SkyboxComponent.hpp"
+#include "components/TransformComponent.hpp"
 
 #include "pipelines/MeshPipeline.hpp"
 #include "pipelines/PointLightPipeline.hpp"
@@ -32,6 +33,7 @@
 #include "config/EngineConfig.hpp"
 #include "config/PointLightConfig.hpp"
 #include "config/RigidBodyConfig.hpp"
+#include "config/TransformConfig.hpp"
 
 class Scene
 {
