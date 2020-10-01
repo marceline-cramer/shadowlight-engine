@@ -52,7 +52,11 @@ public:
     void transitionImageLayout(VkCommandBuffer, VkImage, VkFormat, VkImageLayout, VkImageLayout);
     void copyBufferToImage(VkCommandBuffer, VkBuffer, VkImage, uint32_t, uint32_t);
 
+    void nameHandle(uint64_t, VkObjectType, const char*);
+
     VkExtent2D getSwapChainExtent() { return swapChainExtent; }
+
+    VkDevice device;
 private:
     bool checkValidationLayerSupport();
     void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
@@ -104,7 +108,7 @@ private:
     VkDebugUtilsMessengerEXT debugMessenger;
     VkSurfaceKHR surface;
     VkPhysicalDevice physicalDevice;
-    VkDevice device;
+
     VkQueue graphicsQueue;
     VkQueue presentQueue;
     VkCommandPool commandPool;
@@ -114,6 +118,9 @@ private:
     std::vector<VkImageView> swapChainImageViews;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
+
+    // Vulkan function pointers
+    PFN_vkSetDebugUtilsObjectNameEXT SetDebugUtilsObjectNameEXT = nullptr;
 
     // VulkanMemoryAllocator data
     VmaAllocator allocator;

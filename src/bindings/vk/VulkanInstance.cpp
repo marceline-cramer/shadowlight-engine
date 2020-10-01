@@ -368,6 +368,24 @@ void VulkanInstance::copyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer b
     );
 }
 
+void VulkanInstance::nameHandle(uint64_t handle, VkObjectType objectType, const char* name)
+{
+    VkDebugUtilsObjectNameInfoEXT nameInfo{
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+        .pNext = nullptr,
+        .objectType = objectType,
+        .objectHandle = handle,
+        .pObjectName = name
+    };
+
+    if(SetDebugUtilsObjectNameEXT(device, &nameInfo) != VK_SUCCESS) {
+        std::ostringstream errorMessage;
+        errorMessage << "Failed to name Vulkan object ";
+        errorMessage << name;
+        throw std::runtime_error(errorMessage.str());
+    }
+}
+
 bool VulkanInstance::checkValidationLayerSupport()
 {
     uint32_t layerCount;
@@ -623,6 +641,10 @@ void VulkanInstance::createLogicalDevice()
 
     vkGetDeviceQueue(device, indices.graphicsFamily, 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.graphicsFamily, 0, &presentQueue);
+
+    // Load Vulkan function pointers
+    SetDebugUtilsObjectNameEXT = reinterpret_cast<PFN_vkSetDebugUtilsObjectNameEXT>(
+        vkGetDeviceProcAddr(device, "vkSetDebugUtilsObjectNameEXT"));
 }
 
 void VulkanInstance::createAllocator()
