@@ -9,12 +9,14 @@
 
 #include <shaderc/shaderc.hpp>
 
+#include "bindings/vk/VulkanInstance.hpp"
+
 using ShaderStages = std::vector<VkPipelineShaderStageCreateInfo>;
 
 class ShaderModule
 {
 public:
-    ShaderModule(VkDevice, std::string, shaderc_shader_kind);
+    ShaderModule(VulkanInstance*, std::string, shaderc_shader_kind);
     ~ShaderModule();
 
     void pushCustom(std::string);
@@ -23,7 +25,7 @@ public:
     VkShaderModule compile();
     VkPipelineShaderStageCreateInfo getStageCreateInfo();
 private:
-    VkDevice device;
+    VulkanInstance* vki;
     std::ostringstream glslSource;
     std::string shaderName;
     shaderc_shader_kind shaderKind;

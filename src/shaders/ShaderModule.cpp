@@ -1,8 +1,8 @@
 #include "shaders/ShaderModule.hpp"
 
-ShaderModule::ShaderModule(VkDevice _device, std::string _shaderName, shaderc_shader_kind _shaderKind)
+ShaderModule::ShaderModule(VulkanInstance* _vki, std::string _shaderName, shaderc_shader_kind _shaderKind)
 {
-    device = _device;
+    vki = _vki;
     shaderName = _shaderName;
     shaderKind = _shaderKind;
 
@@ -15,7 +15,7 @@ ShaderModule::ShaderModule(VkDevice _device, std::string _shaderName, shaderc_sh
 ShaderModule::~ShaderModule()
 {
     if(compiled) {
-        vkDestroyShaderModule(device, shaderModule, nullptr);
+        vkDestroyShaderModule(vki->device, shaderModule, nullptr);
     }
 }
 
@@ -76,9 +76,10 @@ VkShaderModule ShaderModule::compile()
         .pCode = spirv.data()
     };
 
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+    if(vkCreateShaderModule(vki->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create shader module");
     }
+    vki->nameHandle((uint64_t)shaderModule, VK_OBJECT_TYPE_SHADER_MODULE, shaderName.data());
 
     compiled = true;
     return shaderModule;
