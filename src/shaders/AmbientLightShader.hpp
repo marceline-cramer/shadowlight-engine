@@ -5,7 +5,7 @@
 class AmbientLightShader
 {
 public:
-    AmbientLightShader(VkDevice);
+    AmbientLightShader(VulkanInstance*);
     ~AmbientLightShader();
 
     ShaderStages getStages();

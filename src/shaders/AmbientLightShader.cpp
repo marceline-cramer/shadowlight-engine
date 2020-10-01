@@ -1,9 +1,9 @@
 #include "shaders/AmbientLightShader.hpp"
 
-AmbientLightShader::AmbientLightShader(VkDevice device)
+AmbientLightShader::AmbientLightShader(VulkanInstance* vki)
 {
-    vertShader = new ShaderModule(device, "AmbientLight.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "AmbientLight.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki, "AmbientLight.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki, "AmbientLight.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec2 positions[4] = vec2[](

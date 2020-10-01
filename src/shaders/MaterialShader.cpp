@@ -1,9 +1,9 @@
 #include "shaders/MaterialShader.hpp"
 
-MaterialShader::MaterialShader(VkDevice device, std::vector<std::string> textures, std::string materialCode)
+MaterialShader::MaterialShader(VulkanInstance* vki, std::vector<std::string> textures, std::string materialCode)
 {
-    vertShader = new ShaderModule(device, "Material.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "Material.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki, "Material.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki, "Material.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 layout(set = 0, binding = 0) uniform UniformBufferObject {

@@ -60,7 +60,7 @@ void CompositePipeline::createPipelineLayout()
 
 void CompositePipeline::createPipeline()
 {
-    CompositeShader shader(vk->device);
+    CompositeShader shader(vk->getInstance());
     auto shaderStages = shader.getStages();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{

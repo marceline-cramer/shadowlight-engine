@@ -5,7 +5,7 @@
 class PointLightShader
 {
 public:
-    PointLightShader(VkDevice);
+    PointLightShader(VulkanInstance*);
     ~PointLightShader();
 
     ShaderStages getStages();

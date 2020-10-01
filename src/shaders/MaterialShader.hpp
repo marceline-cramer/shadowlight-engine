@@ -5,7 +5,7 @@
 class MaterialShader
 {
 public:
-    MaterialShader(VkDevice, std::vector<std::string>, std::string);
+    MaterialShader(VulkanInstance*, std::vector<std::string>, std::string);
     ~MaterialShader();
 
     ShaderStages getStages();

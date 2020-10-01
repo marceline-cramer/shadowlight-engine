@@ -4,8 +4,8 @@ SkyboxShader::SkyboxShader(VulkanInstance* _vki)
 {
     vki = _vki;
 
-    vertShader = new ShaderModule(vki->device, "Skybox.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(vki->device, "Skybox.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki, "Skybox.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki, "Skybox.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 layout(set = 0, binding = 0) uniform UniformBufferObject {

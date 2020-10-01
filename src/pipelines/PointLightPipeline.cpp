@@ -85,7 +85,7 @@ void PointLightPipeline::createPipelineLayout()
 
 void PointLightPipeline::createPipeline()
 {
-    PointLightShader shader(vk->device);
+    PointLightShader shader(vk->getInstance());
     auto shaderStages = shader.getStages();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{

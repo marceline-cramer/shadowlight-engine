@@ -5,7 +5,7 @@
 class CompositeShader
 {
 public:
-    CompositeShader(VkDevice);
+    CompositeShader(VulkanInstance*);
     ~CompositeShader();
 
     ShaderStages getStages();

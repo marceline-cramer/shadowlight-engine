@@ -1,9 +1,9 @@
 #include "shaders/CompositeShader.hpp"
 
-CompositeShader::CompositeShader(VkDevice device)
+CompositeShader::CompositeShader(VulkanInstance* vki)
 {
-    vertShader = new ShaderModule(device, "Composite.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "Composite.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki, "Composite.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki, "Composite.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec2 positions[4] = vec2[](

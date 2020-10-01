@@ -1,9 +1,9 @@
 #include "shaders/PointLightShader.hpp"
 
-PointLightShader::PointLightShader(VkDevice device)
+PointLightShader::PointLightShader(VulkanInstance* vki)
 {
-    vertShader = new ShaderModule(device, "PointLight.vert", shaderc_vertex_shader);
-    fragShader = new ShaderModule(device, "PointLight.frag", shaderc_fragment_shader);
+    vertShader = new ShaderModule(vki, "PointLight.vert", shaderc_vertex_shader);
+    fragShader = new ShaderModule(vki, "PointLight.frag", shaderc_fragment_shader);
 
     vertShader->pushCustom(R"""(
 vec2 positions[4] = vec2[](

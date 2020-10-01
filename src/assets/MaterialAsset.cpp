@@ -91,7 +91,7 @@ void MaterialAsset::createPipeline(const char* materialFile)
 {
     std::string materialCode;
     vk->fs->loadFile(materialFile, materialCode);
-    MaterialShader shader(vk->device, textures, materialCode);
+    MaterialShader shader(vk->getInstance(), textures, materialCode);
     auto shaderStages = shader.getStages();
 
     auto bindingDescription = MeshVertex::getBindingDescription();

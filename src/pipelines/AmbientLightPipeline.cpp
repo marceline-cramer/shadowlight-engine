@@ -64,7 +64,7 @@ void AmbientLightPipeline::createPipelineLayout()
 
 void AmbientLightPipeline::createPipeline()
 {
-    AmbientLightShader shader(vk->device);
+    AmbientLightShader shader(vk->getInstance());
     auto shaderStages = shader.getStages();
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{
